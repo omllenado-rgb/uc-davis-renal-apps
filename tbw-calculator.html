@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCD Renal TBW Calculator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #007AFF, #5856D6); min-height: 100vh; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header-icon { font-size: 60px; margin-bottom: 10px; }
+        .header h1 { color: #007AFF; font-size: 28px; margin-bottom: 8px; }
+        .header p { color: #8E8E93; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .gender-selector { display: flex; gap: 10px; }
+        .gender-btn { flex: 1; padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; background: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .gender-btn.active { border-color: #007AFF; background: #E3F2FD; color: #007AFF; }
+        .gender-btn:hover { border-color: #007AFF; }
+        .input-field { width: 100%; padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; font-size: 18px; font-weight: 500; transition: all 0.3s; }
+        .input-field:focus { outline: none; border-color: #007AFF; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #007AFF, #5856D6); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: transform 0.2s; margin-top: 10px; }
+        .calculate-btn:hover { transform: scale(1.02); }
+        .calculate-btn:active { transform: scale(0.98); }
+        .result-card { display: none; background: linear-gradient(135deg, #34C759, #30B46C); border-radius: 16px; padding: 25px; margin-top: 25px; color: white; text-align: center; }
+        .result-card.show { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-icon { font-size: 50px; margin-bottom: 10px; }
+        .result-label { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
+        .result-value { font-size: 48px; font-weight: 700; margin-bottom: 5px; }
+        .result-unit { font-size: 18px; opacity: 0.9; }
+        .info-section { background: #F2F2F7; border-radius: 12px; padding: 20px; margin-top: 25px; }
+        .info-section h3 { color: #007AFF; font-size: 16px; margin-bottom: 12px; }
+        .info-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #E5E5EA; }
+        .info-item:last-child { border-bottom: none; }
+        .info-label { color: #666; font-size: 14px; }
+        .info-value { color: #333; font-weight: 600; font-size: 14px; }
+        .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #007AFF; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        .footer { text-align: center; margin-top: 20px; color: #8E8E93; font-size: 12px; }
+        .formula-note { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 13px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">💧</div>
+            <h1>TBW Calculator</h1>
+            <p>UC Davis Health - Renal Services</p>
+        </div>
+
+        <form id="tbwForm">
+            <div class="form-group">
+                <label>Gender</label>
+                <div class="gender-selector">
+                    <button type="button" class="gender-btn active" onclick="setGender('male')">👨 Male</button>
+                    <button type="button" class="gender-btn" onclick="setGender('female')">👩 Female</button>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" class="input-field" placeholder="70" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Height (cm)</label>
+                    <input type="number" id="height" class="input-field" placeholder="175" required>
+                </div>
+                <div class="form-group">
+                    <label>Age (yr)</label>
+                    <input type="number" id="age" class="input-field" placeholder="35" required>
+                </div>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate TBW</button>
+        </form>
+
+        <div class="result-card" id="resultCard">
+            <div class="result-icon">💧</div>
+            <div class="result-label">Total Body Water</div>
+            <div class="result-value" id="tbwResult">0.00</div>
+            <div class="result-unit">Liters</div>
+        </div>
+
+        <div class="info-section" id="infoSection" style="display: none;">
+            <h3>📊 Calculation Details</h3>
+            <div class="info-item">
+                <span class="info-label">Formula</span>
+                <span class="info-value" id="formulaUsed">Watson (Male)</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">BMI</span>
+                <span class="info-value" id="bmiResult">0.0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">TBW % of Weight</span>
+                <span class="info-value" id="tbwPercent">0%</span>
+            </div>
+            <div class="formula-note">
+                <strong>Watson Formula:</strong><br>
+                Male: TBW = 2.447 - (0.09156 × age) + (0.1074 × height) + (0.3362 × weight)<br>
+                Female: TBW = -2.097 + (0.1069 × height) + (0.2466 × weight)
+            </div>
+        </div>
+
+        <button type="button" class="reset-btn" onclick="resetForm()" style="display: none;" id="resetBtn">🔄 Calculate Again</button>
+
+        <div class="footer">
+            UC Davis Health © 2026<br>
+            For clinical use only
+        </div>
+    </div>
+
+    <script>
+        let currentGender = 'male';
+
+        function setGender(gender) {
+            currentGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function calculateTBW(weight, height, age, gender) {
+            let tbw;
+            if (gender === 'male') {
+                // Watson formula for males
+                tbw = 2.447 - (0.09156 * age) + (0.1074 * height) + (0.3362 * weight);
+            } else {
+                // Watson formula for females
+                tbw = -2.097 + (0.1069 * height) + (0.2466 * weight);
+            }
+            return Math.round(tbw * 100) / 100;
+        }
+
+        function calculateBMI(weight, height) {
+            const heightM = height / 100;
+            const bmi = weight / (heightM * heightM);
+            return Math.round(bmi * 10) / 10;
+        }
+
+        function resetForm() {
+            document.getElementById('tbwForm').reset();
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('infoSection').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'none';
+            setGender('male');
+        }
+
+        document.getElementById('tbwForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const age = parseFloat(document.getElementById('age').value);
+
+            if (!weight || !height || !age) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Calculate TBW
+            const tbw = calculateTBW(weight, height, age, currentGender);
+            
+            // Calculate BMI
+            const bmi = calculateBMI(weight, height);
+
+            // Calculate TBW as % of weight
+            const tbwPercent = Math.round((tbw / weight) * 100);
+
+            // Display results
+            document.getElementById('tbwResult').textContent = tbw.toFixed(2);
+            document.getElementById('formulaUsed').textContent = `Watson (${currentGender.charAt(0).toUpperCase() + currentGender.slice(1)})`;
+            document.getElementById('bmiResult').textContent = bmi.toFixed(1);
+            document.getElementById('tbwPercent').textContent = `${tbwPercent}%`;
+
+            // Show result card with animation
+            document.getElementById('resultCard').classList.add('show');
+            document.getElementById('infoSection').style.display = 'block';
+            document.getElementById('resetBtn').style.display = 'block';
+
+            // Scroll to results
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    </script>
+</body>
+</html>

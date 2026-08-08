@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University of California Renal Services - Clinical Apps</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        .header { text-align: center; padding: 40px 20px; color: white; }
+        .header-icon { font-size: 80px; margin-bottom: 15px; }
+        .header h1 { font-size: 36px; margin-bottom: 10px; font-weight: 700; }
+        .header p { font-size: 18px; opacity: 0.95; max-width: 600px; margin: 0 auto; }
+        .uc-logo { background: white; color: #003087; padding: 10px 30px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 14px; margin-bottom: 20px; letter-spacing: 1px; }
+        
+        /* Apps Grid */
+        .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px; margin-top: 20px; }
+        .app-card { background: white; border-radius: 16px; padding: 30px; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+        .app-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        .app-icon { font-size: 60px; margin-bottom: 15px; }
+        .app-title { font-size: 22px; color: #003087; margin-bottom: 10px; font-weight: 700; }
+        .app-description { color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+        .app-features { list-style: none; margin-bottom: 20px; }
+        .app-features li { padding: 5px 0; color: #555; font-size: 14px; }
+        .app-features li:before { content: "✅ "; margin-right: 5px; }
+        .app-link { display: inline-block; background: linear-gradient(135deg, #003087, #007AFF); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: transform 0.2s; }
+        .app-link:hover { transform: scale(1.05); }
+        .app-badge { background: #34C759; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 10px; }
+        .app-badge.new { background: #FF9500; }
+        
+        /* Coming Soon */
+        .coming-soon { opacity: 0.6; filter: grayscale(50%); }
+        .coming-soon .app-link { background: #E5E5EA; cursor: not-allowed; }
+        
+        /* Footer */
+        .footer { text-align: center; padding: 40px 20px; color: white; opacity: 0.9; }
+        .footer p { margin: 5px 0; font-size: 14px; }
+        .footer a { color: white; text-decoration: underline; }
+        
+        /* QR Code Section */
+        .qr-section { background: white; border-radius: 16px; padding: 30px; text-align: center; margin: 40px 20px; }
+        .qr-section h3 { color: #003087; margin-bottom: 15px; }
+        .qr-section p { color: #666; margin-bottom: 20px; }
+        
+        /* Contact */
+        .contact-section { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 30px; margin: 40px 20px; color: white; }
+        .contact-section h3 { margin-bottom: 15px; }
+        .contact-info { margin-top: 15px; }
+        .contact-info p { margin: 8px 0; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 28px; }
+            .header p { font-size: 16px; }
+            .apps-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="uc-logo">UNIVERSITY OF CALIFORNIA</div>
+            <div class="header-icon">🏥</div>
+            <h1>Renal Services</h1>
+            <p>Clinical Calculator Apps for Healthcare Professionals</p>
+        </div>
+
+        <!-- Apps Grid -->
+        <div class="apps-grid">
+            
+            <!-- App 1: RenalEd -->
+            <div class="app-card">
+                <span class="app-badge">LIVE</span>
+                <div class="app-icon">🍎</div>
+                <h3 class="app-title">RenalEd</h3>
+                <p class="app-description">Interactive nutrition education app for dialysis patients. Learn kidney-friendly eating through gamification.</p>
+                <ul class="app-features">
+                    <li>248 foods with traffic light ratings</li>
+                    <li>Track K+, Phosphorus, Sodium, Fluid</li>
+                    <li>Real-time nutrient tracking</li>
+                    <li>Works on any device - no download</li>
+                    <li>Patient education & engagement</li>
+                </ul>
+                <a href="renaled.html" class="app-link" target="_blank">Open RenalEd →</a>
+            </div>
+
+            <!-- App 2: TBW Calculator -->
+            <div class="app-card">
+                <span class="app-badge">LIVE</span>
+                <div class="app-icon">💧</div>
+                <h3 class="app-title">TBW Calculator</h3>
+                <p class="app-description">Total Body Water calculator using Watson formula. Essential for dialysis adequacy & fluid management.</p>
+                <ul class="app-features">
+                    <li>Watson formula (Male/Female)</li>
+                    <li>Calculates TBW + BMI + TBW %</li>
+                    <li>Clinical-grade accuracy</li>
+                    <li>Instant results</li>
+                    <li>UC Davis branded</li>
+                </ul>
+                <a href="tbw-calculator.html" class="app-link" target="_blank">Open TBW Calculator →</a>
+            </div>
+
+            <!-- App 3: Kt/V Calculator (Coming Soon) -->
+            <div class="app-card coming-soon">
+                <span class="app-badge new">COMING SOON</span>
+                <div class="app-icon">📊</div>
+                <h3 class="app-title">Kt/V Calculator</h3>
+                <p class="app-description">Dialysis adequacy calculator for hemodialysis patients. Single-pool, equilibrated, and standardized Kt/V.</p>
+                <ul class="app-features">
+                    <li>spKt/V calculation</li>
+                    <li>eKt/V (equilibrated)</li>
+                    <li>stdKt/V (standardized)</li>
+                    <li>URR calculation</li>
+                    <li>Trend tracking</li>
+                </ul>
+                <span class="app-link">Request This App</span>
+            </div>
+
+            <!-- App 4: UFR Calculator (Coming Soon) -->
+            <div class="app-card coming-soon">
+                <span class="app-badge new">COMING SOON</span>
+                <div class="app-icon">💉</div>
+                <h3 class="app-title">UFR Calculator</h3>
+                <p class="app-description">Ultrafiltration Rate calculator for safe fluid removal during hemodialysis.</p>
+                <ul class="app-features">
+                    <li>Calculate UFR (mL/kg/hr)</li>
+                    <li>Safety alerts (>10 mL/kg/hr)</li>
+                    <li>Fluid removal goals</li>
+                    <li>Time-based calculations</li>
+                    <li>Patient safety monitoring</li>
+                </ul>
+                <span class="app-link">Request This App</span>
+            </div>
+
+            <!-- App 5: Fluid Goal Calculator (Coming Soon) -->
+            <div class="app-card coming-soon">
+                <span class="app-badge new">COMING SOON</span>
+                <div class="app-icon">🎯</div>
+                <h3 class="app-title">Fluid Goal Calculator</h3>
+                <p class="app-description">Calculate daily fluid goals based on urine output and insensible losses.</p>
+                <ul class="app-features">
+                    <li>Urine output tracking</li>
+                    <li>Insensible loss estimation</li>
+                    <li>Dry weight assessment</li>
+                    <li>Interdialytic weight gain</li>
+                    <li>Personalized goals</li>
+                </ul>
+                <span class="app-link">Request This App</span>
+            </div>
+
+            <!-- App 6: More Apps (Coming Soon) -->
+            <div class="app-card coming-soon">
+                <span class="app-badge new">MORE COMING SOON</span>
+                <div class="app-icon">🚀</div>
+                <h3 class="app-title">Request an App</h3>
+                <p class="app-description">Need a specific calculator? Suggest a clinical tool for your team!</p>
+                <ul class="app-features">
+                    <li>Custom clinical calculators</li>
+                    <li>Medication dosing tools</li>
+                    <li>Nutrition calculators</li>
+                    <li>Lab value interpreters</li>
+                    <li>And more!</li>
+                </ul>
+                <a href="mailto:omllenado@gmail.com?subject=Request New Renal App" class="app-link">Request App →</a>
+            </div>
+
+        </div>
+
+        <!-- QR Code Section -->
+        <div class="qr-section">
+            <h3>📱 Access on Your Phone</h3>
+            <p>Scan this QR code to access all apps instantly - no download required!</p>
+            <p style="color: #999; font-size: 13px;">(QR code coming soon - or bookmark this page)</p>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h3>📧 Contact & Support</h3>
+            <p>For questions, app requests, or technical support:</p>
+            <div class="contact-info">
+                <p><strong>Oliver Llenado, RN</strong></p>
+                <p>UC Davis Health - Acute Dialysis</p>
+                <p>Email: <a href="mailto:omllenado@gmail.com">omllenado@gmail.com</a></p>
+                <p>Telegram: @oliverllenado</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>University of California Renal Services</strong></p>
+            <p>Clinical Apps for Healthcare Professionals</p>
+            <p>© 2026 UC Davis Health. For clinical use only.</p>
+            <p style="margin-top: 15px; font-size: 12px; opacity: 0.7;">
+                These apps are clinical tools designed for healthcare professionals. 
+                Always verify calculations and use clinical judgment.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Track app clicks (optional analytics)
+        document.querySelectorAll('.app-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const appName = this.closest('.app-card').querySelector('.app-title').textContent;
+                console.log(`App opened: ${appName}`);
+                // Could send to analytics endpoint here
+            });
+        });
+    </script>
+</body>
+</html>
