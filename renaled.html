@@ -1,1 +1,458 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Test Public Site</title></head><body style="font-family:system-ui;padding:40px;text-align:center"><h1>✅ This is PUBLIC!</h1><p>If you see this, the site is accessible without password.</p><p>UC Davis Renal Services © 2026</p></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RenalEd - Kidney-Friendly Eating Tracker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f5f5f5; max-width: 600px; margin: 0 auto; }
+        .welcome-screen { background: linear-gradient(135deg, #2196F3, #1976D2); min-height: 100vh; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; }
+        .welcome-icon { font-size: 80px; margin-bottom: 20px; }
+        .welcome-title { font-size: 32px; font-weight: bold; margin-bottom: 16px; }
+        .welcome-subtitle { font-size: 18px; opacity: 0.95; margin-bottom: 30px; line-height: 1.5; }
+        .welcome-benefits { background: white; color: #212121; border-radius: 16px; padding: 24px; margin-bottom: 30px; width: 100%; max-width: 500px; text-align: left; }
+        .benefit-item { display: flex; align-items: flex-start; margin-bottom: 16px; }
+        .benefit-icon { font-size: 24px; margin-right: 12px; min-width: 30px; }
+        .benefit-text { font-size: 15px; line-height: 1.4; }
+        .start-btn { background: #4CAF50; color: white; border: none; padding: 18px 60px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4); transition: transform 0.2s; }
+        .start-btn:hover { transform: scale(1.05); }
+        .tutorial-screen { display: none; background: white; min-height: 100vh; padding: 20px; }
+        .tutorial-header { text-align: center; padding: 20px 0; border-bottom: 2px solid #f0f0f0; }
+        .tutorial-title { font-size: 24px; font-weight: bold; color: #2196F3; margin-bottom: 8px; }
+        .tutorial-subtitle { font-size: 14px; color: #757575; }
+        .tutorial-step { background: #f5f5f5; border-radius: 12px; padding: 20px; margin: 16px 0; }
+        .step-number { background: #2196F3; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 12px; }
+        .step-title { font-size: 18px; font-weight: bold; color: #212121; margin-bottom: 8px; }
+        .step-description { font-size: 14px; color: #757575; line-height: 1.6; margin-bottom: 12px; }
+        .step-visual { background: white; border-radius: 8px; padding: 16px; text-align: center; }
+        .traffic-light-demo { display: flex; justify-content: space-around; padding: 16px; }
+        .light-demo { text-align: center; }
+        .light-circle-demo { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 28px; }
+        .light-green-demo { background: #4CAF50; }
+        .light-yellow-demo { background: #FFC107; }
+        .light-red-demo { background: #F44336; }
+        .light-label-demo { font-size: 13px; color: #757575; font-weight: 600; }
+        .light-desc-demo { font-size: 11px; color: #9e9e9e; margin-top: 4px; }
+        .meter-demo { background: #e0e0e0; height: 24px; border-radius: 12px; overflow: hidden; margin: 12px 0; }
+        .meter-fill-demo { height: 100%; border-radius: 12px; }
+        .nav-btn { background: #2196F3; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 16px; }
+        .nav-btn.secondary { background: #f5f5f5; color: #2196F3; }
+        .progress-dots { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #e0e0e0; }
+        .dot.active { background: #2196F3; }
+        .main-app { display: none; }
+        .header { background: linear-gradient(135deg, #2196F3, #1976D2); padding: 30px 20px; color: white; }
+        .header h1 { font-size: 24px; margin-bottom: 6px; }
+        .header p { font-size: 13px; opacity: 0.9; }
+        .stats { display: flex; justify-content: space-around; background: white; padding: 16px; margin: -16px 20px 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .stat { text-align: center; }
+        .stat-value { font-size: 20px; font-weight: bold; color: #2196F3; }
+        .stat-label { font-size: 11px; color: #757575; margin-top: 4px; }
+        .section { background: white; margin: 16px 20px; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section h2 { font-size: 16px; margin-bottom: 16px; color: #212121; }
+        .nutrient { margin-bottom: 16px; }
+        .nutrient-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-weight: 600; color: #212121; font-size: 14px; }
+        .meter-bg { background: #e0e0e0; height: 18px; border-radius: 9px; overflow: hidden; }
+        .meter-fill { height: 100%; border-radius: 9px; transition: width 0.3s; }
+        .green { background: #4CAF50; }
+        .yellow { background: #FFC107; }
+        .red { background: #F44336; }
+        .nutrient-footer { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; color: #757575; }
+        .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .action-btn { background: #2196F3; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
+        .action-btn:hover { background: #1976D2; }
+        .action-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+        .meal-card { background: #f5f5f5; padding: 14px; border-radius: 10px; margin-bottom: 10px; }
+        .meal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .meal-type { font-weight: 700; color: #212121; font-size: 13px; }
+        .meal-points { background: #4CAF50; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .meal-info { font-size: 12px; color: #757575; }
+        .traffic-light { display: flex; justify-content: space-around; padding: 14px; background: #f5f5f5; border-radius: 10px; }
+        .light-item { text-align: center; }
+        .light-circle { width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; }
+        .light-green { background: #4CAF50; }
+        .light-yellow { background: #FFC107; }
+        .light-red { background: #F44336; }
+        .light-label { font-size: 11px; color: #757575; font-weight: 600; }
+        .tab-bar { display: flex; justify-content: space-around; background: white; padding: 10px 0; border-top: 1px solid #e0e0e0; position: fixed; bottom: 0; width: 100%; max-width: 600px; }
+        .tab { text-align: center; cursor: pointer; padding: 6px 12px; }
+        .tab-icon { font-size: 22px; margin-bottom: 2px; }
+        .tab-label { font-size: 11px; color: #757575; }
+        .tab.active .tab-label { color: #2196F3; font-weight: 600; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: flex-end; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; width: 100%; max-height: 85vh; border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-title { font-size: 18px; font-weight: 700; }
+        .close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #757575; }
+        .category-tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 8px; }
+        .category-tab { padding: 6px 12px; background: #f5f5f5; border-radius: 16px; font-size: 12px; cursor: pointer; white-space: nowrap; font-weight: 500; }
+        .category-tab.active { background: #2196F3; color: white; }
+        .food-list { max-height: 400px; overflow-y: auto; }
+        .food-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #e0e0e0; cursor: pointer; }
+        .food-item:hover { background: #f5f5f5; }
+        .food-name { font-weight: 600; color: #212121; font-size: 14px; }
+        .food-serving { font-size: 11px; color: #757575; margin-top: 2px; }
+        .food-nutrients { display: flex; gap: 8px; font-size: 11px; color: #757575; margin-top: 4px; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+        .badge-green { background: #e8f5e9; color: #2e7d32; }
+        .badge-yellow { background: #fff3e0; color: #f57c00; }
+        .badge-red { background: #ffebee; color: #c62828; }
+        .help-btn { position: fixed; top: 20px; right: 20px; background: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #2196F3; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; z-index: 100; }
+        .success-message { background: #4CAF50; color: white; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 12px; font-weight: 600; display: none; }
+    </style>
+</head>
+<body>
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon">🍎</div>
+        <h1 class="welcome-title">Welcome to RenalEd!</h1>
+        <p class="welcome-subtitle">Learn kidney-friendly eating in a simple, fun way</p>
+        <div class="welcome-benefits">
+            <div class="benefit-item">
+                <span class="benefit-icon">✅</span>
+                <span class="benefit-text"><strong>Track your nutrients</strong> - See potassium, phosphorus, sodium, and fluid in real-time</span>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🚦</span>
+                <span class="benefit-text"><strong>Traffic light colors</strong> - Green = Go! Yellow = Slow down. Red = Stop!</span>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🏆</span>
+                <span class="benefit-text"><strong>Earn points</strong> - Get rewards for making healthy choices</span>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">📱</span>
+                <span class="benefit-text"><strong>Works everywhere</strong> - Use on phone, tablet, or computer</span>
+            </div>
+        </div>
+        <button class="start-btn" onclick="startTutorial()">Get Started →</button>
+    </div>
+    <div class="tutorial-screen" id="tutorialScreen">
+        <div class="tutorial-header">
+            <h2 class="tutorial-title">How It Works</h2>
+            <p class="tutorial-subtitle">Simple 3-step guide</p>
+        </div>
+        <div class="progress-dots">
+            <div class="dot active" id="dot1"></div>
+            <div class="dot" id="dot2"></div>
+            <div class="dot" id="dot3"></div>
+        </div>
+        <div class="tutorial-step" id="step1">
+            <div class="step-number">1</div>
+            <h3 class="step-title">Understand the Traffic Lights</h3>
+            <p class="step-description">Foods are colored like traffic lights to show what's safe to eat:</p>
+            <div class="step-visual">
+                <div class="traffic-light-demo">
+                    <div class="light-demo">
+                        <div class="light-circle-demo light-green-demo">✓</div>
+                        <div class="light-label-demo">GREEN</div>
+                        <div class="light-desc-demo">Eat Freely</div>
+                    </div>
+                    <div class="light-demo">
+                        <div class="light-circle-demo light-yellow-demo">⚠</div>
+                        <div class="light-label-demo">YELLOW</div>
+                        <div class="light-desc-demo">Small Portions</div>
+                    </div>
+                    <div class="light-demo">
+                        <div class="light-circle-demo light-red-demo">✕</div>
+                        <div class="light-label-demo">RED</div>
+                        <div class="light-desc-demo">Avoid</div>
+                    </div>
+                </div>
+            </div>
+            <button class="nav-btn" onclick="nextStep(2)">Got It! Next →</button>
+        </div>
+        <div class="tutorial-step" id="step2" style="display:none;">
+            <div class="step-number">2</div>
+            <h3 class="step-title">Watch Your Daily Budgets</h3>
+            <p class="step-description">You have daily limits for 4 nutrients. The bars show how much you've used:</p>
+            <div class="step-visual">
+                <div style="text-align: left; padding: 12px;">
+                    <div style="font-size: 13px; font-weight: 600; margin-bottom: 4px;">Potassium</div>
+                    <div class="meter-demo">
+                        <div class="meter-fill-demo green" style="width: 50%"></div>
+                    </div>
+                    <div style="font-size: 11px; color: #757575;">1000 / 2000 mg (50% - Good!)</div>
+                    <div style="font-size: 13px; font-weight: 600; margin: 12px 0 4px;">Phosphorus</div>
+                    <div class="meter-demo">
+                        <div class="meter-fill-demo yellow" style="width: 85%"></div>
+                    </div>
+                    <div style="font-size: 11px; color: #757575;">850 / 1000 mg (85% - Be Careful!)</div>
+                    <div style="font-size: 13px; font-weight: 600; margin: 12px 0 4px;">Sodium</div>
+                    <div class="meter-demo">
+                        <div class="meter-fill-demo red" style="width: 100%"></div>
+                    </div>
+                    <div style="font-size: 11px; color: #757575;">2000 / 2000 mg (100% - Stop!)</div>
+                </div>
+            </div>
+            <p style="font-size: 13px; color: #757575; margin-top: 12px;"><strong>Tip:</strong> Green = Good! Yellow = Slow Down. Red = Stop!</p>
+            <button class="nav-btn" onclick="nextStep(3)">Perfect! Next →</button>
+            <button class="nav-btn secondary" onclick="nextStep(1)">← Back</button>
+        </div>
+        <div class="tutorial-step" id="step3" style="display:none;">
+            <div class="step-number">3</div>
+            <h3 class="step-title">Add Foods to Track</h3>
+            <p class="step-description">Tap "Add Meal" and choose foods you ate. The app automatically tracks your nutrients!</p>
+            <div class="step-visual">
+                <div style="background: #2196F3; color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-weight: 600;">🍳 Add Breakfast</div>
+                <div style="background: #2196F3; color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-weight: 600;">🥗 Add Lunch</div>
+                <div style="background: #2196F3; color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-weight: 600;">🍽️ Add Dinner</div>
+                <div style="background: #2196F3; color: white; padding: 12px; border-radius: 8px; font-weight: 600;">🍎 Add Snack</div>
+            </div>
+            <p style="font-size: 13px; color: #4CAF50; margin-top: 12px; font-weight: 600;">✓ That's it! You're ready to start!</p>
+            <button class="nav-btn" onclick="startApp()">Start Using RenalEd! 🎉</button>
+            <button class="nav-btn secondary" onclick="nextStep(2)">← Back</button>
+        </div>
+    </div>
+    <div class="main-app" id="mainApp">
+        <div class="help-btn" onclick="restartTutorial()">?</div>
+        <div class="success-message" id="successMessage">✓ Food added successfully!</div>
+        <div class="header">
+            <h1 id="greeting">Good Morning! 👋</h1>
+            <p id="currentDate"></p>
+        </div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="streakDays">0</div>
+                <div class="stat-label">Day Streak 🔥</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalPoints">0</div>
+                <div class="stat-label">Total Points ⭐</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="todayPoints">0</div>
+                <div class="stat-label">Today +0</div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Your Nutrient Budgets Today</h2>
+            <div class="nutrient">
+                <div class="nutrient-header">
+                    <span>🍌 Potassium</span>
+                    <span id="kPercent">0%</span>
+                </div>
+                <div class="meter-bg">
+                    <div class="meter-fill green" id="kMeter" style="width: 0%"></div>
+                </div>
+                <div class="nutrient-footer">
+                    <span id="kValue">0 / 2000 mg</span>
+                    <span id="kRemaining">2000 mg left</span>
+                </div>
+            </div>
+            <div class="nutrient">
+                <div class="nutrient-header">
+                    <span>🥛 Phosphorus</span>
+                    <span id="pPercent">0%</span>
+                </div>
+                <div class="meter-bg">
+                    <div class="meter-fill green" id="pMeter" style="width: 0%"></div>
+                </div>
+                <div class="nutrient-footer">
+                    <span id="pValue">0 / 1000 mg</span>
+                    <span id="pRemaining">1000 mg left</span>
+                </div>
+            </div>
+            <div class="nutrient">
+                <div class="nutrient-header">
+                    <span>🧂 Sodium</span>
+                    <span id="naPercent">0%</span>
+                </div>
+                <div class="meter-bg">
+                    <div class="meter-fill green" id="naMeter" style="width: 0%"></div>
+                </div>
+                <div class="nutrient-footer">
+                    <span id="naValue">0 / 2000 mg</span>
+                    <span id="naRemaining">2000 mg left</span>
+                </div>
+            </div>
+            <div class="nutrient">
+                <div class="nutrient-header">
+                    <span>💧 Fluid</span>
+                    <span id="fluidPercent">0%</span>
+                </div>
+                <div class="meter-bg">
+                    <div class="meter-fill green" id="fluidMeter" style="width: 0%"></div>
+                </div>
+                <div class="nutrient-footer">
+                    <span id="fluidValue">0 / 1000 mL</span>
+                    <span id="fluidRemaining">1000 mL left</span>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Add a Meal</h2>
+            <div class="quick-actions">
+                <button class="action-btn" onclick="openMealModal('breakfast')">
+                    <span class="action-icon">🍳</span>
+                    Breakfast
+                </button>
+                <button class="action-btn" onclick="openMealModal('lunch')">
+                    <span class="action-icon">🥗</span>
+                    Lunch
+                </button>
+                <button class="action-btn" onclick="openMealModal('dinner')">
+                    <span class="action-icon">🍽️</span>
+                    Dinner
+                </button>
+                <button class="action-btn" onclick="openMealModal('snack')">
+                    <span class="action-icon">🍎</span>
+                    Snack
+                </button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Today's Meals</h2>
+            <div id="mealsList">
+                <p style="text-align: center; color: #757575; padding: 20px; font-size: 14px;">No meals yet. Tap a button above to add your first meal!</p>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Food Guide</h2>
+            <div class="traffic-light">
+                <div class="light-item">
+                    <div class="light-circle light-green">✓</div>
+                    <div class="light-label">GREEN<br><span style="font-weight: normal; font-size: 10px;">Eat Freely</span></div>
+                </div>
+                <div class="light-item">
+                    <div class="light-circle light-yellow">⚠</div>
+                    <div class="light-label">YELLOW<br><span style="font-weight: normal; font-size: 10px;">Small Portions</span></div>
+                </div>
+                <div class="light-item">
+                    <div class="light-circle light-red">✕</div>
+                    <div class="light-label">RED<br><span style="font-weight: normal; font-size: 10px;">Avoid</span></div>
+                </div>
+            </div>
+        </div>
+        <div style="height: 80px;"></div>
+        <div class="tab-bar">
+            <div class="tab active">
+                <div class="tab-icon">🏠</div>
+                <div class="tab-label">Home</div>
+            </div>
+            <div class="tab" onclick="openMealModal()">
+                <div class="tab-icon">🍽️</div>
+                <div class="tab-label">Add Food</div>
+            </div>
+            <div class="tab">
+                <div class="tab-icon">📖</div>
+                <div class="tab-label">Guide</div>
+            </div>
+            <div class="tab">
+                <div class="tab-icon">👤</div>
+                <div class="tab-label">Profile</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="mealModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Food</h3>
+                <button class="close-btn" onclick="closeMealModal()">&times;</button>
+            </div>
+            <div class="category-tabs" id="categoryTabs"></div>
+            <div class="food-list" id="foodList"></div>
+        </div>
+    </div>
+    <script>
+        const foods = [
+            { id: 'apple', name: 'Apple', category: 'fruits', traffic_light: 'green', potassium: 195, phosphorus: 20, sodium: 2, fluid: 156, serving: '1 medium' },
+            { id: 'banana', name: 'Banana', category: 'fruits', traffic_light: 'red', potassium: 422, phosphorus: 26, sodium: 1, fluid: 89, serving: '1 medium' },
+            { id: 'berries', name: 'Mixed Berries', category: 'fruits', traffic_light: 'green', potassium: 167, phosphorus: 36, sodium: 2, fluid: 125, serving: '1 cup' },
+            { id: 'orange_juice', name: 'Orange Juice', category: 'fruits', traffic_light: 'red', potassium: 496, phosphorus: 42, sodium: 2, fluid: 248, serving: '1 cup' },
+            { id: 'cranberry_juice', name: 'Cranberry Juice', category: 'fruits', traffic_light: 'green', potassium: 15, phosphorus: 13, sodium: 8, fluid: 253, serving: '1 cup' },
+            { id: 'grapes', name: 'Grapes', category: 'fruits', traffic_light: 'green', potassium: 288, phosphorus: 15, sodium: 3, fluid: 124, serving: '1 cup' },
+            { id: 'watermelon', name: 'Watermelon', category: 'fruits', traffic_light: 'yellow', potassium: 170, phosphorus: 17, sodium: 2, fluid: 140, serving: '1 cup' },
+            { id: 'avocado', name: 'Avocado', category: 'fruits', traffic_light: 'red', potassium: 487, phosphorus: 52, sodium: 7, fluid: 73, serving: '1/2 avocado' },
+            { id: 'blueberries', name: 'Blueberries', category: 'fruits', traffic_light: 'green', potassium: 114, phosphorus: 18, sodium: 1, fluid: 125, serving: '1 cup' },
+            { id: 'strawberries', name: 'Strawberries', category: 'fruits', traffic_light: 'green', potassium: 233, phosphorus: 33, sodium: 1, fluid: 136, serving: '1 cup' },
+            { id: 'chicken', name: 'Chicken Breast', category: 'proteins', traffic_light: 'green', potassium: 220, phosphorus: 196, sodium: 63, fluid: 0, serving: '3 oz' },
+            { id: 'turkey', name: 'Turkey Breast', category: 'proteins', traffic_light: 'green', potassium: 200, phosphorus: 174, sodium: 54, fluid: 0, serving: '3 oz' },
+            { id: 'cod', name: 'Cod Fish', category: 'proteins', traffic_light: 'green', potassium: 185, phosphorus: 140, sodium: 55, fluid: 0, serving: '3 oz' },
+            { id: 'egg_whites', name: 'Egg Whites', category: 'proteins', traffic_light: 'green', potassium: 108, phosphorus: 10, sodium: 115, fluid: 0, serving: '2 large' },
+            { id: 'eggs', name: 'Whole Egg', category: 'proteins', traffic_light: 'yellow', potassium: 69, phosphorus: 99, sodium: 71, fluid: 0, serving: '1 large' },
+            { id: 'rice', name: 'White Rice', category: 'grains', traffic_light: 'green', potassium: 25, phosphorus: 30, sodium: 1, fluid: 0, serving: '1/2 cup' },
+            { id: 'pasta', name: 'Pasta', category: 'grains', traffic_light: 'green', potassium: 30, phosphorus: 35, sodium: 1, fluid: 0, serving: '1/2 cup' },
+            { id: 'bread_white', name: 'White Bread', category: 'grains', traffic_light: 'green', potassium: 30, phosphorus: 25, sodium: 85, fluid: 0, serving: '1 slice' },
+            { id: 'lettuce', name: 'Lettuce', category: 'vegetables', traffic_light: 'green', potassium: 52, phosphorus: 10, sodium: 7, fluid: 68, serving: '1 cup' },
+            { id: 'carrots', name: 'Carrots', category: 'vegetables', traffic_light: 'green', potassium: 183, phosphorus: 27, sodium: 58, fluid: 70, serving: '1/2 cup' },
+            { id: 'water', name: 'Water', category: 'beverages', traffic_light: 'green', potassium: 0, phosphorus: 0, sodium: 10, fluid: 240, serving: '1 cup' },
+            { id: 'coffee', name: 'Coffee', category: 'beverages', traffic_light: 'yellow', potassium: 116, phosphorus: 7, sodium: 5, fluid: 240, serving: '1 cup' },
+            { id: 'tea_green', name: 'Green Tea', category: 'beverages', traffic_light: 'green', potassium: 20, phosphorus: 0, sodium: 5, fluid: 240, serving: '1 cup' },
+            { id: 'cola', name: 'Cola Soda', category: 'beverages', traffic_light: 'red', potassium: 15, phosphorus: 40, sodium: 45, fluid: 355, serving: '12 oz' },
+            { id: 'hard_candy', name: 'Hard Candy', category: 'snacks', traffic_light: 'green', potassium: 0, phosphorus: 0, sodium: 5, fluid: 0, serving: '1 piece' },
+            { id: 'gelatin', name: 'Gelatin', category: 'snacks', traffic_light: 'green', potassium: 10, phosphorus: 0, sodium: 30, fluid: 100, serving: '1/2 cup' },
+            { id: 'salt', name: 'Table Salt', category: 'condiments', traffic_light: 'red', potassium: 0, phosphorus: 0, sodium: 590, fluid: 0, serving: '1/4 tsp' },
+            { id: 'herbs', name: 'Salt-Free Herbs', category: 'condiments', traffic_light: 'green', potassium: 5, phosphorus: 1, sodium: 0, fluid: 0, serving: '1/4 tsp' },
+            { id: 'big_mac', name: 'Big Mac', category: 'prepared', traffic_light: 'red', potassium: 380, phosphorus: 300, sodium: 1010, fluid: 0, serving: '1 sandwich' },
+            { id: 'hamburger', name: 'Hamburger', category: 'prepared', traffic_light: 'yellow', potassium: 190, phosphorus: 140, sodium: 470, fluid: 0, serving: '1 sandwich' }
+        ];
+        const categories = ['fruits', 'vegetables', 'proteins', 'dairy', 'grains', 'beverages', 'snacks', 'condiments', 'prepared'];
+        const categoryNames = { fruits: '🍎 Fruits', vegetables: '🥬 Vegetables', proteins: '🍗 Proteins', dairy: '🥛 Dairy', grains: '🌾 Grains', beverages: '🥤 Beverages', snacks: '🍿 Snacks', condiments: '🧂 Condiments', prepared: '🍱 Fast Food' };
+        let currentTotals = { potassium: 0, phosphorus: 0, sodium: 0, fluid: 0 };
+        let meals = [];
+        let streakDays = 0, totalPoints = 0, todayPoints = 0;
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        function startTutorial() { document.getElementById('welcomeScreen').style.display = 'none'; document.getElementById('tutorialScreen').style.display = 'block'; }
+        function nextStep(step) {
+            [1,2,3].forEach(i => { document.getElementById('step'+i).style.display = 'none'; document.getElementById('dot'+i).classList.remove('active'); });
+            document.getElementById('step'+step).style.display = 'block'; document.getElementById('dot'+step).classList.add('active');
+        }
+        function startApp() { document.getElementById('tutorialScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; updateGreeting(); updateMeters(); }
+        function restartTutorial() { document.getElementById('mainApp').style.display = 'none'; document.getElementById('tutorialScreen').style.display = 'block'; nextStep(1); }
+        function updateGreeting() { const h = new Date().getHours(); let g = 'Good Morning!'; if (h >= 12 && h < 17) g = 'Good Afternoon!'; else if (h >= 17) g = 'Good Evening!'; document.getElementById('greeting').textContent = g + ' 👋'; document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
+        function updateMeters() {
+            const limits = { potassium: 2000, phosphorus: 1000, sodium: 2000, fluid: 1000 };
+            const ids = { potassium: 'k', phosphorus: 'p', sodium: 'na', fluid: 'fluid' };
+            const units = { potassium: 'mg', phosphorus: 'mg', sodium: 'mg', fluid: 'mL' };
+            Object.keys(limits).forEach(nutrient => {
+                const value = currentTotals[nutrient], limit = limits[nutrient], percent = Math.min((value / limit) * 100, 100), remaining = Math.max(limit - value, 0);
+                const id = ids[nutrient];
+                document.getElementById(`${id}Percent`).textContent = `${Math.round(percent)}%`;
+                document.getElementById(`${id}Value`).textContent = `${Math.round(value)} / ${limit} ${units[nutrient]}`;
+                document.getElementById(`${id}Remaining`).textContent = `${Math.round(remaining)} ${units[nutrient]} left`;
+                const meter = document.getElementById(`${id}Meter`);
+                meter.style.width = `${percent}%`;
+                meter.className = 'meter-fill ' + (percent >= 100 ? 'red' : percent >= 90 ? 'yellow' : 'green');
+            });
+        }
+        function openMealModal(mealType) {
+            document.getElementById('modalTitle').textContent = mealType ? `Add ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}` : 'Browse All Foods';
+            document.getElementById('mealModal').classList.add('show');
+            renderCategoryTabs(); renderFoodList('fruits');
+        }
+        function closeMealModal() { document.getElementById('mealModal').classList.remove('show'); }
+        function renderCategoryTabs() {
+            const tabs = document.getElementById('categoryTabs');
+            tabs.innerHTML = categories.map((cat, i) => `<div class="category-tab ${i === 0 ? 'active' : ''}" onclick="renderFoodList('${cat}', this)">${categoryNames[cat]}</div>`).join('');
+        }
+        function renderFoodList(category, tabElement) {
+            if (tabElement) { document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active')); tabElement.classList.add('active'); }
+            const list = document.getElementById('foodList');
+            const categoryFoods = foods.filter(f => f.category === category);
+            list.innerHTML = categoryFoods.map(food => `<div class="food-item" onclick="addFood('${food.id}', '${food.name}', ${food.potassium}, ${food.phosphorus}, ${food.sodium}, ${food.fluid})"><div><div class="food-name">${food.name}</div><div class="food-serving">${food.serving}</div><div class="food-nutrients"><span>K+ ${food.potassium}mg</span><span>•</span><span>Phos ${food.phosphorus}mg</span></div></div><span class="badge badge-${food.traffic_light}">${food.traffic_light.toUpperCase()}</span></div>`).join('');
+        }
+        function addFood(id, name, potassium, phosphorus, sodium, fluid) {
+            currentTotals.potassium += potassium; currentTotals.phosphorus += phosphorus; currentTotals.sodium += sodium; currentTotals.fluid += fluid;
+            let points = 0; if (potassium < 200 && phosphorus < 100) points = 15; else if (potassium < 400 && phosphorus < 200) points = 8;
+            todayPoints += points; totalPoints += points;
+            const mealType = document.getElementById('modalTitle').textContent.replace('Add ', '').toLowerCase();
+            const existingMeal = meals.find(m => m.type === mealType);
+            if (existingMeal) { existingMeal.foods++; existingMeal.points += points; existingMeal.potassium += potassium; }
+            else { meals.push({ type: mealType, foods: 1, points: points, potassium: potassium }); }
+            updateMeters(); updateStats(); updateMealsList(); closeMealModal();
+            const msg = document.getElementById('successMessage');
+            msg.textContent = `✓ Added ${name}! +${points} points`; msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 2000);
+        }
+        function updateStats() { document.getElementById('streakDays').textContent = streakDays; document.getElementById('totalPoints').textContent = totalPoints; document.getElementById('todayPoints').textContent = '+' + todayPoints; }
+        function updateMealsList() {
+            const list = document.getElementById('mealsList');
+            if (meals.length === 0) { list.innerHTML = '<p style="text-align: center; color: #757575; padding: 20px; font-size: 14px;">No meals yet. Tap a button above to add your first meal!</p>'; }
+            else { list.innerHTML = meals.map(meal => `<div class="meal-card"><div class="meal-header"><span class="meal-type">${meal.type.toUpperCase()}</span><span class="meal-points">+${meal.points} pts</span></div><div class="meal-info">${meal.foods} food(s) • ${meal.potassium}mg K+</div></div>`).join(''); }
+        }
+        updateMeters();
+    </script>
+</body>
+</html>
