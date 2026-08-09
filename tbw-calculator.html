@@ -47,7 +47,7 @@
         <div class="header">
             <div class="header-icon">💧</div>
             <h1>TBW Calculator</h1>
-            <p>UC Davis Health - Renal Services</p>
+            <p>Clinical Calculator Suite - Renal Services</p>
         </div>
 
         <form id="tbwForm">
@@ -108,7 +108,7 @@
         <button type="button" class="reset-btn" onclick="resetForm()" style="display: none;" id="resetBtn">🔄 Calculate Again</button>
 
         <div class="footer">
-            UC Davis Health © 2026<br>
+            Clinical Calculator Suite © 2026<br>
             For clinical use only
         </div>
     </div>
@@ -189,7 +189,7 @@
 
     <!-- Simple Analytics -->
     <script>
-        fetch('https://api.countapi.xyz/hit/ucdavis-renal/tbw-calculator')
+        fetch('https://api.countapi.xyz/hit/clinical-apps-renal/tbw-calculator')
             .then(r => r.json())
             .then(data => console.log('TBW views:', data.value))
             .catch(e => console.log('Analytics:', e));

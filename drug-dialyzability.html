@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drug Dialyzability Reference - UC Davis Health Renal Services</title>
+    <title>Drug Dialyzability Reference - Clinical Calculator Suite Renal Services</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
@@ -82,7 +82,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="uc-logo">UC DAVIS HEALTH</div>
+            <div class="uc-logo">CLINICAL APPS</div>
             <h1>Drug Dialyzability Reference</h1>
             <h2>Conventional HD • High-Flux HD • CRRT</h2>
             <p>Updated: August 2026 | 200+ Drugs | New & International Medications</p>
@@ -384,11 +384,11 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p><strong>UC Davis Health - Renal Services</strong></p>
+            <p><strong>Clinical Calculator Suite - Renal Services</strong></p>
             <p>Drug Dialyzability Reference | Updated: August 2026</p>
             <p>For clinical use only. Verify all calculations and dosing recommendations.</p>
             <p>References: KDIGO 2025, KDOQI 2025, FDA/EMA Prescribing Information, UpToDate, Lexicomp</p>
-            <p>Prepared by: Oliver Llenado, RN - UC Davis Health, Acute Dialysis</p>
+            <p>Prepared by: Oliver Llenado, RN - Clinical Calculator Suite, Acute Dialysis</p>
         </div>
     </div>
 
@@ -413,7 +413,7 @@
         }
 
         // Analytics tracking
-        fetch('https://api.countapi.xyz/hit/ucdavis-renal/drug-dialyzability')
+        fetch('https://api.countapi.xyz/hit/clinical-apps-renal/drug-dialyzability')
             .then(r => r.json())
             .then(data => console.log('Drug reference views:', data.value))
             .catch(e => console.log('Analytics:', e));
