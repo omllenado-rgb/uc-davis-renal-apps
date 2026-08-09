@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kt/V Calculator - UC Davis Renal Services</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 30px; }
+        .header-icon { font-size: 60px; margin-bottom: 10px; }
+        .header h1 { color: #003087; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
+        .header p { color: #666; font-size: 14px; }
+        .uc-logo { background: #003087; color: white; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
+        
+        /* Calculator Type Selector */
+        .calc-type { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
+        .calc-btn { padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; background: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .calc-btn.active { border-color: #007AFF; background: #E3F2FD; color: #007AFF; }
+        .calc-btn:hover { border-color: #007AFF; }
+        
+        /* Form */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .input-field { width: 100%; padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+        .input-field:focus { outline: none; border-color: #007AFF; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .input-field.error { border-color: #FF3B30; }
+        .helper-text { font-size: 12px; color: #999; margin-top: 5px; }
+        
+        /* Calculate Button */
+        .calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #003087, #007AFF); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: transform 0.2s; margin-top: 10px; }
+        .calculate-btn:hover { transform: scale(1.02); }
+        .calculate-btn:active { transform: scale(0.98); }
+        
+        /* Results */
+        .result-card { display: none; background: linear-gradient(135deg, #34C759, #30B46C); border-radius: 16px; padding: 25px; margin-top: 25px; color: white; }
+        .result-card.show { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-header { text-align: center; margin-bottom: 20px; }
+        .result-icon { font-size: 50px; margin-bottom: 10px; }
+        .result-label { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
+        .result-value { font-size: 48px; font-weight: 700; margin-bottom: 5px; }
+        .result-unit { font-size: 16px; opacity: 0.9; }
+        .result-status { background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; font-weight: 600; font-size: 14px; }
+        .status-good { background: rgba(255,255,255,0.3); }
+        .status-warning { background: #FFC107; color: #333; }
+        .status-bad { background: #FF3B30; color: white; }
+        
+        /* Details Section */
+        .details-section { background: #F2F2F7; border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .details-title { font-size: 16px; color: #003087; margin-bottom: 15px; font-weight: 700; }
+        .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #E5E5EA; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { color: #666; font-size: 14px; }
+        .detail-value { color: #333; font-weight: 600; font-size: 14px; }
+        
+        /* Guidelines */
+        .guidelines { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .guidelines h4 { color: #E65100; font-size: 14px; margin-bottom: 10px; }
+        .guidelines ul { list-style: none; }
+        .guidelines li { padding: 5px 0; font-size: 13px; color: #666; }
+        .guidelines li:before { content: "📋 "; margin-right: 5px; }
+        
+        /* Reset Button */
+        .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #003087; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        
+        /* Footer */
+        .footer { text-align: center; margin-top: 25px; color: #999; font-size: 12px; }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .input-row { grid-template-columns: 1fr; }
+            .calc-type { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="uc-logo">UC DAVIS HEALTH</div>
+            <div class="header-icon">📊</div>
+            <h1>Kt/V Calculator</h1>
+            <p>Dialysis Adequacy Assessment</p>
+        </div>
+
+        <!-- Calculator Type -->
+        <div class="calc-type">
+            <button class="calc-btn active" onclick="setCalcType('spktv')">spKt/V<br><span style="font-size: 11px; font-weight: normal;">Single-Pool</span></button>
+            <button class="calc-btn" onclick="setCalcType('ektv')">eKt/V<br><span style="font-size: 11px; font-weight: normal;">Equilibrated</span></button>
+            <button class="calc-btn" onclick="setCalcType('stdktv')">stdKt/V<br><span style="font-size: 11px; font-weight: normal;">Standardized</span></button>
+            <button class="calc-btn" onclick="setCalcType('urr')">URR<br><span style="font-size: 11px; font-weight: normal;">Urea Reduction</span></button>
+        </div>
+
+        <!-- Form -->
+        <form id="ktvForm">
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Pre-BUN (mg/dL)</label>
+                    <input type="number" id="preBun" class="input-field" placeholder="e.g., 80" step="1" required>
+                    <div class="helper-text">Before dialysis</div>
+                </div>
+                <div class="form-group">
+                    <label>Post-BUN (mg/dL)</label>
+                    <input type="number" id="postBun" class="input-field" placeholder="e.g., 20" step="1" required>
+                    <div class="helper-text">After dialysis</div>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" class="input-field" placeholder="e.g., 70" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Session Time (hours)</label>
+                    <input type="number" id="time" class="input-field" placeholder="e.g., 4" step="0.5" required>
+                </div>
+            </div>
+
+            <div class="form-group" id="ufGroup">
+                <label>Ultrafiltration Volume (L)</label>
+                <input type="number" id="ufVolume" class="input-field" placeholder="e.g., 2.5" step="0.1">
+                <div class="helper-text">Total fluid removed</div>
+            </div>
+
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="gender" class="input-field" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age (years)</label>
+                    <input type="number" id="age" class="input-field" placeholder="e.g., 65" required>
+                </div>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Kt/V</button>
+        </form>
+
+        <!-- Results -->
+        <div class="result-card" id="resultCard">
+            <div class="result-header">
+                <div class="result-icon">✅</div>
+                <div class="result-label" id="resultType">spKt/V Result</div>
+                <div class="result-value" id="ktvValue">0.00</div>
+                <div class="result-unit" id="resultStatus">Adequate</div>
+            </div>
+            <div class="result-status status-good" id="statusBadge">✓ Meets KDOQI Guidelines</div>
+        </div>
+
+        <!-- Details -->
+        <div class="details-section" id="detailsSection" style="display: none;">
+            <h3 class="details-title">📊 Calculation Details</h3>
+            <div class="detail-item">
+                <span class="detail-label">URR (Urea Reduction Ratio)</span>
+                <span class="detail-value" id="urrValue">--%</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Formula Used</span>
+                <span class="detail-value" id="formulaUsed">Daugirdas II</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Dialysis Dose</span>
+                <span class="detail-value" id="dialysisDose">--</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Clearance Rate</span>
+                <span class="detail-value" id="clearanceRate">-- mL/min</span>
+            </div>
+        </div>
+
+        <!-- Guidelines -->
+        <div class="guidelines">
+            <h4>📋 KDOQI Guidelines (2025)</h4>
+            <ul>
+                <li><strong>spKt/V:</strong> Minimum 1.2 per session (3x/week)</li>
+                <li><strong>eKt/V:</strong> Minimum 1.05 per session</li>
+                <li><strong>stdKt/V:</strong> Minimum 2.0 per week</li>
+                <li><strong>URR:</strong> Minimum 65% per session</li>
+                <li><strong>Target:</strong> spKt/V ≥ 1.4 for better outcomes</li>
+            </ul>
+        </div>
+
+        <button type="button" class="reset-btn" onclick="resetForm()">🔄 Calculate Again</button>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>UC Davis Health - Renal Services © 2026</p>
+            <p>For clinical use only. Verify all calculations.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentCalcType = 'spktv';
+
+        function setCalcType(type) {
+            currentCalcType = type;
+            document.querySelectorAll('.calc-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.calc-btn').classList.add('active');
+            
+            // Update form labels based on type
+            const titles = {
+                'spktv': 'Single-Pool Kt/V',
+                'ektv': 'Equilibrated Kt/V',
+                'stdktv': 'Standardized Kt/V',
+                'urr': 'Urea Reduction Ratio'
+            };
+            document.querySelector('.header h1').textContent = titles[type];
+        }
+
+        function calculateKTv(preBun, postBun, weight, time, uf, gender, age) {
+            // URR calculation
+            const urr = ((preBun - postBun) / preBun) * 100;
+            
+            // spKt/V (Daugirdas II formula)
+            const R = postBun / preBun;
+            const t = time * 60; // minutes
+            const spktv = -Math.log(R - 0.008 * t) + (4 - 3.5 * R) * (uf / weight);
+            
+            // eKt/V (equilibrated - accounts for urea rebound)
+            const ektv = spktv - 0.6 * (spktv / t) + 0.03;
+            
+            // stdKt/V (standardized, weekly)
+            const sessionsPerWeek = 3;
+            const stdktv = (spktv * sessionsPerWeek * 10) / ((time * sessionsPerWeek) + 10);
+            
+            return { urr, spktv, ektv, stdktv };
+        }
+
+        function getStatus(value, type) {
+            const thresholds = {
+                'spktv': { min: 1.2, target: 1.4 },
+                'ektv': { min: 1.05, target: 1.2 },
+                'stdktv': { min: 2.0, target: 2.3 },
+                'urr': { min: 65, target: 70 }
+            };
+            
+            const t = thresholds[type];
+            if (value >= t.target) return { status: 'good', text: '✓ Exceeds Guidelines', class: 'status-good' };
+            if (value >= t.min) return { status: 'adequate', text: '✓ Meets Guidelines', class: 'status-good' };
+            return { status: 'bad', text: '✗ Below Minimum', class: 'status-bad' };
+        }
+
+        function resetForm() {
+            document.getElementById('ktvForm').reset();
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('detailsSection').style.display = 'none';
+            setCalcType('spktv');
+        }
+
+        document.getElementById('ktvForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const preBun = parseFloat(document.getElementById('preBun').value);
+            const postBun = parseFloat(document.getElementById('postBun').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const time = parseFloat(document.getElementById('time').value);
+            const uf = parseFloat(document.getElementById('ufVolume').value) || 0;
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+
+            if (!preBun || !postBun || !weight || !time || !age) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            if (postBun >= preBun) {
+                alert('Post-BUN must be lower than Pre-BUN');
+                return;
+            }
+
+            // Calculate
+            const results = calculateKTv(preBun, postBun, weight, time, uf, gender, age);
+            
+            // Get current type result
+            let displayValue, resultType;
+            if (currentCalcType === 'spktv') {
+                displayValue = results.spktv;
+                resultType = 'spKt/V';
+            } else if (currentCalcType === 'ektv') {
+                displayValue = results.ektv;
+                resultType = 'eKt/V';
+            } else if (currentCalcType === 'stdktv') {
+                displayValue = results.stdktv;
+                resultType = 'stdKt/V';
+            } else {
+                displayValue = results.urr;
+                resultType = 'URR';
+            }
+
+            // Get status
+            const status = getStatus(displayValue, currentCalcType);
+
+            // Display results
+            document.getElementById('resultType').textContent = `${resultType} Result`;
+            document.getElementById('ktvValue').textContent = displayValue.toFixed(2);
+            document.getElementById('resultStatus').textContent = status.text;
+            document.getElementById('statusBadge').textContent = status.text;
+            document.getElementById('statusBadge').className = `result-status ${status.class}`;
+
+            // Details
+            document.getElementById('urrValue').textContent = `${results.urr.toFixed(1)}%`;
+            document.getElementById('formulaUsed').textContent = 'Daugirdas II (spKt/V)';
+            document.getElementById('dialysisDose').textContent = displayValue >= 1.2 ? '✓ Adequate' : '✗ Inadequate';
+            
+            // Estimate clearance (K) from Kt/V
+            const t = time * 60; // minutes
+            const v = 0.6 * weight; // approximate V (total body water)
+            const k = (displayValue * v) / t;
+            document.getElementById('clearanceRate').textContent = `${Math.round(k)} mL/min`;
+
+            // Show results
+            document.getElementById('resultCard').classList.add('show');
+            document.getElementById('detailsSection').style.display = 'block';
+
+            // Scroll to results
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        // Analytics tracking
+        fetch('https://api.countapi.xyz/hit/ucdavis-renal/ktv-calculator')
+            .then(r => r.json())
+            .then(data => console.log('KtV views:', data.value))
+            .catch(e => console.log('Analytics:', e));
+    </script>
+</body>
+</html>
