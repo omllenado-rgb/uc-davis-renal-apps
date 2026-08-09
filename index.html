@@ -211,5 +211,15 @@
             });
         });
     </script>
+
+    <!-- Simple Analytics (privacy-friendly, no cookies) -->
+    <script>
+        // Track page view (sends to simple counter API)
+        fetch('https://api.countapi.xyz/hit/ucdavis-renal/landing-page')
+            .then(r => r.json())
+            .then(data => console.log('Page views:', data.value))
+            .catch(e => console.log('Analytics:', e));
+    </script>
 </body>
+
 </html>

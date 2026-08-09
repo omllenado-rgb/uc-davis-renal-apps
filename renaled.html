@@ -454,5 +454,14 @@
         }
         updateMeters();
     </script>
+
+    <!-- Simple Analytics -->
+    <script>
+        fetch('https://api.countapi.xyz/hit/ucdavis-renal/renaled-app')
+            .then(r => r.json())
+            .then(data => console.log('RenalEd views:', data.value))
+            .catch(e => console.log('Analytics:', e));
+    </script>
 </body>
+
 </html>
