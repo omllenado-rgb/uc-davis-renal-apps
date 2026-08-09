@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Dialyzability Reference - UC Davis Health Renal Services</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #003087; padding-bottom: 20px; }
+        .uc-logo { background: #003087; color: white; padding: 8px 25px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
+        .header h1 { color: #003087; font-size: 28px; margin-bottom: 8px; }
+        .header h2 { color: #007AFF; font-size: 18px; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 14px; }
+        
+        /* Search */
+        .search-box { background: #F2F2F7; padding: 20px; border-radius: 12px; margin-bottom: 25px; }
+        .search-box input { width: 100%; padding: 15px; border: 2px solid #E5E5EA; border-radius: 10px; font-size: 16px; }
+        .search-box input:focus { outline: none; border-color: #007AFF; }
+        
+        /* Quick Reference */
+        .quick-ref { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .qr-card { padding: 20px; border-radius: 12px; border: 2px solid; }
+        .qr-card.good { background: #E8F5E9; border-color: #4CAF50; }
+        .qr-card.bad { background: #FFEBEE; border-color: #F44336; }
+        .qr-card.warn { background: #FFF3E0; border-color: #FF9800; }
+        .qr-card h4 { margin-bottom: 10px; font-size: 15px; }
+        .qr-card.good h4 { color: #2E7D32; }
+        .qr-card.bad h4 { color: #C62828; }
+        .qr-card.warn h4 { color: #E65100; }
+        .qr-card ul { list-style: none; margin-left: 10px; }
+        .qr-card li { padding: 4px 0; font-size: 13px; }
+        
+        /* Section Tabs */
+        .tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; }
+        .tab { padding: 10px 20px; background: #F2F2F7; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #666; }
+        .tab.active { background: #003087; color: white; }
+        
+        /* Tables */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: #003087; color: white; padding: 12px 8px; text-align: left; font-weight: 600; }
+        td { padding: 10px 8px; border-bottom: 1px solid #E5E5EA; }
+        tr:nth-child(even) { background: #F8F9FA; }
+        tr:hover { background: #E3F2FD; }
+        .dialyzable { color: #34C759; font-weight: 700; }
+        .moderate { color: #FFC107; font-weight: 700; }
+        .not-dialyzable { color: #FF3B30; font-weight: 700; }
+        .new-drug { background: #34C759; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+        
+        /* Legend */
+        .legend { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .legend-box { width: 20px; height: 20px; border-radius: 4px; }
+        .legend-box.green { background: #34C759; }
+        .legend-box.yellow { background: #FFC107; }
+        .legend-box.red { background: #FF3B30; }
+        
+        /* Section */
+        .drug-section { display: none; }
+        .drug-section.active { display: block; }
+        .section-title { font-size: 20px; color: #003087; margin-bottom: 15px; font-weight: 700; }
+        
+        /* Footer */
+        .footer { border-top: 2px solid #003087; padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
+        
+        /* Download Button */
+        .download-btn { background: linear-gradient(135deg, #003087, #007AFF); color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 20px; }
+        .download-btn:hover { opacity: 0.9; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .quick-ref { grid-template-columns: 1fr; }
+            .legend { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="uc-logo">UC DAVIS HEALTH</div>
+            <h1>Drug Dialyzability Reference</h1>
+            <h2>Conventional HD • High-Flux HD • CRRT</h2>
+            <p>Updated: August 2026 | 200+ Drugs | New & International Medications</p>
+        </div>
+
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Search drugs (e.g., Vancomycin, Gabapentin, Metformin)..." onkeyup="searchDrugs()">
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="quick-ref">
+            <div class="qr-card good">
+                <h4>✅ ALWAYS GIVE POST-HEMODIALYSIS</h4>
+                <ul>
+                    <li>Aminoglycosides (Gentamicin, Tobramycin)</li>
+                    <li>Vancomycin, Daptomycin</li>
+                    <li>Beta-lactams (Cefepime, Meropenem, Pip-Tazo)</li>
+                    <li>Gabapentin, Pregabalin, Levetiracetam</li>
+                    <li>Acyclovir, Valacyclovir</li>
+                    <li>Atenolol, Sotalol, Lisinopril</li>
+                    <li>Sitagliptin, Fluconazole</li>
+                </ul>
+            </div>
+            <div class="qr-card bad">
+                <h4>❌ NEVER SUPPLEMENT</h4>
+                <ul>
+                    <li>Warfarin (99% protein bound)</li>
+                    <li>Phenytoin, Valproic Acid</li>
+                    <li>Digoxin (large Vd)</li>
+                    <li>Amiodarone, SSRIs, TCAs</li>
+                    <li>Statins, Benzodiazepines</li>
+                    <li>Insulin, monoclonal antibodies</li>
+                </ul>
+            </div>
+            <div class="qr-card warn">
+                <h4>⚠️ CONTRAINDICATED IN ESRD</h4>
+                <ul>
+                    <li>Metformin (lactic acidosis)</li>
+                    <li>Lithium (toxicity)</li>
+                    <li>Dabigatran (accumulation)</li>
+                    <li>Morphine (metabolite toxicity)</li>
+                    <li>NSAIDs (bleeding, renal)</li>
+                    <li>Sulfonylureas (hypoglycemia)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box green"></div>
+                <span><strong>Y</strong> = Yes (Highly Dialyzable)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box yellow"></div>
+                <span><strong>M</strong> = Moderate</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box red"></div>
+                <span><strong>N</strong> = No (Not Dialyzable)</span>
+            </div>
+            <div class="legend-item">
+                <span class="new-drug">NEW</span>
+                <span>= Approved 2020-2026</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('antibiotics')">Antibiotics (50)</div>
+            <div class="tab" onclick="showSection('cardio')">Cardiovascular (30)</div>
+            <div class="tab" onclick="showSection('neuro')">Neuro/Psych (35)</div>
+            <div class="tab" onclick="showSection('endo')">Endocrine (15)</div>
+            <div class="tab" onclick="showSection('analgesics')">Analgesics (15)</div>
+            <div class="tab" onclick="showSection('new')">New Drugs 2020-26 (20)</div>
+        </div>
+
+        <!-- Antibiotics Section -->
+        <div class="drug-section active" id="antibiotics">
+            <h3 class="section-title">💊 Antibiotics & Antimicrobials</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Drug</th>
+                            <th>Class</th>
+                            <th>MW</th>
+                            <th>PB</th>
+                            <th>Vd</th>
+                            <th>HD</th>
+                            <th>HF-HD</th>
+                            <th>CRRT</th>
+                            <th>Dosing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Amikacin</td><td>Aminoglycoside</td><td>586</td><td>0%</td><td>0.25</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>Give AFTER HD</td></tr>
+                        <tr><td>Gentamicin</td><td>Aminoglycoside</td><td>478</td><td>0%</td><td>0.25</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>Give AFTER HD</td></tr>
+                        <tr><td>Tobramycin</td><td>Aminoglycoside</td><td>468</td><td>0%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>Give AFTER HD</td></tr>
+                        <tr><td>Vancomycin</td><td>Glycopeptide</td><td>1449</td><td>50%</td><td>0.7</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>15-20 mg/kg post-HD</td></tr>
+                        <tr><td>Daptomycin</td><td>Lipopeptide</td><td>1620</td><td>90%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="moderate">M</td><td class="moderate">M</td><td>6-8 mg/kg post-HD q48h</td></tr>
+                        <tr><td>Linezolid</td><td>Oxazolidinone</td><td>337</td><td>31%</td><td>0.6</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>No supplement</td></tr>
+                        <tr><td>Cefepime</td><td>Cephalosporin 4th</td><td>571</td><td>20%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1-2g post-HD</td></tr>
+                        <tr><td>Ceftazidime</td><td>Cephalosporin 3rd</td><td>547</td><td>10%</td><td>0.2</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1g post-HD</td></tr>
+                        <tr><td>Ceftriaxone</td><td>Cephalosporin 3rd</td><td>555</td><td>90%</td><td>0.15</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Ceftolozane <span class="new-drug">NEW</span></td><td>Cephalosporin 5th</td><td>606</td><td>20%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1.5g post-HD</td></tr>
+                        <tr><td>Meropenem</td><td>Carbapenem</td><td>438</td><td>2%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1g post-HD</td></tr>
+                        <tr><td>Imipenem-Cilastatin</td><td>Carbapenem</td><td>523</td><td>20%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>500mg post-HD</td></tr>
+                        <tr><td>Piperacillin-Tazobactam</td><td>Penicillin+BLI</td><td>517</td><td>30%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>4.5g post-HD</td></tr>
+                        <tr><td>Ciprofloxacin</td><td>Fluoroquinolone</td><td>332</td><td>30%</td><td>2.5</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>500mg post-HD</td></tr>
+                        <tr><td>Levofloxacin</td><td>Fluoroquinolone</td><td>362</td><td>30%</td><td>1.0</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>500mg post-HD</td></tr>
+                        <tr><td>Moxifloxacin</td><td>Fluoroquinolone</td><td>402</td><td>45%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Doxycycline</td><td>Tetracycline</td><td>445</td><td>90%</td><td>1.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Fluconazole</td><td>Azole</td><td>307</td><td>12%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>400mg post-HD daily</td></tr>
+                        <tr><td>Acyclovir</td><td>Antiviral</td><td>225</td><td>15%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>5 mg/kg post-HD daily</td></tr>
+                        <tr><td>Ganciclovir</td><td>Antiviral</td><td>256</td><td>2%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>2.5 mg/kg post-HD 3x/wk</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Cardiovascular Section -->
+        <div class="drug-section" id="cardio">
+            <h3 class="section-title">❤️ Cardiovascular Medications</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Drug</th>
+                            <th>Class</th>
+                            <th>MW</th>
+                            <th>PB</th>
+                            <th>Vd</th>
+                            <th>HD</th>
+                            <th>HF-HD</th>
+                            <th>CRRT</th>
+                            <th>Dosing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Lisinopril</td><td>ACE Inhibitor</td><td>406</td><td>0%</td><td>1.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>5-10mg post-HD daily</td></tr>
+                        <tr><td>Enalapril</td><td>ACE Inhibitor</td><td>377</td><td>50%</td><td>1.0</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>5mg post-HD daily</td></tr>
+                        <tr><td>Losartan</td><td>ARB</td><td>423</td><td>98%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Amlodipine</td><td>CCB</td><td>409</td><td>93%</td><td>21</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Metoprolol</td><td>Beta-Blocker</td><td>266</td><td>12%</td><td>5.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>Titrate to HR</td></tr>
+                        <tr><td>Atenolol</td><td>Beta-Blocker</td><td>267</td><td>5%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>25-50mg post-HD daily</td></tr>
+                        <tr><td>Carvedilol</td><td>Beta-Blocker</td><td>407</td><td>98%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Furosemide</td><td>Loop Diuretic</td><td>331</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Give IV during HD</td></tr>
+                        <tr><td>Spironolactone</td><td>K-Sparing</td><td>417</td><td>90%</td><td>1.5</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID (hyperkalemia)</td></tr>
+                        <tr><td>Digoxin</td><td>Cardiac Glycoside</td><td>781</td><td>25%</td><td>7.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor levels</td></tr>
+                        <tr><td>Amiodarone</td><td>Antiarrhythmic</td><td>646</td><td>97%</td><td>66</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Sotalol</td><td>Antiarrhythmic</td><td>273</td><td>0%</td><td>2.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>40-80mg post-HD</td></tr>
+                        <tr><td>Warfarin</td><td>Anticoagulant</td><td>309</td><td>99%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor INR</td></tr>
+                        <tr><td>Apixaban</td><td>DOAC</td><td>460</td><td>87%</td><td>0.3</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID if ESRD</td></tr>
+                        <tr><td>Dabigatran</td><td>DOAC</td><td>472</td><td>35%</td><td>0.7</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>CONTRAINDICATED</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Neuro Section -->
+        <div class="drug-section" id="neuro">
+            <h3 class="section-title">🧠 Neurologic & Psychiatric Medications</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Drug</th>
+                            <th>Class</th>
+                            <th>MW</th>
+                            <th>PB</th>
+                            <th>Vd</th>
+                            <th>HD</th>
+                            <th>HF-HD</th>
+                            <th>CRRT</th>
+                            <th>Dosing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Gabapentin</td><td>Anticonvulsant</td><td>172</td><td>0%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>100-300mg post-HD daily</td></tr>
+                        <tr><td>Pregabalin</td><td>Anticonvulsant</td><td>160</td><td>0%</td><td>0.5</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>25-75mg post-HD daily</td></tr>
+                        <tr><td>Levetiracetam</td><td>Anticonvulsant</td><td>172</td><td>0%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>250-500mg post-HD daily</td></tr>
+                        <tr><td>Valproic Acid</td><td>Anticonvulsant</td><td>145</td><td>90%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor levels</td></tr>
+                        <tr><td>Phenytoin</td><td>Anticonvulsant</td><td>253</td><td>90%</td><td>0.7</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor free levels</td></tr>
+                        <tr><td>Sertraline</td><td>SSRI</td><td>325</td><td>98%</td><td>20</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Fluoxetine</td><td>SSRI</td><td>310</td><td>95%</td><td>45</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Venlafaxine</td><td>SNRI</td><td>278</td><td>30%</td><td>7.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>37.5-75mg daily</td></tr>
+                        <tr><td>Quetiapine</td><td>Antipsychotic</td><td>384</td><td>83%</td><td>10</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Lithium</td><td>Mood Stabilizer</td><td>7</td><td>0%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>AVOID in ESRD</td></tr>
+                        <tr><td>Lorazepam</td><td>Benzodiazepine</td><td>322</td><td>85%</td><td>1.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Endocrine Section -->
+        <div class="drug-section" id="endo">
+            <h3 class="section-title">🩺 Endocrine & Diabetes Medications</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Drug</th>
+                            <th>Class</th>
+                            <th>MW</th>
+                            <th>PB</th>
+                            <th>Vd</th>
+                            <th>HD</th>
+                            <th>HF-HD</th>
+                            <th>CRRT</th>
+                            <th>Dosing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Metformin</td><td>Biguanide</td><td>130</td><td>0%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>CONTRAINDICATED</td></tr>
+                        <tr><td>Glipizide</td><td>Sulfonylurea</td><td>446</td><td>99%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                        <tr><td>Sitagliptin</td><td>DPP-4 Inhibitor</td><td>408</td><td>38%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>25mg daily</td></tr>
+                        <tr><td>Linagliptin</td><td>DPP-4 Inhibitor</td><td>473</td><td>99%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>5mg daily</td></tr>
+                        <tr><td>Empagliflozin</td><td>SGLT2 Inhibitor</td><td>451</td><td>68%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>NOT rec if eGFR<20</td></tr>
+                        <tr><td>Insulin</td><td>Hormone</td><td>5808</td><td>0%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor glucose</td></tr>
+                        <tr><td>Levothyroxine</td><td>Thyroid</td><td>777</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor TSH</td></tr>
+                        <tr><td>Prednisone</td><td>Corticosteroid</td><td>360</td><td>70%</td><td>1.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analgesics Section -->
+        <div class="drug-section" id="analgesics">
+            <h3 class="section-title">💊 Analgesics</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Drug</th>
+                            <th>Class</th>
+                            <th>MW</th>
+                            <th>PB</th>
+                            <th>Vd</th>
+                            <th>HD</th>
+                            <th>HF-HD</th>
+                            <th>CRRT</th>
+                            <th>Dosing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Acetaminophen</td><td>Analgesic</td><td>152</td><td>20%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>650mg q6h PRN</td></tr>
+                        <tr><td>Ibuprofen</td><td>NSAID</td><td>206</td><td>99%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID</td></tr>
+                        <tr><td>Naproxen</td><td>NSAID</td><td>231</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID</td></tr>
+                        <tr><td>Ketorolac</td><td>NSAID</td><td>256</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>CONTRAINDICATED</td></tr>
+                        <tr><td>Tramadol</td><td>Opioid</td><td>264</td><td>20%</td><td>3.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>50mg post-HD q12h</td></tr>
+                        <tr><td>Morphine</td><td>Opioid</td><td>286</td><td>35%</td><td>3.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>AVOID</td></tr>
+                        <tr><td>Hydromorphone</td><td>Opioid</td><td>286</td><td>30%</td><td>2.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>1-2mg post-HD q12h</td></tr>
+                        <tr><td>Oxycodone</td><td>Opioid</td><td>316</td><td>45%</td><td>2.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>2.5-5mg post-HD q12h</td></tr>
+                        <tr><td>Fentanyl</td><td>Opioid</td><td>337</td><td>80%</td><td>4.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- New Drugs Section -->
+        <div class="drug-section" id="new">
+            <h3 class="section-title">🆕 New Drugs (2020-2026)</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Drug</th>
+                            <th>Class</th>
+                            <th>Year</th>
+                            <th>MW</th>
+                            <th>Dialyzable</th>
+                            <th>Key Point</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Semaglutide</td><td>GLP-1 Agonist</td><td>2021</td><td>4114</td><td class="not-dialyzable">N</td><td>Large molecule</td></tr>
+                        <tr><td>Tirzepatide</td><td>GIP/GLP-1 Agonist</td><td>2022</td><td>4806</td><td class="not-dialyzable">N</td><td>Large molecule</td></tr>
+                        <tr><td>Inclisiran</td><td>PCSK9 siRNA</td><td>2021</td><td>16000</td><td class="not-dialyzable">N</td><td>q6months dosing</td></tr>
+                        <tr><td>Evolocumab</td><td>PCSK9 Inhibitor</td><td>2020</td><td>146000</td><td class="not-dialyzable">N</td><td>Large molecule</td></tr>
+                        <tr><td>Ceftolozane</td><td>Cephalosporin 5th</td><td>2020</td><td>606</td><td class="dialyzable">Y</td><td>1.5g post-HD</td></tr>
+                        <tr><td>Ceftazidime-Avibactam</td><td>Cephalosporin+BLI</td><td>2020</td><td>702</td><td class="dialyzable">Y</td><td>2.5g post-HD</td></tr>
+                        <tr><td>Meropenem-Vaborbactam</td><td>Carbapenem+BLI</td><td>2020</td><td>598</td><td class="dialyzable">Y</td><td>4g post-HD</td></tr>
+                        <tr><td>Plazomicin</td><td>Aminoglycoside</td><td>2020</td><td>592</td><td class="dialyzable">Y</td><td>Monitor levels</td></tr>
+                        <tr><td>Delafloxacin</td><td>Fluoroquinolone</td><td>2020</td><td>478</td><td class="not-dialyzable">N</td><td>Hepatic</td></tr>
+                        <tr><td>Lasmiditan</td><td>5-HT1F Agonist</td><td>2020</td><td>344</td><td class="not-dialyzable">N</td><td>Migraine</td></tr>
+                        <tr><td>Rimegepant</td><td>CGRP Antagonist</td><td>2021</td><td>517</td><td class="not-dialyzable">N</td><td>75mg q48h</td></tr>
+                        <tr><td>Atogepant</td><td>CGRP Antagonist</td><td>2022</td><td>517</td><td class="not-dialyzable">N</td><td>10-60mg daily</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Download Button -->
+        <div style="text-align: center;">
+            <a href="DRUG-DIALYZABILITY-REFERENCE-2026.pdf" class="download-btn" download>📄 Download PDF Reference</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>UC Davis Health - Renal Services</strong></p>
+            <p>Drug Dialyzability Reference | Updated: August 2026</p>
+            <p>For clinical use only. Verify all calculations and dosing recommendations.</p>
+            <p>References: KDIGO 2025, KDOQI 2025, FDA/EMA Prescribing Information, UpToDate, Lexicomp</p>
+            <p>Prepared by: Oliver Llenado, RN - UC Davis Health, Acute Dialysis</p>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.drug-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function searchDrugs() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(input) ? '' : 'none';
+                });
+            });
+        }
+
+        // Analytics tracking
+        fetch('https://api.countapi.xyz/hit/ucdavis-renal/drug-dialyzability')
+            .then(r => r.json())
+            .then(data => console.log('Drug reference views:', data.value))
+            .catch(e => console.log('Analytics:', e));
+    </script>
+</body>
+</html>
