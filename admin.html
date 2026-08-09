@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UC Davis Renal Apps - Analytics Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        /* Header */
+        .header { text-align: center; padding: 30px 20px; color: white; margin-bottom: 30px; }
+        .header-icon { font-size: 60px; margin-bottom: 10px; }
+        .header h1 { font-size: 28px; margin-bottom: 8px; font-weight: 700; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .last-updated { background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; font-size: 13px; }
+        
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .stat-icon { font-size: 40px; margin-bottom: 15px; }
+        .stat-title { font-size: 16px; color: #666; margin-bottom: 8px; font-weight: 600; }
+        .stat-value { font-size: 42px; font-weight: 700; color: #003087; margin-bottom: 5px; }
+        .stat-label { font-size: 13px; color: #999; }
+        .stat-change { font-size: 12px; color: #34C759; font-weight: 600; margin-top: 8px; }
+        
+        /* Total Stats */
+        .total-section { background: white; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .total-title { font-size: 20px; color: #003087; margin-bottom: 20px; font-weight: 700; }
+        .total-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .total-item { text-align: center; padding: 20px; background: #F2F2F7; border-radius: 12px; }
+        .total-value { font-size: 36px; font-weight: 700; color: #007AFF; margin-bottom: 5px; }
+        .total-label { font-size: 13px; color: #666; }
+        
+        /* GitHub Stats */
+        .github-section { background: white; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .github-title { font-size: 20px; color: #003087; margin-bottom: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .github-icon { font-size: 24px; }
+        .github-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .github-stat { padding: 15px; background: #F2F2F7; border-radius: 10px; }
+        .github-stat-value { font-size: 24px; font-weight: 700; color: #003087; }
+        .github-stat-label { font-size: 12px; color: #666; margin-top: 5px; }
+        
+        /* App List */
+        .app-section { background: white; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .app-title { font-size: 20px; color: #003087; margin-bottom: 20px; font-weight: 700; }
+        .app-list { list-style: none; }
+        .app-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #E5E5EA; }
+        .app-item:last-child { border-bottom: none; }
+        .app-name { font-weight: 600; color: #333; font-size: 15px; }
+        .app-url { font-size: 12px; color: #007AFF; margin-top: 4px; }
+        .app-views { font-size: 18px; font-weight: 700; color: #003087; }
+        
+        /* Refresh Button */
+        .refresh-btn { background: linear-gradient(135deg, #003087, #007AFF); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s; display: block; margin: 0 auto; }
+        .refresh-btn:hover { transform: scale(1.05); }
+        .refresh-btn:active { transform: scale(0.98); }
+        
+        /* Loading */
+        .loading { text-align: center; padding: 40px; color: white; }
+        .loading-spinner { border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Footer */
+        .footer { text-align: center; padding: 20px; color: white; opacity: 0.8; font-size: 13px; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .total-grid { grid-template-columns: 1fr; }
+            .github-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">📊</div>
+            <h1>UC Davis Renal Apps Analytics</h1>
+            <p>Real-time usage statistics for all clinical apps</p>
+            <div class="last-updated">Last updated: <span id="lastUpdated">--</span></div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading analytics data...</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-icon">🏠</div>
+                <div class="stat-title">Landing Page</div>
+                <div class="stat-value" id="landingViews">0</div>
+                <div class="stat-label">Total views</div>
+                <div class="stat-change" id="landingChange">+0 today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🍎</div>
+                <div class="stat-title">RenalEd App</div>
+                <div class="stat-value" id="renaledViews">0</div>
+                <div class="stat-label">Total views</div>
+                <div class="stat-change" id="renaledChange">+0 today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💧</div>
+                <div class="stat-title">TBW Calculator</div>
+                <div class="stat-value" id="tbwViews">0</div>
+                <div class="stat-label">Total views</div>
+                <div class="stat-change" id="tbwChange">+0 today</div>
+            </div>
+        </div>
+
+        <!-- Total Stats -->
+        <div class="total-section" id="totalSection" style="display: none;">
+            <h2 class="total-title">📈 Overall Performance</h2>
+            <div class="total-grid">
+                <div class="total-item">
+                    <div class="total-value" id="totalViews">0</div>
+                    <div class="total-label">Total Views (All Apps)</div>
+                </div>
+                <div class="total-item">
+                    <div class="total-value" id="avgViews">0</div>
+                    <div class="total-label">Avg Views per App</div>
+                </div>
+                <div class="total-item">
+                    <div class="total-value" id="totalApps">3</div>
+                    <div class="total-label">Active Apps</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GitHub Stats -->
+        <div class="github-section" id="githubSection" style="display: none;">
+            <h2 class="github-title">
+                <span class="github-icon">🐙</span>
+                GitHub Repository Traffic
+            </h2>
+            <div class="github-stats">
+                <div class="github-stat">
+                    <div class="github-stat-value" id="ghViews">--</div>
+                    <div class="github-stat-label">Views (14 days)</div>
+                </div>
+                <div class="github-stat">
+                    <div class="github-stat-value" id="ghVisitors">--</div>
+                    <div class="github-stat-label">Unique Visitors</div>
+                </div>
+                <div class="github-stat">
+                    <div class="github-stat-value" id="ghClones">--</div>
+                    <div class="github-stat-label">Repo Clones</div>
+                </div>
+                <div class="github-stat">
+                    <div class="github-stat-value" id="ghCloneUsers">--</div>
+                    <div class="github-stat-label">Unique Cloners</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App List -->
+        <div class="app-section" id="appSection" style="display: none;">
+            <h2 class="app-title">📱 All Apps</h2>
+            <ul class="app-list">
+                <li class="app-item">
+                    <div>
+                        <div class="app-name">🏠 Landing Page</div>
+                        <div class="app-url">omllenado-rgb.github.io/uc-davis-renal-apps/</div>
+                    </div>
+                    <div class="app-views" id="app1Views">0 views</div>
+                </li>
+                <li class="app-item">
+                    <div>
+                        <div class="app-name">🍎 RenalEd</div>
+                        <div class="app-url">omllenado-rgb.github.io/uc-davis-renal-apps/renaled.html</div>
+                    </div>
+                    <div class="app-views" id="app2Views">0 views</div>
+                </li>
+                <li class="app-item">
+                    <div>
+                        <div class="app-name">💧 TBW Calculator</div>
+                        <div class="app-url">omllenado-rgb.github.io/uc-davis-renal-apps/tbw-calculator.html</div>
+                    </div>
+                    <div class="app-views" id="app3Views">0 views</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Refresh Button -->
+        <button class="refresh-btn" onclick="loadAnalytics()">🔄 Refresh Data</button>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>UC Davis Health - Renal Services © 2026</p>
+            <p>For internal use only | Data updates in real-time</p>
+        </div>
+    </div>
+
+    <script>
+        // Analytics endpoints
+        const endpoints = {
+            landing: 'https://api.countapi.xyz/get/ucdavis-renal/landing-page',
+            renaled: 'https://api.countapi.xyz/get/ucdavis-renal/renaled-app',
+            tbw: 'https://api.countapi.xyz/get/ucdavis-renal/tbw-calculator'
+        };
+
+        // GitHub API endpoint (public repo traffic)
+        const githubTrafficUrl = 'https://api.github.com/repos/omllenado-rgb/uc-davis-renal-apps/traffic/views';
+        const githubClonesUrl = 'https://api.github.com/repos/omllenado-rgb/uc-davis-renal-apps/traffic/clones';
+
+        // Load all analytics data
+        async function loadAnalytics() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('statsGrid').style.display = 'none';
+            document.getElementById('totalSection').style.display = 'none';
+            document.getElementById('githubSection').style.display = 'none';
+            document.getElementById('appSection').style.display = 'none';
+
+            try {
+                // Load page view counts
+                const [landing, renaled, tbw] = await Promise.all([
+                    fetch(endpoints.landing).then(r => r.json()).catch(() => ({ value: 0 })),
+                    fetch(endpoints.renaled).then(r => r.json()).catch(() => ({ value: 0 })),
+                    fetch(endpoints.tbw).then(r => r.json()).catch(() => ({ value: 0 }))
+                ]);
+
+                // Update stat cards
+                document.getElementById('landingViews').textContent = landing.value || 0;
+                document.getElementById('renaledViews').textContent = renaled.value || 0;
+                document.getElementById('tbwViews').textContent = tbw.value || 0;
+
+                // Calculate totals
+                const total = (landing.value || 0) + (renaled.value || 0) + (tbw.value || 0);
+                const avg = Math.round(total / 3);
+
+                document.getElementById('totalViews').textContent = total;
+                document.getElementById('avgViews').textContent = avg;
+                document.getElementById('totalApps').textContent = '3';
+
+                // Update app list
+                document.getElementById('app1Views').textContent = `${landing.value || 0} views`;
+                document.getElementById('app2Views').textContent = `${renaled.value || 0} views`;
+                document.getElementById('app3Views').textContent = `${tbw.value || 0} views`;
+
+                // Load GitHub traffic (may fail due to rate limiting)
+                try {
+                    const [viewsRes, clonesRes] = await Promise.all([
+                        fetch(githubTrafficUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' }}).then(r => r.json()).catch(() => null),
+                        fetch(githubClonesUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' }}).then(r => r.json()).catch(() => null)
+                    ]);
+
+                    if (viewsRes && viewsRes.count !== undefined) {
+                        document.getElementById('ghViews').textContent = viewsRes.count.toLocaleString();
+                        document.getElementById('ghVisitors').textContent = viewsRes.uniques.toLocaleString();
+                    } else {
+                        document.getElementById('ghViews').textContent = '--';
+                        document.getElementById('ghVisitors').textContent = '--';
+                    }
+
+                    if (clonesRes && clonesRes.count !== undefined) {
+                        document.getElementById('ghClones').textContent = clonesRes.count.toLocaleString();
+                        document.getElementById('ghCloneUsers').textContent = clonesRes.uniques.toLocaleString();
+                    } else {
+                        document.getElementById('ghClones').textContent = '--';
+                        document.getElementById('ghCloneUsers').textContent = '--';
+                    }
+                } catch (e) {
+                    console.log('GitHub traffic API rate limited');
+                    document.getElementById('ghViews').textContent = '--';
+                    document.getElementById('ghVisitors').textContent = '--';
+                    document.getElementById('ghClones').textContent = '--';
+                    document.getElementById('ghCloneUsers').textContent = '--';
+                }
+
+                // Show all sections
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('statsGrid').style.display = 'grid';
+                document.getElementById('totalSection').style.display = 'block';
+                document.getElementById('githubSection').style.display = 'block';
+                document.getElementById('appSection').style.display = 'block';
+
+                // Update timestamp
+                const now = new Date();
+                document.getElementById('lastUpdated').textContent = now.toLocaleString('en-US', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                document.getElementById('loading').innerHTML = '<p>Error loading data. Please refresh.</p>';
+            }
+        }
+
+        // Load on page load
+        loadAnalytics();
+
+        // Auto-refresh every 60 seconds
+        setInterval(loadAnalytics, 60000);
+    </script>
+</body>
+</html>
