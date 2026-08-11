@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PD Catheter Volume Calculator - Clinical Apps</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 30px; }
+        .header-icon { font-size: 60px; margin-bottom: 10px; }
+        .header h1 { color: #003087; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
+        .header p { color: #666; font-size: 14px; }
+        
+        /* Formula Box */
+        .formula-box { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border-left: 4px solid #007AFF; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .formula-box h3 { color: #003087; font-size: 14px; margin-bottom: 8px; }
+        .formula { background: white; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 13px; color: #003087; font-weight: 600; }
+        
+        /* Form */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .input-field { width: 100%; padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+        .input-field:focus { outline: none; border-color: #007AFF; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .helper-text { font-size: 12px; color: #999; margin-top: 5px; }
+        
+        /* Preset Buttons */
+        .preset-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .preset-btn { padding: 8px 16px; background: #F2F2F7; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .preset-btn:hover { background: #007AFF; color: white; }
+        
+        /* Calculate Button */
+        .calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #003087, #007AFF); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: transform 0.2s; margin-top: 10px; }
+        .calculate-btn:hover { transform: scale(1.02); }
+        .calculate-btn:active { transform: scale(0.98); }
+        
+        /* Results */
+        .result-card { display: none; background: linear-gradient(135deg, #34C759, #30B46C); border-radius: 16px; padding: 25px; margin-top: 25px; color: white; }
+        .result-card.show { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-header { text-align: center; margin-bottom: 20px; }
+        .result-icon { font-size: 50px; margin-bottom: 10px; }
+        .result-label { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
+        .result-value { font-size: 48px; font-weight: 700; margin-bottom: 5px; }
+        .result-unit { font-size: 16px; opacity: 0.9; }
+        
+        /* Breakdown */
+        .breakdown { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .breakdown-title { font-size: 14px; font-weight: 700; margin-bottom: 15px; text-align: center; }
+        .breakdown-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.3); }
+        .breakdown-item:last-child { border-bottom: none; font-weight: 700; font-size: 16px; }
+        .breakdown-label { opacity: 0.9; }
+        .breakdown-value { font-weight: 600; }
+        
+        /* Reset Button */
+        .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #003087; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        
+        /* Footer */
+        .footer { text-align: center; margin-top: 25px; color: #999; font-size: 12px; }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .input-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">💊</div>
+            <h1>PD Catheter Volume Calculator</h1>
+            <p>Calculate fill volume for peritoneal dialysis catheters</p>
+        </div>
+
+        <!-- Formula -->
+        <div class="formula-box">
+            <h3>📊 Formula:</h3>
+            <div class="formula">Fill Volume (mL) = Catheter Length (inches) × 0.0548 + Transfer Set (mL)</div>
+        </div>
+
+        <!-- Form -->
+        <form id="pdForm">
+            <div class="form-group">
+                <label>PD Catheter Length (inches)</label>
+                <input type="number" id="catheterLength" class="input-field" placeholder="e.g., 14" step="0.5" required>
+                <div class="helper-text">Common sizes: 12", 14", 16", 18", 20", 22"</div>
+                <div class="preset-row">
+                    <button type="button" class="preset-btn" onclick="setLength(12)">12"</button>
+                    <button type="button" class="preset-btn" onclick="setLength(14)">14"</button>
+                    <button type="button" class="preset-btn" onclick="setLength(16)">16"</button>
+                    <button type="button" class="preset-btn" onclick="setLength(18)">18"</button>
+                    <button type="button" class="preset-btn" onclick="setLength(20)">20"</button>
+                    <button type="button" class="preset-btn" onclick="setLength(22)">22"</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Transfer Set Volume (mL)</label>
+                <input type="number" id="transferSet" class="input-field" placeholder="e.g., 2" step="0.1" value="2" required>
+                <div class="helper-text">Baxter set = 2 mL (default)</div>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Fill Volume</button>
+        </form>
+
+        <!-- Results -->
+        <div class="result-card" id="resultCard">
+            <div class="result-header">
+                <div class="result-icon">✅</div>
+                <div class="result-label">Total Fill Volume</div>
+                <div class="result-value" id="totalVolume">0.00</div>
+                <div class="result-unit">mL</div>
+            </div>
+            <div class="breakdown">
+                <div class="breakdown-title">📋 Volume Breakdown</div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Catheter Length</span>
+                    <span class="breakdown-value" id="catheterLengthDisplay">-- inches</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Catheter Volume</span>
+                    <span class="breakdown-value" id="catheterVolume">-- mL</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Transfer Set Volume</span>
+                    <span class="breakdown-value" id="transferSetVolume">-- mL</span>
+                </div>
+                <div class="breakdown-item">
+                    <span class="breakdown-label">🎯 Total Fill Volume</span>
+                    <span class="breakdown-value" id="totalVolumeBreakdown">-- mL</span>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="reset-btn" onclick="resetForm()">🔄 Calculate Again</button>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Clinical Calculator Suite | Updated: August 2026</p>
+            <p>For clinical use only. Verify all calculations.</p>
+            <p style="margin-top: 10px; font-size: 11px;">⚠️ Currently in testing and approval phase</p>
+        </div>
+    </div>
+
+    <script>
+        const CATHETER_CONSTANT = 0.0548; // mL/cm (but we use inches as input)
+
+        function setLength(length) {
+            document.getElementById('catheterLength').value = length;
+        }
+
+        function resetForm() {
+            document.getElementById('pdForm').reset();
+            document.getElementById('transferSet').value = 2;
+            document.getElementById('resultCard').classList.remove('show');
+        }
+
+        document.getElementById('pdForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const catheterLength = parseFloat(document.getElementById('catheterLength').value);
+            const transferSet = parseFloat(document.getElementById('transferSet').value);
+
+            if (!catheterLength || !transferSet) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Calculate catheter volume (length in inches × 0.0548)
+            const catheterVolume = catheterLength * CATHETER_CONSTANT;
+            
+            // Calculate total fill volume
+            const totalVolume = catheterVolume + transferSet;
+
+            // Display results
+            document.getElementById('catheterLengthDisplay').textContent = `${catheterLength} inches`;
+            document.getElementById('catheterVolume').textContent = `${catheterVolume.toFixed(2)} mL`;
+            document.getElementById('transferSetVolume').textContent = `${transferSet.toFixed(1)} mL`;
+            document.getElementById('totalVolumeBreakdown').textContent = `${totalVolume.toFixed(2)} mL`;
+            document.getElementById('totalVolume').textContent = totalVolume.toFixed(2);
+
+            // Show results
+            document.getElementById('resultCard').classList.add('show');
+
+            // Scroll to results
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        // Analytics tracking
+        fetch('https://api.countapi.xyz/hit/clinical-apps/pd-catheter-calculator')
+            .then(r => r.json())
+            .then(data => console.log('PD Catheter Calculator views:', data.value))
+            .catch(e => console.log('Analytics:', e));
+    </script>
+</body>
+</html>
