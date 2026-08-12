@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kt/V Calculator - Clinical Calculator Renal Services</title>
+    <title>Kt/V Calculator - Clinical Calculator Suite</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
@@ -90,10 +90,10 @@
 
         <!-- Calculator Type -->
         <div class="calc-type">
-            <button class="calc-btn active" onclick="setCalcType('spktv')">spKt/V<br><span style="font-size: 11px; font-weight: normal;">Single-Pool</span></button>
-            <button class="calc-btn" onclick="setCalcType('ektv')">eKt/V<br><span style="font-size: 11px; font-weight: normal;">Equilibrated</span></button>
-            <button class="calc-btn" onclick="setCalcType('stdktv')">stdKt/V<br><span style="font-size: 11px; font-weight: normal;">Standardized</span></button>
-            <button class="calc-btn" onclick="setCalcType('urr')">URR<br><span style="font-size: 11px; font-weight: normal;">Urea Reduction</span></button>
+            <button class="calc-btn active" onclick="setCalcType('spktv', this)">spKt/V<br><span style="font-size: 11px; font-weight: normal;">Single-Pool</span></button>
+            <button class="calc-btn" onclick="setCalcType('ektv', this)">eKt/V<br><span style="font-size: 11px; font-weight: normal;">Equilibrated</span></button>
+            <button class="calc-btn" onclick="setCalcType('stdktv', this)">stdKt/V<br><span style="font-size: 11px; font-weight: normal;">Standardized</span></button>
+            <button class="calc-btn" onclick="setCalcType('urr', this)">URR<br><span style="font-size: 11px; font-weight: normal;">Urea Reduction</span></button>
         </div>
 
         <!-- Form -->
@@ -193,7 +193,7 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p>Clinical Calculator Suite - Renal Services © 2026</p>
+            <p>Clinical Calculator Suite © 2026</p>
             <p>For clinical use only. Verify all calculations.</p>
         </div>
     </div>
@@ -201,10 +201,10 @@
     <script>
         let currentCalcType = 'spktv';
 
-        function setCalcType(type) {
+        function setCalcType(type, el) {
             currentCalcType = type;
             document.querySelectorAll('.calc-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.closest('.calc-btn').classList.add('active');
+            (el || event.currentTarget).closest('.calc-btn').classList.add('active');
             
             // Update form labels based on type
             const titles = {
@@ -301,7 +301,8 @@
 
             // Display results
             document.getElementById('resultType').textContent = `${resultType} Result`;
-            document.getElementById('ktvValue').textContent = displayValue.toFixed(2);
+            const displayStr = currentCalcType === 'urr' ? `${displayValue.toFixed(1)}%` : displayValue.toFixed(2);
+            document.getElementById('ktvValue').textContent = displayStr;
             document.getElementById('resultStatus').textContent = status.text;
             document.getElementById('statusBadge').textContent = status.text;
             document.getElementById('statusBadge').className = `result-status ${status.class}`;

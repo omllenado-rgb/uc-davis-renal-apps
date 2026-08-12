@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drug Dialyzability Reference - Clinical Calculator Suite Renal Services</title>
+    <title>Drug Dialyzability Reference - Clinical Calculator Suite</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
@@ -91,6 +91,7 @@
         <!-- Search -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="🔍 Search drugs (e.g., Vancomycin, Gabapentin, Metformin)..." onkeyup="searchDrugs()">
+            <div id="searchCount" style="margin-top: 10px; font-size: 13px; font-weight: 600; color: #007AFF; display: none;"></div>
         </div>
 
         <!-- Quick Reference -->
@@ -384,11 +385,11 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p><strong>Clinical Calculator Suite - Renal Services</strong></p>
+            <p><strong>Clinical Calculator Suite</strong></p>
             <p>Drug Dialyzability Reference | Updated: August 2026</p>
             <p>For clinical use only. Verify all calculations and dosing recommendations.</p>
             <p>References: KDIGO 2025, KDOQI 2025, FDA/EMA Prescribing Information, UpToDate, Lexicomp</p>
-            <p>Prepared by: Oliver Llenado, RN - Clinical Calculator Suite, Acute Dialysis</p>
+            <p>Prepared by: Oliver Llenado, RN - Clinical Calculator Suite</p>
         </div>
     </div>
 
@@ -401,15 +402,54 @@
         }
 
         function searchDrugs() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const tables = document.querySelectorAll('table');
-            tables.forEach(table => {
-                const rows = table.querySelectorAll('tbody tr');
+            const input = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!input) {
+                // Reset: show all rows, all sections
+                document.querySelectorAll('table tbody tr').forEach(row => row.style.display = '');
+                // Show the first section as active
+                document.querySelectorAll('.drug-section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                const first = document.querySelector('.drug-section');
+                const firstTab = document.querySelector('.tab');
+                if (first) first.classList.add('active');
+                if (firstTab) firstTab.classList.add('active');
+                return;
+            }
+
+            // Count matches per section and hide empty ones
+            const sections = document.querySelectorAll('.drug-section');
+            let firstMatch = null;
+            let totalMatches = 0;
+            sections.forEach(sec => {
+                const rows = sec.querySelectorAll('tbody tr');
+                let secMatches = 0;
                 rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(input) ? '' : 'none';
+                    const show = row.textContent.toLowerCase().includes(input);
+                    row.style.display = show ? '' : 'none';
+                    if (show) secMatches++;
                 });
+                totalMatches += secMatches;
+                if (secMatches > 0 && !firstMatch) firstMatch = sec;
             });
+
+            // Auto-activate the first section that has matches
+            if (firstMatch) {
+                document.querySelectorAll('.drug-section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                firstMatch.classList.add('active');
+                // Match and highlight the corresponding tab
+                document.querySelectorAll('.tab').forEach(t => {
+                    const m = t.getAttribute('onclick').match(/'([^']+)'/);
+                    if (m && m[1] === firstMatch.id) t.classList.add('active');
+                });
+            }
+
+            // Show count of matches
+            const resultInfo = document.getElementById('searchCount');
+            if (resultInfo) {
+                resultInfo.textContent = input ? `${totalMatches} drug(s) found` : '';
+                resultInfo.style.display = input ? 'block' : 'none';
+            }
         }
 
         // Analytics tracking
