@@ -345,9 +345,9 @@
                 <div class="tab-icon">📖</div>
                 <div class="tab-label">Guide</div>
             </div>
-            <div class="tab">
-                <div class="tab-icon">👤</div>
-                <div class="tab-label">Profile</div>
+            <div class="tab" onclick="openSettingsModal()">
+                <div class="tab-icon">⚙️</div>
+                <div class="tab-label">Budgets</div>
             </div>
         </div>
     </div>
@@ -360,6 +360,20 @@
             <input type="text" class="search-box" id="foodSearch" placeholder="🔍 Search foods..." oninput="searchFoods()">
             <div class="category-tabs" id="categoryTabs"></div>
             <div class="food-list" id="foodList"></div>
+        </div>
+    </div>
+
+    <!-- Settings / Budgets Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">⚙️ My Daily Budgets</h3>
+                <button class="close-btn" onclick="closeSettingsModal()">&times;</button>
+            </div>
+            <p style="font-size: 13px; color: #757575; margin-bottom: 16px;">Set your personal daily limits. Defaults follow KDOQI nutrition guidelines. Your healthcare team can help you adjust these.</p>
+            <div id="budgetInputs"></div>
+            <button class="nav-btn" onclick="saveBudgets()" style="margin-top: 16px;">💾 Save Budgets</button>
+            <button class="nav-btn secondary" onclick="resetBudgets()" style="margin-top: 8px;">↩ Reset to KDOQI Defaults</button>
         </div>
     </div>
     <script>
@@ -583,9 +597,11 @@
 
         // ===== Persistence via localStorage =====
         const STORE_KEY = 'renaled_state_v1';
-        const LIMITS = { potassium: 2000, phosphorus: 1000, sodium: 2000, fluid: 1000 };
+        // KDOQI-aligned default daily budgets (patient-adjustable)
+        const DEFAULT_LIMITS = { potassium: 2000, phosphorus: 1000, sodium: 2000, fluid: 1000 };
         const UNITS = { potassium: 'mg', phosphorus: 'mg', sodium: 'mg', fluid: 'mL' };
         const NUT_IDS = { potassium: 'k', phosphorus: 'p', sodium: 'na', fluid: 'fluid' };
+        const NUT_LABELS = { potassium: 'Potassium', phosphorus: 'Phosphorus', sodium: 'Sodium', fluid: 'Fluid' };
 
         function todayKey() { return new Date().toISOString().slice(0,10); }
 
@@ -605,7 +621,8 @@
                             streakDays: prevStreak,
                             totalPoints: s.totalPoints || 0,
                             todayPoints: 0,
-                            lastActiveDate: s.date || null
+                            lastActiveDate: s.date || null,
+                            limits: s.limits || { ...DEFAULT_LIMITS }
                         };
                     }
                     return s;
@@ -618,7 +635,8 @@
                 streakDays: 0,
                 totalPoints: 0,
                 todayPoints: 0,
-                lastActiveDate: null
+                lastActiveDate: null,
+                limits: { ...DEFAULT_LIMITS }
             };
         }
 
@@ -637,6 +655,7 @@
         let streakDays = state.streakDays;
         let totalPoints = state.totalPoints;
         let todayPoints = state.todayPoints;
+        let limits = state.limits || { ...DEFAULT_LIMITS };
 
         document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -664,8 +683,8 @@
         function restartTutorial() { document.getElementById('mainApp').style.display = 'none'; document.getElementById('tutorialScreen').style.display = 'block'; nextStep(1); }
         function updateGreeting() { const h = new Date().getHours(); let g = 'Good Morning!'; if (h >= 12 && h < 17) g = 'Good Afternoon!'; else if (h >= 17) g = 'Good Evening!'; document.getElementById('greeting').textContent = g + ' 👋'; document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); }
         function updateMeters() {
-            Object.keys(LIMITS).forEach(nutrient => {
-                const value = currentTotals[nutrient], limit = LIMITS[nutrient], percent = Math.min((value / limit) * 100, 100), remaining = Math.max(limit - value, 0);
+            Object.keys(limits).forEach(nutrient => {
+                const value = currentTotals[nutrient], limit = limits[nutrient] || DEFAULT_LIMITS[nutrient], percent = Math.min((value / limit) * 100, 100), remaining = Math.max(limit - value, 0);
                 const id = NUT_IDS[nutrient];
                 document.getElementById(`${id}Percent`).textContent = `${Math.round(percent)}%`;
                 document.getElementById(`${id}Value`).textContent = `${Math.round(value)} / ${limit} ${UNITS[nutrient]}`;
@@ -683,6 +702,42 @@
             if (s) { s.value = ''; }
         }
         function closeMealModal() { document.getElementById('mealModal').classList.remove('show'); }
+
+        // ===== Patient-adjustable budgets (KDOQI-aligned) =====
+        function openSettingsModal() {
+            const container = document.getElementById('budgetInputs');
+            container.innerHTML = Object.keys(DEFAULT_LIMITS).map(nut => {
+                const val = limits[nut] || DEFAULT_LIMITS[nut];
+                const unit = UNITS[nut];
+                const icon = { potassium: '🍌', phosphorus: '🥛', sodium: '🧂', fluid: '💧' }[nut] || '';
+                return `<div class="form-group">
+                    <label>${icon} ${NUT_LABELS[nut]} (${unit}/day)</label>
+                    <input type="number" id="budget_${nut}" class="input-field" value="${val}" min="1" step="50">
+                </div>`;
+            }).join('');
+            document.getElementById('settingsModal').classList.add('show');
+        }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.remove('show'); }
+        function saveBudgets() {
+            Object.keys(DEFAULT_LIMITS).forEach(nut => {
+                const el = document.getElementById(`budget_${nut}`);
+                const v = parseFloat(el.value);
+                if (v && v > 0) limits[nut] = v;
+            });
+            state.limits = { ...limits };
+            saveState();
+            updateMeters();
+            closeSettingsModal();
+            showSuccess('✓ Budgets saved');
+        }
+        function resetBudgets() {
+            limits = { ...DEFAULT_LIMITS };
+            state.limits = { ...limits };
+            saveState();
+            updateMeters();
+            openSettingsModal();
+            showSuccess('↩ Reset to KDOQI defaults');
+        }
         function renderCategoryTabs() {
             const tabs = document.getElementById('categoryTabs');
             tabs.innerHTML = categories.map((cat, i) => {
