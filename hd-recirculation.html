@@ -15,12 +15,6 @@
         .header h1 { color: #003087; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
         .header p { color: #666; font-size: 14px; }
 
-        /* Method Tabs */
-        .method-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .method-btn { padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; background: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .method-btn.active { border-color: #007AFF; background: #E3F2FD; color: #007AFF; }
-        .method-btn:hover { border-color: #007AFF; }
-
         /* Formula Box */
         .formula-box { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border-left: 4px solid #007AFF; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
         .formula-box h3 { color: #003087; font-size: 14px; margin-bottom: 8px; }
@@ -69,10 +63,6 @@
 
         /* Footer */
         .footer { text-align: center; margin-top: 25px; color: #999; font-size: 12px; }
-
-        @media (max-width: 480px) {
-            .method-tabs { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
@@ -84,56 +74,28 @@
             <p>Hemodialysis Access Recirculation Assessment</p>
         </div>
 
-        <!-- Method Tabs -->
-        <div class="method-tabs">
-            <button class="method-btn active" onclick="setMethod('three', this)">🔺 Three-Needle<br><span style="font-size:11px;font-weight:normal;">Peripheral draw</span></button>
-            <button class="method-btn" onclick="setMethod('two', this)">🔻 Two-Needle<br><span style="font-size:11px;font-weight:normal;">Stop-Flow</span></button>
-        </div>
-
         <!-- Formula Display -->
         <div class="formula-box">
-            <h3 id="formulaTitle">📊 Formula (Three-Needle Method):</h3>
-            <div class="formula" id="formulaDisplay">Recirculation % = (P − A) / (P − V) × 100</div>
+            <h3>📊 Formula (Two-Needle / Stop-Flow Method):</h3>
+            <div class="formula">Recirculation % = (P − A) / (P − V) × 100</div>
         </div>
 
         <!-- Form -->
         <form id="recircForm">
-            <!-- Three-needle inputs -->
-            <div id="threeInputs">
-                <div class="form-group">
-                    <label>Peripheral (Systemic) Urea — P (mg/dL)</label>
-                    <input type="number" id="peripheral" class="input-field" placeholder="e.g., 60" step="0.1" required>
-                    <div class="helper-text">From a peripheral vein (NOT the access)</div>
-                </div>
-                <div class="form-group">
-                    <label>Arterial (Pre-Dialyzer) Urea — A (mg/dL)</label>
-                    <input type="number" id="arterial" class="input-field" placeholder="e.g., 55" step="0.1" required>
-                    <div class="helper-text">From the arterial line (pre-dialyzer)</div>
-                </div>
-                <div class="form-group">
-                    <label>Venous (Post-Dialyzer) Urea — V (mg/dL)</label>
-                    <input type="number" id="venous" class="input-field" placeholder="e.g., 20" step="0.1" required>
-                    <div class="helper-text">From the venous line (post-dialyzer)</div>
-                </div>
+            <div class="form-group">
+                <label>Peripheral BUN (Stop-Flow) — P (mg/dL)</label>
+                <input type="number" id="peripheral" class="input-field" placeholder="e.g., 60" step="0.1" required>
+                <div class="helper-text">Clamp venous line, let pressure rise, draw from arterial port</div>
             </div>
-
-            <!-- Two-needle inputs -->
-            <div id="twoInputs" style="display:none;">
-                <div class="form-group">
-                    <label>Peripheral BUN (Stop-Flow) — P (mg/dL)</label>
-                    <input type="number" id="peripheral2" class="input-field" placeholder="e.g., 60" step="0.1" required>
-                    <div class="helper-text">Clamp venous line, let pressure rise, draw from arterial port</div>
-                </div>
-                <div class="form-group">
-                    <label>Arterial BUN — A (mg/dL)</label>
-                    <input type="number" id="arterial2" class="input-field" placeholder="e.g., 55" step="0.1" required>
-                    <div class="helper-text">From the arterial (red) port of blood lines</div>
-                </div>
-                <div class="form-group">
-                    <label>Venous BUN — V (mg/dL)</label>
-                    <input type="number" id="venous2" class="input-field" placeholder="e.g., 20" step="0.1" required>
-                    <div class="helper-text">From the venous (blue) port of blood lines</div>
-                </div>
+            <div class="form-group">
+                <label>Arterial BUN — A (mg/dL)</label>
+                <input type="number" id="arterial" class="input-field" placeholder="e.g., 55" step="0.1" required>
+                <div class="helper-text">From the arterial (red) port of blood lines</div>
+            </div>
+            <div class="form-group">
+                <label>Venous BUN — V (mg/dL)</label>
+                <input type="number" id="venous" class="input-field" placeholder="e.g., 20" step="0.1" required>
+                <div class="helper-text">From the venous (blue) port of blood lines</div>
             </div>
 
             <button type="submit" class="calculate-btn">Calculate Recirculation</button>
@@ -143,7 +105,7 @@
         <div class="result-card" id="resultCard">
             <div class="result-header">
                 <div class="result-icon">🔄</div>
-                <div class="result-label" id="resultMethod">Recirculation (Three-Needle)</div>
+                <div class="result-label">Recirculation (Two-Needle)</div>
                 <div class="result-value" id="recircValue">0.0%</div>
                 <div class="result-status" id="recircStatus">Normal</div>
             </div>
@@ -177,8 +139,7 @@
                 <li><strong>10-15%:</strong> Borderline — investigate access</li>
                 <li><strong>&gt; 15%:</strong> Significant recirculation — access dysfunction likely</li>
             </ul>
-            <p><strong>Three-Needle Method:</strong> Uses peripheral (P), arterial (A), and venous (V) urea samples. Most accurate, requires a peripheral draw.</p>
-            <p><strong>Two-Needle (Stop-Flow) Method:</strong> Draw arterial (red port) and venous (blue port) samples. Decrease BFR to 50 mL/hr, clamp the venous line (closest to patient), allow venous pressure to rise until the machine alarms, then draw from the arterial port (label as PERIPHERAL). Uses the same formula: (P − A) / (P − V) × 100.</p>
+            <p><strong>Two-Needle (Stop-Flow) Method:</strong> Draw arterial (red port) and venous (blue port) samples. Decrease BFR to 50 mL/hr, clamp the venous line (closest to patient), allow venous pressure to rise until the machine alarms, then draw from the arterial port (label as PERIPHERAL). Uses the formula: (P − A) / (P − V) × 100.</p>
         </div>
 
         <!-- Footer -->
@@ -190,54 +151,22 @@
     </div>
 
     <script>
-        let currentMethod = 'three';
-
-        function setMethod(method, el) {
-            currentMethod = method;
-            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-
-            if (method === 'three') {
-                document.getElementById('threeInputs').style.display = 'block';
-                document.getElementById('twoInputs').style.display = 'none';
-                document.getElementById('formulaTitle').textContent = '📊 Formula (Three-Needle Method):';
-                document.getElementById('formulaDisplay').textContent = 'Recirculation % = (P − A) / (P − V) × 100';
-            } else {
-                document.getElementById('threeInputs').style.display = 'none';
-                document.getElementById('twoInputs').style.display = 'block';
-                document.getElementById('formulaTitle').textContent = '📊 Formula (Two-Needle / Stop-Flow Method):';
-                document.getElementById('formulaDisplay').textContent = 'Recirculation % = (P − A) / (P − V) × 100';
-            }
-        }
-
         function resetForm() {
             document.getElementById('recircForm').reset();
             document.getElementById('resultCard').classList.remove('show');
-            setMethod('three', document.querySelector('.method-btn'));
         }
 
         document.getElementById('recircForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            let P, A, V, numerator, denominator, recirc, methodLabel;
+            const P = parseFloat(document.getElementById('peripheral').value);
+            const A = parseFloat(document.getElementById('arterial').value);
+            const V = parseFloat(document.getElementById('venous').value);
 
-            if (currentMethod === 'three') {
-                P = parseFloat(document.getElementById('peripheral').value);
-                A = parseFloat(document.getElementById('arterial').value);
-                V = parseFloat(document.getElementById('venous').value);
-                if (!P || !A || !V) { alert('Please fill in all fields'); return; }
-                numerator = P - A;
-                denominator = P - V;
-                methodLabel = 'Recirculation (Three-Needle)';
-            } else {
-                P = parseFloat(document.getElementById('peripheral2').value);
-                A = parseFloat(document.getElementById('arterial2').value);
-                V = parseFloat(document.getElementById('venous2').value);
-                if (!P || !A || !V) { alert('Please fill in all fields'); return; }
-                numerator = P - A;
-                denominator = P - V;
-                methodLabel = 'Recirculation (Two-Needle)';
-            }
+            if (!P || !A || !V) { alert('Please fill in all fields'); return; }
+
+            const numerator = P - A;
+            const denominator = P - V;
 
             // Validation
             if (denominator <= 0) {
@@ -249,7 +178,7 @@
                 return;
             }
 
-            recirc = (numerator / denominator) * 100;
+            const recirc = (numerator / denominator) * 100;
 
             // Status
             let status, statusClass;
@@ -258,7 +187,6 @@
             else { status = '❌ Significant (>15%)'; statusClass = 'status-bad'; }
 
             // Display
-            document.getElementById('resultMethod').textContent = methodLabel;
             document.getElementById('recircValue').textContent = recirc.toFixed(1) + '%';
             document.getElementById('recircStatus').textContent = status;
             document.getElementById('recircStatus').className = 'result-status ' + statusClass;
