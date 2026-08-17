@@ -86,8 +86,8 @@
 
         <!-- Method Tabs -->
         <div class="method-tabs">
-            <button class="method-btn active" onclick="setMethod('three', this)">🔺 Three-Needle<br><span style="font-size:11px;font-weight:normal;">Urea-based</span></button>
-            <button class="method-btn" onclick="setMethod('two', this)">🔻 Two-Needle<br><span style="font-size:11px;font-weight:normal;">Slow-Flow</span></button>
+            <button class="method-btn active" onclick="setMethod('three', this)">🔺 Three-Needle<br><span style="font-size:11px;font-weight:normal;">Peripheral draw</span></button>
+            <button class="method-btn" onclick="setMethod('two', this)">🔻 Two-Needle<br><span style="font-size:11px;font-weight:normal;">Stop-Flow</span></button>
         </div>
 
         <!-- Formula Display -->
@@ -120,19 +120,19 @@
             <!-- Two-needle inputs -->
             <div id="twoInputs" style="display:none;">
                 <div class="form-group">
-                    <label>Slow-Flow Arterial BUN — S (mg/dL)</label>
-                    <input type="number" id="systemic" class="input-field" placeholder="e.g., 58" step="0.1" required>
-                    <div class="helper-text">Arterial sample drawn at reduced (slow) blood flow</div>
+                    <label>Peripheral BUN (Stop-Flow) — P (mg/dL)</label>
+                    <input type="number" id="peripheral2" class="input-field" placeholder="e.g., 60" step="0.1" required>
+                    <div class="helper-text">Clamp venous line, let pressure rise, draw from arterial port</div>
                 </div>
                 <div class="form-group">
-                    <label>Arterial-Line BUN (Full Flow) — A (mg/dL)</label>
+                    <label>Arterial BUN — A (mg/dL)</label>
                     <input type="number" id="arterial2" class="input-field" placeholder="e.g., 55" step="0.1" required>
-                    <div class="helper-text">Arterial-line sample at full blood flow</div>
+                    <div class="helper-text">From the arterial (red) port of blood lines</div>
                 </div>
                 <div class="form-group">
-                    <label>Venous-Line BUN (Full Flow) — V (mg/dL)</label>
+                    <label>Venous BUN — V (mg/dL)</label>
                     <input type="number" id="venous2" class="input-field" placeholder="e.g., 20" step="0.1" required>
-                    <div class="helper-text">Venous-line sample at full blood flow</div>
+                    <div class="helper-text">From the venous (blue) port of blood lines</div>
                 </div>
             </div>
 
@@ -178,7 +178,7 @@
                 <li><strong>&gt; 15%:</strong> Significant recirculation — access dysfunction likely</li>
             </ul>
             <p><strong>Three-Needle Method:</strong> Uses peripheral (P), arterial (A), and venous (V) urea samples. Most accurate, requires a peripheral draw.</p>
-            <p><strong>Two-Needle (Slow-Flow) Method:</strong> Draws arterial-line and venous-line samples at full blood flow, plus an arterial sample after reducing blood flow (slow-flow). Uses slow-flow arterial (S), arterial-line full-flow (A), and venous-line full-flow (V) BUN. Avoids a peripheral draw.</p>
+            <p><strong>Two-Needle (Stop-Flow) Method:</strong> Draw arterial (red port) and venous (blue port) samples. Decrease BFR to 50 mL/hr, clamp the venous line (closest to patient), allow venous pressure to rise until the machine alarms, then draw from the arterial port (label as PERIPHERAL). Uses the same formula: (P − A) / (P − V) × 100.</p>
         </div>
 
         <!-- Footer -->
@@ -205,8 +205,8 @@
             } else {
                 document.getElementById('threeInputs').style.display = 'none';
                 document.getElementById('twoInputs').style.display = 'block';
-                document.getElementById('formulaTitle').textContent = '📊 Formula (Two-Needle / Slow-Flow Method):';
-                document.getElementById('formulaDisplay').textContent = 'Recirculation % = (S − A) / (S − V) × 100';
+                document.getElementById('formulaTitle').textContent = '📊 Formula (Two-Needle / Stop-Flow Method):';
+                document.getElementById('formulaDisplay').textContent = 'Recirculation % = (P − A) / (P − V) × 100';
             }
         }
 
@@ -219,7 +219,7 @@
         document.getElementById('recircForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            let P, A, V, S, numerator, denominator, recirc, methodLabel;
+            let P, A, V, numerator, denominator, recirc, methodLabel;
 
             if (currentMethod === 'three') {
                 P = parseFloat(document.getElementById('peripheral').value);
@@ -230,12 +230,12 @@
                 denominator = P - V;
                 methodLabel = 'Recirculation (Three-Needle)';
             } else {
+                P = parseFloat(document.getElementById('peripheral2').value);
                 A = parseFloat(document.getElementById('arterial2').value);
-                S = parseFloat(document.getElementById('systemic').value);
                 V = parseFloat(document.getElementById('venous2').value);
-                if (!A || !S || !V) { alert('Please fill in all fields'); return; }
-                numerator = S - A;
-                denominator = S - V;
+                if (!P || !A || !V) { alert('Please fill in all fields'); return; }
+                numerator = P - A;
+                denominator = P - V;
                 methodLabel = 'Recirculation (Two-Needle)';
             }
 
@@ -245,7 +245,7 @@
                 return;
             }
             if (numerator < 0) {
-                alert('Invalid values: numerator is negative. Check your sample values (arterial should be lower than peripheral/systemic).');
+                alert('Invalid values: numerator is negative. Check your sample values (arterial should be lower than peripheral).');
                 return;
             }
 
