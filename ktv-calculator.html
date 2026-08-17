@@ -219,19 +219,22 @@
         function calculateKTv(preBun, postBun, weight, time, uf, gender, age) {
             // URR calculation
             const urr = ((preBun - postBun) / preBun) * 100;
-            
-            // spKt/V (Daugirdas II formula)
+
+            // spKt/V (Daugirdas II formula) - t in HOURS
             const R = postBun / preBun;
-            const t = time * 60; // minutes
-            const spktv = -Math.log(R - 0.008 * t) + (4 - 3.5 * R) * (uf / weight);
-            
-            // eKt/V (equilibrated - accounts for urea rebound)
-            const ektv = spktv - 0.6 * (spktv / t) + 0.03;
-            
-            // stdKt/V (standardized, weekly)
+            const tHr = time; // hours (Daugirdas II requires hours)
+            const spktv = -Math.log(R - 0.008 * tHr) + (4 - 3.5 * R) * (uf / weight);
+
+            // eKt/V (equilibrated - accounts for urea rebound) - t in minutes
+            const tMin = time * 60;
+            const ektv = spktv - 0.6 * (spktv / tMin) + 0.03;
+
+            // stdKt/V (standardized weekly - Leypoldt formula)
+            // stdKt/V = (spKt/V * N * 10080) / (t_min * N + 10080)
+            // where N = sessions/week, t_min = treatment time in minutes, 10080 = min/week
             const sessionsPerWeek = 3;
-            const stdktv = (spktv * sessionsPerWeek * 10) / ((time * sessionsPerWeek) + 10);
-            
+            const stdktv = (spktv * sessionsPerWeek * 10080) / ((tMin * sessionsPerWeek) + 10080);
+
             return { urr, spktv, ektv, stdktv };
         }
 
