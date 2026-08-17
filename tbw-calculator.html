@@ -40,6 +40,12 @@
         .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #007AFF; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
         .footer { text-align: center; margin-top: 20px; color: #8E8E93; font-size: 12px; }
         .formula-note { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 13px; color: #666; }
+        .watson-info { background: #E3F2FD; border-left: 4px solid #007AFF; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 13px; color: #333; }
+        .watson-info h4 { color: #007AFF; margin-bottom: 8px; font-size: 14px; }
+        .watson-info p { margin: 6px 0; line-height: 1.5; }
+        .watson-info ul { margin: 6px 0 6px 18px; }
+        .watson-info li { margin: 4px 0; line-height: 1.4; }
+        .error-msg { color: #FF3B30; font-size: 13px; margin-top: 8px; display: none; }
     </style>
 </head>
 <body>
@@ -54,8 +60,8 @@
             <div class="form-group">
                 <label>Gender</label>
                 <div class="gender-selector">
-                    <button type="button" class="gender-btn active" onclick="setGender('male')">👨 Male</button>
-                    <button type="button" class="gender-btn" onclick="setGender('female')">👩 Female</button>
+                    <button type="button" class="gender-btn active" onclick="setGender('male', this)">👨 Male</button>
+                    <button type="button" class="gender-btn" onclick="setGender('female', this)">👩 Female</button>
                 </div>
             </div>
 
@@ -103,6 +109,18 @@
                 Male: TBW = 2.447 - (0.09156 × age) + (0.1074 × height) + (0.3362 × weight)<br>
                 Female: TBW = -2.097 + (0.1069 × height) + (0.2466 × weight)
             </div>
+            <div class="watson-info">
+                <h4>📖 About the Watson Formula</h4>
+                <p><strong>Source:</strong> Watson PE, Watson ID, Batt RD. "Total body water volumes for adult males and females estimated from simple anthropometric measurements." <em>Am J Clin Nutr</em> 1980;33(1):27-39.</p>
+                <p><strong>What it estimates:</strong> Total body water (TBW) in liters, derived from age, height, and weight. It is the most widely used anthropometric method for estimating TBW in clinical practice.</p>
+                <p><strong>Clinical use in dialysis:</strong></p>
+                <ul>
+                    <li>Estimates the volume of distribution (V) for urea — used in Kt/V adequacy calculations</li>
+                    <li>Guides dry weight assessment and fluid management</li>
+                    <li>Helps interpret bioimpedance and clinical volume status</li>
+                </ul>
+                <p><strong>Limitations:</strong> Developed in healthy adults; may overestimate TBW in obese patients and underestimate in the elderly or edematous states. Not validated for pediatric use.</p>
+            </div>
         </div>
 
         <button type="button" class="reset-btn" onclick="resetForm()" style="display: none;" id="resetBtn">🔄 Calculate Again</button>
@@ -116,12 +134,12 @@
     <script>
         let currentGender = 'male';
 
-        function setGender(gender) {
+        function setGender(gender, el) {
             currentGender = gender;
             document.querySelectorAll('.gender-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            (el || event.currentTarget).classList.add('active');
         }
 
         function calculateTBW(weight, height, age, gender) {
@@ -159,6 +177,20 @@
 
             if (!weight || !height || !age) {
                 alert('Please fill in all fields');
+                return;
+            }
+
+            // Input validation
+            if (weight < 20 || weight > 300) {
+                alert('Please enter a valid weight (20-300 kg)');
+                return;
+            }
+            if (height < 100 || height > 250) {
+                alert('Please enter a valid height (100-250 cm)');
+                return;
+            }
+            if (age < 18 || age > 120) {
+                alert('Please enter a valid age (18-120 years)');
                 return;
             }
 
