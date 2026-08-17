@@ -8,19 +8,20 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        
+
         /* Header */
         .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #003087; padding-bottom: 20px; }
         .uc-logo { background: #003087; color: white; padding: 8px 25px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
         .header h1 { color: #003087; font-size: 28px; margin-bottom: 8px; }
         .header h2 { color: #007AFF; font-size: 18px; margin-bottom: 10px; }
         .header p { color: #666; font-size: 14px; }
-        
+
         /* Search */
-        .search-box { background: #F2F2F7; padding: 20px; border-radius: 12px; margin-bottom: 25px; }
+        .search-box { background: #F2F2F7; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
         .search-box input { width: 100%; padding: 15px; border: 2px solid #E5E5EA; border-radius: 10px; font-size: 16px; }
         .search-box input:focus { outline: none; border-color: #007AFF; }
-        
+        #searchCount { margin-top: 10px; font-size: 13px; font-weight: 600; color: #007AFF; }
+
         /* Quick Reference */
         .quick-ref { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .qr-card { padding: 20px; border-radius: 12px; border: 2px solid; }
@@ -33,12 +34,25 @@
         .qr-card.warn h4 { color: #E65100; }
         .qr-card ul { list-style: none; margin-left: 10px; }
         .qr-card li { padding: 4px 0; font-size: 13px; }
-        
+
+        /* Legend */
+        .legend { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .legend-box { width: 20px; height: 20px; border-radius: 4px; }
+        .legend-box.green { background: #34C759; }
+        .legend-box.yellow { background: #FFC107; }
+        .legend-box.red { background: #FF3B30; }
+
+        /* Filter chips */
+        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+        .filter-chip { padding: 8px 16px; background: #F2F2F7; border: 2px solid #E5E5EA; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .filter-chip.active { background: #003087; color: white; border-color: #003087; }
+
         /* Section Tabs */
         .tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; }
         .tab { padding: 10px 20px; background: #F2F2F7; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #666; }
         .tab.active { background: #003087; color: white; }
-        
+
         /* Tables */
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -50,27 +64,18 @@
         .moderate { color: #FFC107; font-weight: 700; }
         .not-dialyzable { color: #FF3B30; font-weight: 700; }
         .new-drug { background: #34C759; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
-        
-        /* Legend */
-        .legend { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
-        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-        .legend-box { width: 20px; height: 20px; border-radius: 4px; }
-        .legend-box.green { background: #34C759; }
-        .legend-box.yellow { background: #FFC107; }
-        .legend-box.red { background: #FF3B30; }
-        
-        /* Section */
+
         .drug-section { display: none; }
         .drug-section.active { display: block; }
         .section-title { font-size: 20px; color: #003087; margin-bottom: 15px; font-weight: 700; }
-        
+
         /* Footer */
         .footer { border-top: 2px solid #003087; padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
-        
+
         /* Download Button */
         .download-btn { background: linear-gradient(135deg, #003087, #007AFF); color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 20px; }
         .download-btn:hover { opacity: 0.9; }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .quick-ref { grid-template-columns: 1fr; }
@@ -85,13 +90,13 @@
             <div class="uc-logo">CLINICAL APPS</div>
             <h1>Drug Dialyzability Reference</h1>
             <h2>Conventional HD • High-Flux HD • CRRT</h2>
-            <p>Updated: August 2026 | 200+ Drugs | New & International Medications</p>
+            <p id="headerCount">Updated: August 2026 | Loading drug count...</p>
         </div>
 
         <!-- Search -->
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="🔍 Search drugs (e.g., Vancomycin, Gabapentin, Metformin)..." onkeyup="searchDrugs()">
-            <div id="searchCount" style="margin-top: 10px; font-size: 13px; font-weight: 600; color: #007AFF; display: none;"></div>
+            <div id="searchCount"></div>
         </div>
 
         <!-- Quick Reference -->
@@ -134,249 +139,26 @@
 
         <!-- Legend -->
         <div class="legend">
-            <div class="legend-item">
-                <div class="legend-box green"></div>
-                <span><strong>Y</strong> = Yes (Highly Dialyzable)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-box yellow"></div>
-                <span><strong>M</strong> = Moderate</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-box red"></div>
-                <span><strong>N</strong> = No (Not Dialyzable)</span>
-            </div>
-            <div class="legend-item">
-                <span class="new-drug">NEW</span>
-                <span>= Approved 2020-2026</span>
-            </div>
+            <div class="legend-item"><div class="legend-box green"></div><span><strong>Y</strong> = Yes (Highly Dialyzable)</span></div>
+            <div class="legend-item"><div class="legend-box yellow"></div><span><strong>M</strong> = Moderate</span></div>
+            <div class="legend-item"><div class="legend-box red"></div><span><strong>N</strong> = No (Not Dialyzable)</span></div>
+            <div class="legend-item"><span class="new-drug">NEW</span><span>= Approved 2020-2026</span></div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" onclick="showSection('antibiotics')">Antibiotics (50)</div>
-            <div class="tab" onclick="showSection('cardio')">Cardiovascular (30)</div>
-            <div class="tab" onclick="showSection('neuro')">Neuro/Psych (35)</div>
-            <div class="tab" onclick="showSection('endo')">Endocrine (15)</div>
-            <div class="tab" onclick="showSection('analgesics')">Analgesics (15)</div>
-            <div class="tab" onclick="showSection('new')">New Drugs 2020-26 (20)</div>
+        <!-- Dialyzability Filter -->
+        <div class="filter-row">
+            <span style="font-size:13px;font-weight:600;color:#666;padding-top:8px;">Filter:</span>
+            <div class="filter-chip active" onclick="setFilter('all', this)">All</div>
+            <div class="filter-chip" onclick="setFilter('Y', this)">🟢 Dialyzable</div>
+            <div class="filter-chip" onclick="setFilter('M', this)">🟡 Moderate</div>
+            <div class="filter-chip" onclick="setFilter('N', this)">🔴 Not Dialyzable</div>
         </div>
 
-        <!-- Antibiotics Section -->
-        <div class="drug-section active" id="antibiotics">
-            <h3 class="section-title">💊 Antibiotics & Antimicrobials</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Drug</th>
-                            <th>Class</th>
-                            <th>MW</th>
-                            <th>PB</th>
-                            <th>Vd</th>
-                            <th>HD</th>
-                            <th>HF-HD</th>
-                            <th>CRRT</th>
-                            <th>Dosing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Amikacin</td><td>Aminoglycoside</td><td>586</td><td>0%</td><td>0.25</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>Give AFTER HD</td></tr>
-                        <tr><td>Gentamicin</td><td>Aminoglycoside</td><td>478</td><td>0%</td><td>0.25</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>Give AFTER HD</td></tr>
-                        <tr><td>Tobramycin</td><td>Aminoglycoside</td><td>468</td><td>0%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>Give AFTER HD</td></tr>
-                        <tr><td>Vancomycin</td><td>Glycopeptide</td><td>1449</td><td>50%</td><td>0.7</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>15-20 mg/kg post-HD</td></tr>
-                        <tr><td>Daptomycin</td><td>Lipopeptide</td><td>1620</td><td>90%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="moderate">M</td><td class="moderate">M</td><td>6-8 mg/kg post-HD q48h</td></tr>
-                        <tr><td>Linezolid</td><td>Oxazolidinone</td><td>337</td><td>31%</td><td>0.6</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>No supplement</td></tr>
-                        <tr><td>Cefepime</td><td>Cephalosporin 4th</td><td>571</td><td>20%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1-2g post-HD</td></tr>
-                        <tr><td>Ceftazidime</td><td>Cephalosporin 3rd</td><td>547</td><td>10%</td><td>0.2</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1g post-HD</td></tr>
-                        <tr><td>Ceftriaxone</td><td>Cephalosporin 3rd</td><td>555</td><td>90%</td><td>0.15</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Ceftolozane <span class="new-drug">NEW</span></td><td>Cephalosporin 5th</td><td>606</td><td>20%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1.5g post-HD</td></tr>
-                        <tr><td>Meropenem</td><td>Carbapenem</td><td>438</td><td>2%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>1g post-HD</td></tr>
-                        <tr><td>Imipenem-Cilastatin</td><td>Carbapenem</td><td>523</td><td>20%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>500mg post-HD</td></tr>
-                        <tr><td>Piperacillin-Tazobactam</td><td>Penicillin+BLI</td><td>517</td><td>30%</td><td>0.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>4.5g post-HD</td></tr>
-                        <tr><td>Ciprofloxacin</td><td>Fluoroquinolone</td><td>332</td><td>30%</td><td>2.5</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>500mg post-HD</td></tr>
-                        <tr><td>Levofloxacin</td><td>Fluoroquinolone</td><td>362</td><td>30%</td><td>1.0</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>500mg post-HD</td></tr>
-                        <tr><td>Moxifloxacin</td><td>Fluoroquinolone</td><td>402</td><td>45%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Doxycycline</td><td>Tetracycline</td><td>445</td><td>90%</td><td>1.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Fluconazole</td><td>Azole</td><td>307</td><td>12%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>400mg post-HD daily</td></tr>
-                        <tr><td>Acyclovir</td><td>Antiviral</td><td>225</td><td>15%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>5 mg/kg post-HD daily</td></tr>
-                        <tr><td>Ganciclovir</td><td>Antiviral</td><td>256</td><td>2%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>2.5 mg/kg post-HD 3x/wk</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- Tabs (auto-generated) -->
+        <div class="tabs" id="tabs"></div>
 
-        <!-- Cardiovascular Section -->
-        <div class="drug-section" id="cardio">
-            <h3 class="section-title">❤️ Cardiovascular Medications</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Drug</th>
-                            <th>Class</th>
-                            <th>MW</th>
-                            <th>PB</th>
-                            <th>Vd</th>
-                            <th>HD</th>
-                            <th>HF-HD</th>
-                            <th>CRRT</th>
-                            <th>Dosing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Lisinopril</td><td>ACE Inhibitor</td><td>406</td><td>0%</td><td>1.3</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>5-10mg post-HD daily</td></tr>
-                        <tr><td>Enalapril</td><td>ACE Inhibitor</td><td>377</td><td>50%</td><td>1.0</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>5mg post-HD daily</td></tr>
-                        <tr><td>Losartan</td><td>ARB</td><td>423</td><td>98%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Amlodipine</td><td>CCB</td><td>409</td><td>93%</td><td>21</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Metoprolol</td><td>Beta-Blocker</td><td>266</td><td>12%</td><td>5.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>Titrate to HR</td></tr>
-                        <tr><td>Atenolol</td><td>Beta-Blocker</td><td>267</td><td>5%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>25-50mg post-HD daily</td></tr>
-                        <tr><td>Carvedilol</td><td>Beta-Blocker</td><td>407</td><td>98%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Furosemide</td><td>Loop Diuretic</td><td>331</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Give IV during HD</td></tr>
-                        <tr><td>Spironolactone</td><td>K-Sparing</td><td>417</td><td>90%</td><td>1.5</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID (hyperkalemia)</td></tr>
-                        <tr><td>Digoxin</td><td>Cardiac Glycoside</td><td>781</td><td>25%</td><td>7.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor levels</td></tr>
-                        <tr><td>Amiodarone</td><td>Antiarrhythmic</td><td>646</td><td>97%</td><td>66</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Sotalol</td><td>Antiarrhythmic</td><td>273</td><td>0%</td><td>2.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>40-80mg post-HD</td></tr>
-                        <tr><td>Warfarin</td><td>Anticoagulant</td><td>309</td><td>99%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor INR</td></tr>
-                        <tr><td>Apixaban</td><td>DOAC</td><td>460</td><td>87%</td><td>0.3</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID if ESRD</td></tr>
-                        <tr><td>Dabigatran</td><td>DOAC</td><td>472</td><td>35%</td><td>0.7</td><td class="moderate">M</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>CONTRAINDICATED</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Neuro Section -->
-        <div class="drug-section" id="neuro">
-            <h3 class="section-title">🧠 Neurologic & Psychiatric Medications</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Drug</th>
-                            <th>Class</th>
-                            <th>MW</th>
-                            <th>PB</th>
-                            <th>Vd</th>
-                            <th>HD</th>
-                            <th>HF-HD</th>
-                            <th>CRRT</th>
-                            <th>Dosing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Gabapentin</td><td>Anticonvulsant</td><td>172</td><td>0%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>100-300mg post-HD daily</td></tr>
-                        <tr><td>Pregabalin</td><td>Anticonvulsant</td><td>160</td><td>0%</td><td>0.5</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>25-75mg post-HD daily</td></tr>
-                        <tr><td>Levetiracetam</td><td>Anticonvulsant</td><td>172</td><td>0%</td><td>0.7</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>250-500mg post-HD daily</td></tr>
-                        <tr><td>Valproic Acid</td><td>Anticonvulsant</td><td>145</td><td>90%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor levels</td></tr>
-                        <tr><td>Phenytoin</td><td>Anticonvulsant</td><td>253</td><td>90%</td><td>0.7</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor free levels</td></tr>
-                        <tr><td>Sertraline</td><td>SSRI</td><td>325</td><td>98%</td><td>20</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Fluoxetine</td><td>SSRI</td><td>310</td><td>95%</td><td>45</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Venlafaxine</td><td>SNRI</td><td>278</td><td>30%</td><td>7.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>37.5-75mg daily</td></tr>
-                        <tr><td>Quetiapine</td><td>Antipsychotic</td><td>384</td><td>83%</td><td>10</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Lithium</td><td>Mood Stabilizer</td><td>7</td><td>0%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>AVOID in ESRD</td></tr>
-                        <tr><td>Lorazepam</td><td>Benzodiazepine</td><td>322</td><td>85%</td><td>1.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Endocrine Section -->
-        <div class="drug-section" id="endo">
-            <h3 class="section-title">🩺 Endocrine & Diabetes Medications</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Drug</th>
-                            <th>Class</th>
-                            <th>MW</th>
-                            <th>PB</th>
-                            <th>Vd</th>
-                            <th>HD</th>
-                            <th>HF-HD</th>
-                            <th>CRRT</th>
-                            <th>Dosing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Metformin</td><td>Biguanide</td><td>130</td><td>0%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>CONTRAINDICATED</td></tr>
-                        <tr><td>Glipizide</td><td>Sulfonylurea</td><td>446</td><td>99%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                        <tr><td>Sitagliptin</td><td>DPP-4 Inhibitor</td><td>408</td><td>38%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>25mg daily</td></tr>
-                        <tr><td>Linagliptin</td><td>DPP-4 Inhibitor</td><td>473</td><td>99%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>5mg daily</td></tr>
-                        <tr><td>Empagliflozin</td><td>SGLT2 Inhibitor</td><td>451</td><td>68%</td><td>2.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>NOT rec if eGFR<20</td></tr>
-                        <tr><td>Insulin</td><td>Hormone</td><td>5808</td><td>0%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor glucose</td></tr>
-                        <tr><td>Levothyroxine</td><td>Thyroid</td><td>777</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>Monitor TSH</td></tr>
-                        <tr><td>Prednisone</td><td>Corticosteroid</td><td>360</td><td>70%</td><td>1.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Analgesics Section -->
-        <div class="drug-section" id="analgesics">
-            <h3 class="section-title">💊 Analgesics</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Drug</th>
-                            <th>Class</th>
-                            <th>MW</th>
-                            <th>PB</th>
-                            <th>Vd</th>
-                            <th>HD</th>
-                            <th>HF-HD</th>
-                            <th>CRRT</th>
-                            <th>Dosing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Acetaminophen</td><td>Analgesic</td><td>152</td><td>20%</td><td>1.0</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td class="dialyzable">Y</td><td>650mg q6h PRN</td></tr>
-                        <tr><td>Ibuprofen</td><td>NSAID</td><td>206</td><td>99%</td><td>0.1</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID</td></tr>
-                        <tr><td>Naproxen</td><td>NSAID</td><td>231</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>AVOID</td></tr>
-                        <tr><td>Ketorolac</td><td>NSAID</td><td>256</td><td>99%</td><td>0.2</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>CONTRAINDICATED</td></tr>
-                        <tr><td>Tramadol</td><td>Opioid</td><td>264</td><td>20%</td><td>3.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>50mg post-HD q12h</td></tr>
-                        <tr><td>Morphine</td><td>Opioid</td><td>286</td><td>35%</td><td>3.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>AVOID</td></tr>
-                        <tr><td>Hydromorphone</td><td>Opioid</td><td>286</td><td>30%</td><td>2.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>1-2mg post-HD q12h</td></tr>
-                        <tr><td>Oxycodone</td><td>Opioid</td><td>316</td><td>45%</td><td>2.0</td><td class="moderate">M</td><td class="moderate">M</td><td class="moderate">M</td><td>2.5-5mg post-HD q12h</td></tr>
-                        <tr><td>Fentanyl</td><td>Opioid</td><td>337</td><td>80%</td><td>4.0</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td class="not-dialyzable">N</td><td>No supplement</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- New Drugs Section -->
-        <div class="drug-section" id="new">
-            <h3 class="section-title">🆕 New Drugs (2020-2026)</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Drug</th>
-                            <th>Class</th>
-                            <th>Year</th>
-                            <th>MW</th>
-                            <th>Dialyzable</th>
-                            <th>Key Point</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Semaglutide</td><td>GLP-1 Agonist</td><td>2021</td><td>4114</td><td class="not-dialyzable">N</td><td>Large molecule</td></tr>
-                        <tr><td>Tirzepatide</td><td>GIP/GLP-1 Agonist</td><td>2022</td><td>4806</td><td class="not-dialyzable">N</td><td>Large molecule</td></tr>
-                        <tr><td>Inclisiran</td><td>PCSK9 siRNA</td><td>2021</td><td>16000</td><td class="not-dialyzable">N</td><td>q6months dosing</td></tr>
-                        <tr><td>Evolocumab</td><td>PCSK9 Inhibitor</td><td>2020</td><td>146000</td><td class="not-dialyzable">N</td><td>Large molecule</td></tr>
-                        <tr><td>Ceftolozane</td><td>Cephalosporin 5th</td><td>2020</td><td>606</td><td class="dialyzable">Y</td><td>1.5g post-HD</td></tr>
-                        <tr><td>Ceftazidime-Avibactam</td><td>Cephalosporin+BLI</td><td>2020</td><td>702</td><td class="dialyzable">Y</td><td>2.5g post-HD</td></tr>
-                        <tr><td>Meropenem-Vaborbactam</td><td>Carbapenem+BLI</td><td>2020</td><td>598</td><td class="dialyzable">Y</td><td>4g post-HD</td></tr>
-                        <tr><td>Plazomicin</td><td>Aminoglycoside</td><td>2020</td><td>592</td><td class="dialyzable">Y</td><td>Monitor levels</td></tr>
-                        <tr><td>Delafloxacin</td><td>Fluoroquinolone</td><td>2020</td><td>478</td><td class="not-dialyzable">N</td><td>Hepatic</td></tr>
-                        <tr><td>Lasmiditan</td><td>5-HT1F Agonist</td><td>2020</td><td>344</td><td class="not-dialyzable">N</td><td>Migraine</td></tr>
-                        <tr><td>Rimegepant</td><td>CGRP Antagonist</td><td>2021</td><td>517</td><td class="not-dialyzable">N</td><td>75mg q48h</td></tr>
-                        <tr><td>Atogepant</td><td>CGRP Antagonist</td><td>2022</td><td>517</td><td class="not-dialyzable">N</td><td>10-60mg daily</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- Sections (auto-generated) -->
+        <div id="sections"></div>
 
         <!-- Download Button -->
         <div style="text-align: center;">
@@ -394,65 +176,343 @@
     </div>
 
     <script>
-        function showSection(sectionId) {
+        const DRUGS = [
+            { c:'antibiotics', n:'Amikacin', cl:'Aminoglycoside', mw:'586', pb:'0%', vd:'0.25', hd:'Y', hf:'Y', crrt:'Y', dose:'Give AFTER HD', nw:false },
+            { c:'antibiotics', n:'Gentamicin', cl:'Aminoglycoside', mw:'478', pb:'0%', vd:'0.25', hd:'Y', hf:'Y', crrt:'Y', dose:'Give AFTER HD', nw:false },
+            { c:'antibiotics', n:'Tobramycin', cl:'Aminoglycoside', mw:'468', pb:'0%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'Give AFTER HD', nw:false },
+            { c:'antibiotics', n:'Plazomicin', cl:'Aminoglycoside', mw:'592', pb:'0%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'15 mg/kg post-HD', nw:true },
+            { c:'antibiotics', n:'Vancomycin', cl:'Glycopeptide', mw:'1449', pb:'50%', vd:'0.7', hd:'M', hf:'Y', crrt:'Y', dose:'15-20 mg/kg post-HD', nw:false },
+            { c:'antibiotics', n:'Teicoplanin', cl:'Glycopeptide', mw:'1880', pb:'90%', vd:'1.1', hd:'N', hf:'M', crrt:'M', dose:'No supplement - monitor levels', nw:false },
+            { c:'antibiotics', n:'Dalbavancin', cl:'Lipoglycopeptide', mw:'1817', pb:'93%', vd:'0.5', hd:'N', hf:'N', crrt:'N', dose:'No supplement - once weekly', nw:false },
+            { c:'antibiotics', n:'Oritavancin', cl:'Lipoglycopeptide', mw:'1793', pb:'85%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Daptomycin', cl:'Lipopeptide', mw:'1620', pb:'90%', vd:'0.1', hd:'N', hf:'M', crrt:'M', dose:'6-8 mg/kg post-HD q48h', nw:false },
+            { c:'antibiotics', n:'Linezolid', cl:'Oxazolidinone', mw:'337', pb:'31%', vd:'0.6', hd:'Y', hf:'Y', crrt:'Y', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Tedizolid', cl:'Oxazolidinone', mw:'369', pb:'70-90%', vd:'1.5', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Cefepime', cl:'Cephalosporin 4th', mw:'571', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'1-2g post-HD', nw:false },
+            { c:'antibiotics', n:'Ceftazidime', cl:'Cephalosporin 3rd', mw:'547', pb:'10%', vd:'0.2', hd:'Y', hf:'Y', crrt:'Y', dose:'1g post-HD', nw:false },
+            { c:'antibiotics', n:'Ceftriaxone', cl:'Cephalosporin 3rd', mw:'555', pb:'90%', vd:'0.15', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Cefazolin', cl:'Cephalosporin 1st', mw:'455', pb:'80%', vd:'0.2', hd:'Y', hf:'Y', crrt:'Y', dose:'2g post-HD', nw:false },
+            { c:'antibiotics', n:'Cefuroxime', cl:'Cephalosporin 2nd', mw:'424', pb:'50%', vd:'0.2', hd:'Y', hf:'Y', crrt:'Y', dose:'1g post-HD', nw:false },
+            { c:'antibiotics', n:'Ceftolozane', cl:'Cephalosporin 5th', mw:'606', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'1.5g post-HD', nw:true },
+            { c:'antibiotics', n:'Ceftazidime-Avibactam', cl:'Cephalosporin+BLI', mw:'702', pb:'10%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'2.5g post-HD', nw:true },
+            { c:'antibiotics', n:'Cefiderocol', cl:'Siderophore Ceph', mw:'754', pb:'40%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'2g post-HD', nw:true },
+            { c:'antibiotics', n:'Ceftaroline', cl:'Cephalosporin 5th', mw:'604', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'400mg post-HD', nw:false },
+            { c:'antibiotics', n:'Meropenem', cl:'Carbapenem', mw:'438', pb:'2%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'1g post-HD', nw:false },
+            { c:'antibiotics', n:'Imipenem-Cilastatin', cl:'Carbapenem', mw:'523', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'500mg post-HD', nw:false },
+            { c:'antibiotics', n:'Ertapenem', cl:'Carbapenem', mw:'497', pb:'90%', vd:'0.3', hd:'Y', hf:'M', crrt:'M', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Meropenem-Vaborbactam', cl:'Carbapenem+BLI', mw:'598', pb:'30%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'4g post-HD', nw:true },
+            { c:'antibiotics', n:'Piperacillin-Tazobactam', cl:'Penicillin+BLI', mw:'517', pb:'30%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'4.5g post-HD', nw:false },
+            { c:'antibiotics', n:'Ampicillin', cl:'Penicillin', mw:'349', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'1-2g post-HD', nw:false },
+            { c:'antibiotics', n:'Ampicillin-Sulbactam', cl:'Penicillin+BLI', mw:'393', pb:'30%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'3g post-HD', nw:false },
+            { c:'antibiotics', n:'Amoxicillin', cl:'Penicillin', mw:'365', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'500mg post-HD', nw:false },
+            { c:'antibiotics', n:'Amoxicillin-Clavulanate', cl:'Penicillin+BLI', mw:'419', pb:'30%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'875mg post-HD', nw:false },
+            { c:'antibiotics', n:'Nafcillin', cl:'Penicillinase-resistant', mw:'436', pb:'90%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Oxacillin', cl:'Penicillinase-resistant', mw:'401', pb:'92%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Ciprofloxacin', cl:'Fluoroquinolone', mw:'332', pb:'30%', vd:'2.5', hd:'Y', hf:'M', crrt:'M', dose:'500mg post-HD', nw:false },
+            { c:'antibiotics', n:'Levofloxacin', cl:'Fluoroquinolone', mw:'362', pb:'30%', vd:'1.0', hd:'N', hf:'Y', crrt:'Y', dose:'500mg post-HD', nw:false },
+            { c:'antibiotics', n:'Moxifloxacin', cl:'Fluoroquinolone', mw:'402', pb:'45%', vd:'2.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Delafloxacin', cl:'Fluoroquinolone', mw:'478', pb:'84%', vd:'1.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:true },
+            { c:'antibiotics', n:'Azithromycin', cl:'Macrolide', mw:'749', pb:'50%', vd:'30', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Clarithromycin', cl:'Macrolide', mw:'748', pb:'70%', vd:'4', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Erythromycin', cl:'Macrolide', mw:'734', pb:'70%', vd:'0.6', hd:'Y', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Doxycycline', cl:'Tetracycline', mw:'445', pb:'90%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Minocycline', cl:'Tetracycline', mw:'457', pb:'75%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Tigecycline', cl:'Glycylcycline', mw:'586', pb:'70%', vd:'7', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Fluconazole', cl:'Azole', mw:'307', pb:'12%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'400mg post-HD daily', nw:false },
+            { c:'antibiotics', n:'Voriconazole', cl:'Azole', mw:'349', pb:'58%', vd:'4.6', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Posaconazole', cl:'Azole', mw:'701', pb:'99%', vd:'8', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Isavuconazole', cl:'Azole', mw:'437', pb:'99%', vd:'6', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Micafungin', cl:'Echinocandin', mw:'1270', pb:'99%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Caspofungin', cl:'Echinocandin', mw:'1213', pb:'97%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Anidulafungin', cl:'Echinocandin', mw:'1140', pb:'99%', vd:'0.6', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Amphotericin B', cl:'Polyene', mw:'924', pb:'90%', vd:'4', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Terbinafine', cl:'Allylamine', mw:'291', pb:'99%', vd:'6', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Acyclovir', cl:'Antiviral', mw:'225', pb:'15%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'5 mg/kg post-HD daily', nw:false },
+            { c:'antibiotics', n:'Valacyclovir', cl:'Antiviral (prodrug)', mw:'324', pb:'15%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'500mg post-HD', nw:false },
+            { c:'antibiotics', n:'Ganciclovir', cl:'Antiviral', mw:'256', pb:'2%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'2.5 mg/kg post-HD 3x/wk', nw:false },
+            { c:'antibiotics', n:'Valganciclovir', cl:'Antiviral (prodrug)', mw:'355', pb:'2%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'450mg 3x/wk post-HD', nw:false },
+            { c:'antibiotics', n:'Famciclovir', cl:'Antiviral (prodrug)', mw:'321', pb:'20%', vd:'1.1', hd:'Y', hf:'Y', crrt:'Y', dose:'250mg post-HD', nw:false },
+            { c:'antibiotics', n:'Oseltamivir', cl:'Neuraminidase Inhib', mw:'312', pb:'40%', vd:'0.4', hd:'Y', hf:'Y', crrt:'Y', dose:'75mg post-HD', nw:false },
+            { c:'antibiotics', n:'Remdesivir', cl:'Antiviral', mw:'602', pb:'90%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:true },
+            { c:'antibiotics', n:'Foscarnet', cl:'Antiviral', mw:'192', pb:'15%', vd:'0.5', hd:'Y', hf:'Y', crrt:'Y', dose:'60-90 mg/kg post-HD', nw:false },
+            { c:'antibiotics', n:'Letermovir', cl:'Antiviral', mw:'572', pb:'99%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:true },
+            { c:'antibiotics', n:'Rifampin', cl:'Rifamycin', mw:'823', pb:'80%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Isoniazid', cl:'Isonicotinic acid', mw:'137', pb:'10%', vd:'0.6', hd:'N', hf:'Y', crrt:'Y', dose:'300mg post-HD', nw:false },
+            { c:'antibiotics', n:'Ethambutol', cl:'Antimycobacterial', mw:'204', pb:'20%', vd:'1.6', hd:'Y', hf:'Y', crrt:'Y', dose:'800mg 3x/wk', nw:false },
+            { c:'antibiotics', n:'Pyrazinamide', cl:'Antimycobacterial', mw:'123', pb:'10%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'25 mg/kg 3x/wk', nw:false },
+            { c:'antibiotics', n:'Metronidazole', cl:'Nitroimidazole', mw:'171', pb:'20%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'500mg post-HD', nw:false },
+            { c:'antibiotics', n:'Clindamycin', cl:'Lincosamide', mw:'425', pb:'90%', vd:'1.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'antibiotics', n:'Trimethoprim-Sulfamethoxazole', cl:'Sulfonamide comb', mw:'290', pb:'50%', vd:'1.3', hd:'Y', hf:'Y', crrt:'Y', dose:'5-10 mg/kg post-HD', nw:false },
+            { c:'antibiotics', n:'Nitrofurantoin', cl:'Nitrofuran', mw:'238', pb:'60%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'CONTRAINDICATED - avoid', nw:false },
+            { c:'antibiotics', n:'Colistimethate', cl:'Polymyxin', mw:'1300', pb:'50%', vd:'0.2', hd:'M', hf:'M', crrt:'M', dose:'2-3 mg/kg post-HD', nw:false },
+            { c:'cardio', n:'Lisinopril', cl:'ACE Inhibitor', mw:'406', pb:'0%', vd:'1.3', hd:'Y', hf:'Y', crrt:'Y', dose:'5-10mg post-HD daily', nw:false },
+            { c:'cardio', n:'Enalapril', cl:'ACE Inhibitor', mw:'377', pb:'50%', vd:'1.0', hd:'Y', hf:'Y', crrt:'Y', dose:'5mg post-HD daily', nw:false },
+            { c:'cardio', n:'Captopril', cl:'ACE Inhibitor', mw:'217', pb:'30%', vd:'0.2', hd:'Y', hf:'Y', crrt:'Y', dose:'12.5-25mg post-HD', nw:false },
+            { c:'cardio', n:'Fosinopril', cl:'ACE Inhibitor', mw:'564', pb:'95%', vd:'2.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Ramipril', cl:'ACE Inhibitor', mw:'417', pb:'70%', vd:'0.9', hd:'N', hf:'M', crrt:'M', dose:'No routine supplement', nw:false },
+            { c:'cardio', n:'Losartan', cl:'ARB', mw:'423', pb:'98%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Valsartan', cl:'ARB', mw:'436', pb:'95%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Candesartan', cl:'ARB', mw:'441', pb:'99%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Irbesartan', cl:'ARB', mw:'429', pb:'95%', vd:'0.9', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Telmisartan', cl:'ARB', mw:'515', pb:'99%', vd:'7', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Amlodipine', cl:'CCB', mw:'409', pb:'93%', vd:'21', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Nifedipine', cl:'CCB', mw:'346', pb:'95%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Diltiazem', cl:'CCB', mw:'415', pb:'80%', vd:'5.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Verapamil', cl:'CCB', mw:'455', pb:'90%', vd:'4.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Metoprolol', cl:'Beta-Blocker', mw:'266', pb:'12%', vd:'5.0', hd:'Y', hf:'M', crrt:'M', dose:'Titrate to HR', nw:false },
+            { c:'cardio', n:'Atenolol', cl:'Beta-Blocker', mw:'267', pb:'5%', vd:'1.0', hd:'Y', hf:'Y', crrt:'Y', dose:'25-50mg post-HD daily', nw:false },
+            { c:'cardio', n:'Carvedilol', cl:'Beta-Blocker', mw:'407', pb:'98%', vd:'2.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Bisoprolol', cl:'Beta-Blocker', mw:'326', pb:'30%', vd:'3.0', hd:'M', hf:'M', crrt:'M', dose:'No routine supplement', nw:false },
+            { c:'cardio', n:'Propranolol', cl:'Beta-Blocker', mw:'259', pb:'90%', vd:'4.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Sotalol', cl:'Antiarrhythmic (BB)', mw:'273', pb:'0%', vd:'2.0', hd:'Y', hf:'Y', crrt:'Y', dose:'40-80mg post-HD', nw:false },
+            { c:'cardio', n:'Labetalol', cl:'Beta-Blocker', mw:'328', pb:'50%', vd:'6.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Esmolol', cl:'Beta-Blocker', mw:'267', pb:'55%', vd:'0.4', hd:'Y', hf:'Y', crrt:'Y', dose:'Continuous infusion', nw:false },
+            { c:'cardio', n:'Furosemide', cl:'Loop Diuretic', mw:'331', pb:'99%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'Give IV during HD', nw:false },
+            { c:'cardio', n:'Bumetanide', cl:'Loop Diuretic', mw:'364', pb:'95%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'Give IV during HD', nw:false },
+            { c:'cardio', n:'Torsemide', cl:'Loop Diuretic', mw:'349', pb:'99%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'Give IV during HD', nw:false },
+            { c:'cardio', n:'Hydrochlorothiazide', cl:'Thiazide', mw:'298', pb:'70%', vd:'2.0', hd:'N', hf:'N', crrt:'N', dose:'Minimal effect in ESRD', nw:false },
+            { c:'cardio', n:'Spironolactone', cl:'K-Sparing', mw:'417', pb:'90%', vd:'1.5', hd:'N', hf:'N', crrt:'N', dose:'AVOID (hyperkalemia)', nw:false },
+            { c:'cardio', n:'Eplerenone', cl:'K-Sparing', mw:'415', pb:'50%', vd:'0.6', hd:'N', hf:'N', crrt:'N', dose:'AVOID (hyperkalemia)', nw:false },
+            { c:'cardio', n:'Metolazone', cl:'Thiazide-like', mw:'366', pb:'95%', vd:'2.0', hd:'N', hf:'N', crrt:'N', dose:'Use with loop diuretic', nw:false },
+            { c:'cardio', n:'Digoxin', cl:'Cardiac Glycoside', mw:'781', pb:'25%', vd:'7.0', hd:'N', hf:'N', crrt:'N', dose:'Monitor levels', nw:false },
+            { c:'cardio', n:'Amiodarone', cl:'Antiarrhythmic', mw:'646', pb:'97%', vd:'66', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Lidocaine', cl:'Antiarrhythmic', mw:'234', pb:'70%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Procainamide', cl:'Antiarrhythmic', mw:'272', pb:'15%', vd:'2.0', hd:'Y', hf:'Y', crrt:'Y', dose:'Give AFTER HD', nw:false },
+            { c:'cardio', n:'Flecainide', cl:'Antiarrhythmic', mw:'414', pb:'40%', vd:'6.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Mexiletine', cl:'Antiarrhythmic', mw:'179', pb:'60%', vd:'6.0', hd:'Y', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Warfarin', cl:'Anticoagulant', mw:'309', pb:'99%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Monitor INR', nw:false },
+            { c:'cardio', n:'Apixaban', cl:'DOAC', mw:'460', pb:'87%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'AVOID if ESRD', nw:false },
+            { c:'cardio', n:'Rivaroxaban', cl:'DOAC', mw:'436', pb:'95%', vd:'0.5', hd:'N', hf:'N', crrt:'N', dose:'AVOID if ESRD', nw:false },
+            { c:'cardio', n:'Dabigatran', cl:'DOAC', mw:'472', pb:'35%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'CONTRAINDICATED', nw:false },
+            { c:'cardio', n:'Edoxaban', cl:'DOAC', mw:'548', pb:'55%', vd:'1.4', hd:'N', hf:'N', crrt:'N', dose:'AVOID if ESRD', nw:false },
+            { c:'cardio', n:'Heparin', cl:'Anticoagulant', mw:'15000', pb:'30%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Monitor aPTT', nw:false },
+            { c:'cardio', n:'Enoxaparin', cl:'LMWH', mw:'4500', pb:'90%', vd:'0.1', hd:'N', hf:'M', crrt:'M', dose:'1 mg/kg daily', nw:false },
+            { c:'cardio', n:'Clopidogrel', cl:'Antiplatelet', mw:'322', pb:'98%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Aspirin', cl:'Antiplatelet', mw:'180', pb:'50%', vd:'0.2', hd:'Y', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Hydralazine', cl:'Vasodilator', mw:'196', pb:'85%', vd:'1.5', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Nitroglycerin', cl:'Nitrate', mw:'227', pb:'60%', vd:'3.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'cardio', n:'Statins (Atorvastatin)', cl:'Statin', mw:'559', pb:'98%', vd:'5.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Gabapentin', cl:'Anticonvulsant', mw:'171', pb:'3%', vd:'0.8', hd:'Y', hf:'Y', crrt:'Y', dose:'300mg post-HD', nw:false },
+            { c:'neuro', n:'Pregabalin', cl:'Anticonvulsant', mw:'159', pb:'0%', vd:'0.5', hd:'Y', hf:'Y', crrt:'Y', dose:'50-75mg post-HD', nw:false },
+            { c:'neuro', n:'Levetiracetam', cl:'Anticonvulsant', mw:'170', pb:'0%', vd:'0.5', hd:'Y', hf:'Y', crrt:'Y', dose:'500mg post-HD', nw:false },
+            { c:'neuro', n:'Phenytoin', cl:'Anticonvulsant', mw:'252', pb:'90%', vd:'0.7', hd:'N', hf:'N', crrt:'N', dose:'Monitor levels', nw:false },
+            { c:'neuro', n:'Valproic Acid', cl:'Anticonvulsant', mw:'144', pb:'90%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'Monitor levels', nw:false },
+            { c:'neuro', n:'Carbamazepine', cl:'Anticonvulsant', mw:'236', pb:'75%', vd:'1.4', hd:'N', hf:'N', crrt:'N', dose:'Monitor levels', nw:false },
+            { c:'neuro', n:'Lamotrigine', cl:'Anticonvulsant', mw:'256', pb:'55%', vd:'1.2', hd:'M', hf:'M', crrt:'M', dose:'25mg alternate days', nw:false },
+            { c:'neuro', n:'Topiramate', cl:'Anticonvulsant', mw:'339', pb:'15%', vd:'0.7', hd:'Y', hf:'Y', crrt:'Y', dose:'50-100mg post-HD', nw:false },
+            { c:'neuro', n:'Oxcarbazepine', cl:'Anticonvulsant', mw:'252', pb:'40%', vd:'0.5', hd:'M', hf:'M', crrt:'M', dose:'300mg post-HD', nw:false },
+            { c:'neuro', n:'Lacosamide', cl:'Anticonvulsant', mw:'254', pb:'15%', vd:'0.6', hd:'Y', hf:'Y', crrt:'Y', dose:'200mg post-HD', nw:true },
+            { c:'neuro', n:'Brivaracetam', cl:'Anticonvulsant', mw:'212', pb:'20%', vd:'0.5', hd:'M', hf:'M', crrt:'M', dose:'No routine supplement', nw:true },
+            { c:'neuro', n:'Perampanel', cl:'Anticonvulsant', mw:'349', pb:'95%', vd:'1.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:true },
+            { c:'neuro', n:'Fluoxetine', cl:'SSRI', mw:'309', pb:'95%', vd:'25', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Sertraline', cl:'SSRI', mw:'306', pb:'98%', vd:'25', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Citalopram', cl:'SSRI', mw:'324', pb:'80%', vd:'13', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Escitalopram', cl:'SSRI', mw:'324', pb:'56%', vd:'12', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Venlafaxine', cl:'SNRI', mw:'277', pb:'27%', vd:'7.5', hd:'M', hf:'M', crrt:'M', dose:'Reduce dose 50%', nw:false },
+            { c:'neuro', n:'Duloxetine', cl:'SNRI', mw:'298', pb:'90%', vd:'4.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Bupropion', cl:'NDRI', mw:'240', pb:'80%', vd:'20', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Mirtazapine', cl:'Tetracyclic', mw:'265', pb:'85%', vd:'5.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Amitriptyline', cl:'TCA', mw:'277', pb:'95%', vd:'10', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Nortriptyline', cl:'TCA', mw:'263', pb:'92%', vd:'15', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Quetiapine', cl:'Atypical Antipsychotic', mw:'384', pb:'83%', vd:'10', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Olanzapine', cl:'Atypical Antipsychotic', mw:'312', pb:'93%', vd:'20', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Risperidone', cl:'Atypical Antipsychotic', mw:'410', pb:'90%', vd:'1.5', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Aripiprazole', cl:'Atypical Antipsychotic', mw:'448', pb:'99%', vd:'4.9', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Haloperidol', cl:'Typical Antipsychotic', mw:'376', pb:'90%', vd:'20', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Clozapine', cl:'Atypical Antipsychotic', mw:'327', pb:'95%', vd:'4.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Lithium', cl:'Mood Stabilizer', mw:'74', pb:'0%', vd:'0.8', hd:'Y', hf:'Y', crrt:'Y', dose:'CONTRAINDICATED - monitor levels', nw:false },
+            { c:'neuro', n:'Lamotrigine (mood)', cl:'Mood Stabilizer', mw:'256', pb:'55%', vd:'1.2', hd:'M', hf:'M', crrt:'M', dose:'25mg alternate days', nw:false },
+            { c:'neuro', n:'Lorazepam', cl:'Benzodiazepine', mw:'321', pb:'90%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Diazepam', cl:'Benzodiazepine', mw:'285', pb:'98%', vd:'1.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Clonazepam', cl:'Benzodiazepine', mw:'316', pb:'85%', vd:'3.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Midazolam', cl:'Benzodiazepine', mw:'326', pb:'95%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Zolpidem', cl:'Hypnotic', mw:'307', pb:'92%', vd:'0.5', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Trazodone', cl:'Antidepressant/hypnotic', mw:'372', pb:'90%', vd:'0.7', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Donepezil', cl:'Cholinesterase Inhib', mw:'380', pb:'96%', vd:'12', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'neuro', n:'Memantine', cl:'NMDA Antagonist', mw:'179', pb:'45%', vd:'10', hd:'M', hf:'M', crrt:'M', dose:'5mg post-HD', nw:false },
+            { c:'neuro', n:'Baclofen', cl:'Muscle Relaxant', mw:'214', pb:'30%', vd:'0.8', hd:'Y', hf:'Y', crrt:'Y', dose:'CONTRAINDICATED - toxicity', nw:false },
+            { c:'neuro', n:'Carisoprodol', cl:'Muscle Relaxant', mw:'260', pb:'60%', vd:'2.5', hd:'Y', hf:'M', crrt:'M', dose:'No routine supplement', nw:false },
+            { c:'endo', n:'Metformin', cl:'Biguanide', mw:'129', pb:'0%', vd:'4.0', hd:'Y', hf:'N', crrt:'N', dose:'CONTRAINDICATED in ESRD', nw:false },
+            { c:'endo', n:'Insulin (all)', cl:'Insulin', mw:'6000', pb:'10%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Individualize dosing', nw:false },
+            { c:'endo', n:'Glipizide', cl:'Sulfonylurea', mw:'445', pb:'98%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Glyburide', cl:'Sulfonylurea', mw:'494', pb:'99%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'endo', n:'Glimepiride', cl:'Sulfonylurea', mw:'491', pb:'99%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'endo', n:'Sitagliptin', cl:'DPP-4 Inhibitor', mw:'407', pb:'38%', vd:'2.0', hd:'Y', hf:'Y', crrt:'Y', dose:'25mg post-HD', nw:false },
+            { c:'endo', n:'Linagliptin', cl:'DPP-4 Inhibitor', mw:'473', pb:'70%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Saxagliptin', cl:'DPP-4 Inhibitor', mw:'316', pb:'60%', vd:'0.8', hd:'M', hf:'M', crrt:'M', dose:'2.5mg daily', nw:false },
+            { c:'endo', n:'Empagliflozin', cl:'SGLT2 Inhibitor', mw:'450', pb:'86%', vd:'0.4', hd:'N', hf:'N', crrt:'N', dose:'Not for dialysis', nw:false },
+            { c:'endo', n:'Dapagliflozin', cl:'SGLT2 Inhibitor', mw:'409', pb:'91%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'Not for dialysis', nw:false },
+            { c:'endo', n:'Canagliflozin', cl:'SGLT2 Inhibitor', mw:'444', pb:'99%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'Not for dialysis', nw:false },
+            { c:'endo', n:'Repaglinide', cl:'Meglitinide', mw:'453', pb:'98%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Pioglitazone', cl:'TZD', mw:'357', pb:'99%', vd:'0.6', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Levothyroxine', cl:'Thyroid Hormone', mw:'777', pb:'99%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'Monitor TSH', nw:false },
+            { c:'endo', n:'Liothyronine (T3)', cl:'Thyroid Hormone', mw:'651', pb:'99%', vd:'0.4', hd:'N', hf:'N', crrt:'N', dose:'Monitor TSH', nw:false },
+            { c:'endo', n:'Prednisone', cl:'Corticosteroid', mw:'358', pb:'70%', vd:'0.6', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Methylprednisolone', cl:'Corticosteroid', mw:'374', pb:'77%', vd:'0.7', hd:'Y', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Dexamethasone', cl:'Corticosteroid', mw:'392', pb:'70%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Hydrocortisone', cl:'Corticosteroid', mw:'362', pb:'90%', vd:'0.4', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Cinacalcet', cl:'Calcimimetic', mw:'358', pb:'97%', vd:'1000', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'endo', n:'Sevelamer', cl:'Phosphate Binder', mw:'3500', pb:'0%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'GI - not absorbed', nw:false },
+            { c:'endo', n:'Calcitriol', cl:'Vitamin D Analog', mw:'417', pb:'99%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Monitor calcium', nw:false },
+            { c:'endo', n:'Erythropoietin', cl:'ESA', mw:'34000', pb:'0%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Individualize dosing', nw:false },
+            { c:'analgesics', n:'Ibuprofen', cl:'NSAID', mw:'206', pb:'99%', vd:'0.15', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'analgesics', n:'Naproxen', cl:'NSAID', mw:'230', pb:'99%', vd:'0.15', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'analgesics', n:'Ketorolac', cl:'NSAID', mw:'255', pb:'99%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'analgesics', n:'Celecoxib', cl:'COX-2 Inhibitor', mw:'381', pb:'97%', vd:'1.0', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'analgesics', n:'Indomethacin', cl:'NSAID', mw:'358', pb:'90%', vd:'0.3', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'analgesics', n:'Diclofenac', cl:'NSAID', mw:'296', pb:'99%', vd:'0.2', hd:'N', hf:'N', crrt:'N', dose:'AVOID in ESRD', nw:false },
+            { c:'analgesics', n:'Acetaminophen', cl:'Analgesic', mw:'151', pb:'25%', vd:'1.0', hd:'Y', hf:'M', crrt:'M', dose:'650mg q6h', nw:false },
+            { c:'analgesics', n:'Morphine', cl:'Opioid', mw:'285', pb:'35%', vd:'3.0', hd:'M', hf:'M', crrt:'M', dose:'AVOID - metabolite toxicity', nw:false },
+            { c:'analgesics', n:'Hydromorphone', cl:'Opioid', mw:'285', pb:'20%', vd:'4.0', hd:'M', hf:'M', crrt:'M', dose:'Reduce dose 50%', nw:false },
+            { c:'analgesics', n:'Oxycodone', cl:'Opioid', mw:'316', pb:'45%', vd:'2.0', hd:'M', hf:'M', crrt:'M', dose:'2.5-5mg post-HD q12h', nw:false },
+            { c:'analgesics', n:'Fentanyl', cl:'Opioid', mw:'337', pb:'80%', vd:'4.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'analgesics', n:'Methadone', cl:'Opioid', mw:'309', pb:'90%', vd:'5.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'analgesics', n:'Tramadol', cl:'Opioid', mw:'263', pb:'20%', vd:'3.0', hd:'M', hf:'M', crrt:'M', dose:'50mg post-HD', nw:false },
+            { c:'analgesics', n:'Codeine', cl:'Opioid', mw:'299', pb:'20%', vd:'4.0', hd:'N', hf:'M', crrt:'M', dose:'AVOID - metabolite', nw:false },
+            { c:'analgesics', n:'Buprenorphine', cl:'Opioid', mw:'467', pb:'96%', vd:'2.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'analgesics', n:'Meperidine', cl:'Opioid', mw:'247', pb:'65%', vd:'4.0', hd:'N', hf:'M', crrt:'M', dose:'AVOID - normeperidine', nw:false },
+            { c:'analgesics', n:'Gabapentin (neuropathic)', cl:'Anticonvulsant', mw:'171', pb:'3%', vd:'0.8', hd:'Y', hf:'Y', crrt:'Y', dose:'300mg post-HD', nw:false },
+            { c:'analgesics', n:'Pregabalin (neuropathic)', cl:'Anticonvulsant', mw:'159', pb:'0%', vd:'0.5', hd:'Y', hf:'Y', crrt:'Y', dose:'50-75mg post-HD', nw:false },
+            { c:'analgesics', n:'Duloxetine (neuropathic)', cl:'SNRI', mw:'298', pb:'90%', vd:'4.0', hd:'N', hf:'N', crrt:'N', dose:'No supplement', nw:false },
+            { c:'new', n:'Semaglutide', cl:'GLP-1 Agonist', mw:'4114', pb:'99%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+            { c:'new', n:'Tirzepatide', cl:'GIP/GLP-1 Agonist', mw:'4806', pb:'99%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+            { c:'new', n:'Inclisiran', cl:'PCSK9 siRNA', mw:'16000', pb:'90%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'q6months dosing', nw:true },
+            { c:'new', n:'Evolocumab', cl:'PCSK9 Inhibitor', mw:'146000', pb:'90%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+            { c:'new', n:'Alirocumab', cl:'PCSK9 Inhibitor', mw:'146000', pb:'90%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+            { c:'new', n:'Ceftolozane', cl:'Cephalosporin 5th', mw:'606', pb:'20%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'1.5g post-HD', nw:true },
+            { c:'new', n:'Ceftazidime-Avibactam', cl:'Cephalosporin+BLI', mw:'702', pb:'10%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'2.5g post-HD', nw:true },
+            { c:'new', n:'Meropenem-Vaborbactam', cl:'Carbapenem+BLI', mw:'598', pb:'30%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'4g post-HD', nw:true },
+            { c:'new', n:'Plazomicin', cl:'Aminoglycoside', mw:'592', pb:'0%', vd:'0.3', hd:'Y', hf:'Y', crrt:'Y', dose:'15 mg/kg post-HD', nw:true },
+            { c:'new', n:'Delafloxacin', cl:'Fluoroquinolone', mw:'478', pb:'84%', vd:'1.3', hd:'N', hf:'N', crrt:'N', dose:'Hepatic clearance', nw:true },
+            { c:'new', n:'Lasmiditan', cl:'5-HT1F Agonist', mw:'344', pb:'50%', vd:'0.6', hd:'N', hf:'N', crrt:'N', dose:'Migraine', nw:true },
+            { c:'new', n:'Rimegepant', cl:'CGRP Antagonist', mw:'517', pb:'96%', vd:'0.8', hd:'N', hf:'N', crrt:'N', dose:'75mg q48h', nw:true },
+            { c:'new', n:'Atogepant', cl:'CGRP Antagonist', mw:'517', pb:'90%', vd:'0.8', hd:'N', hf:'N', crrt:'N', dose:'10-60mg daily', nw:true },
+            { c:'new', n:'Finerenone', cl:'Mineralocorticoid Antagonist', mw:'378', pb:'92%', vd:'0.7', hd:'N', hf:'N', crrt:'N', dose:'Monitor K+', nw:true },
+            { c:'new', n:'Empagliflozin (cardio)', cl:'SGLT2 Inhibitor', mw:'450', pb:'86%', vd:'0.4', hd:'N', hf:'N', crrt:'N', dose:'Not for dialysis', nw:true },
+            { c:'new', n:'Resmetirom', cl:'THR-β Agonist', mw:'498', pb:'99%', vd:'0.6', hd:'N', hf:'N', crrt:'N', dose:'Hepatic', nw:true },
+            { c:'new', n:'Lecanemab', cl:'Anti-amyloid mAb', mw:'146000', pb:'0%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+            { c:'new', n:'Bimekizumab', cl:'IL-17 Inhibitor', mw:'146000', pb:'0%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+            { c:'new', n:'Mirikizumab', cl:'IL-23 Inhibitor', mw:'146000', pb:'0%', vd:'0.1', hd:'N', hf:'N', crrt:'N', dose:'Large molecule', nw:true },
+        ];
+
+
+        const CATEGORIES = [
+            { id:'antibiotics', label:'Antibiotics', icon:'💊' },
+            { id:'cardio', label:'Cardiovascular', icon:'❤️' },
+            { id:'neuro', label:'Neuro/Psych', icon:'🧠' },
+            { id:'endo', label:'Endocrine/Diabetes', icon:'🩺' },
+            { id:'analgesics', label:'Analgesics', icon:'💉' },
+            { id:'new', label:'New Drugs 2020-26', icon:'🆕' },
+        ];
+        let currentCat = 'antibiotics';
+        let currentFilter = 'all';
+
+        function dialClass(code) {
+            if (code === 'Y') return 'dialyzable';
+            if (code === 'M') return 'moderate';
+            return 'not-dialyzable';
+        }
+        function dialIcon(code) {
+            if (code === 'Y') return '✅ Y';
+            if (code === 'M') return '⚠️ M';
+            return '❌ N';
+        }
+        function countBy(cat) { return DRUGS.filter(d => d.c === cat).length; }
+        function totalCount() { return DRUGS.length; }
+
+        function buildTabs() {
+            const tabs = document.getElementById('tabs');
+            tabs.innerHTML = CATEGORIES.map(c =>
+                `<div class="tab ${c.id === currentCat ? 'active' : ''}" onclick="showSection('${c.id}')">${c.icon} ${c.label} (${countBy(c.id)})</div>`
+            ).join('');
+        }
+
+        function buildSections() {
+            const sec = document.getElementById('sections');
+            sec.innerHTML = CATEGORIES.map(c =>
+                `<div class="drug-section ${c.id === currentCat ? 'active' : ''}" id="sec-${c.id}"></div>`
+            ).join('');
+            CATEGORIES.forEach(c => renderTable(c.id));
+        }
+
+        function renderTable(cat) {
+            const el = document.getElementById('sec-' + cat);
+            let list = DRUGS.filter(d => d.c === cat);
+            if (currentFilter !== 'all') list = list.filter(d => d.hd === currentFilter);
+            const meta = CATEGORIES.find(c=>c.id===cat);
+            const rows = list.map(d => {
+                const nw = d.nw ? ' <span class="new-drug">NEW</span>' : '';
+                return `<tr>
+                    <td>${d.n}${nw}</td>
+                    <td>${d.cl || '—'}</td>
+                    <td>${d.mw || '—'}</td>
+                    <td>${d.pb || '—'}</td>
+                    <td>${(d.vd !== '' && d.vd != null) ? d.vd : '—'}</td>
+                    <td class="${dialClass(d.hd)}">${dialIcon(d.hd)}</td>
+                    <td class="${dialClass(d.hf || '')}">${d.hf ? dialIcon(d.hf) : '—'}</td>
+                    <td class="${dialClass(d.crrt || '')}">${d.crrt ? dialIcon(d.crrt) : '—'}</td>
+                    <td>${d.dose || '—'}</td>
+                </tr>`;
+            }).join('');
+            el.innerHTML = `<h3 class="section-title">${meta.icon} ${meta.label} (${list.length})</h3>
+                <div class="table-container"><table>
+                    <thead><tr><th>Drug</th><th>Class</th><th>MW</th><th>PB</th><th>Vd</th><th>HD</th><th>HF-HD</th><th>CRRT</th><th>Dosing</th></tr></thead>
+                    <tbody>${rows}</tbody></table></div>`;
+        }
+
+        function showSection(cat) {
+            currentCat = cat;
             document.querySelectorAll('.drug-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
+            document.getElementById('sec-' + cat).classList.add('active');
+            buildTabs();
+        }
+
+        function setFilter(f, el) {
+            currentFilter = f;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            buildSections();
         }
 
         function searchDrugs() {
             const input = document.getElementById('searchInput').value.trim().toLowerCase();
+            const countEl = document.getElementById('searchCount');
             if (!input) {
-                // Reset: show all rows, all sections
-                document.querySelectorAll('table tbody tr').forEach(row => row.style.display = '');
-                // Show the first section as active
+                document.querySelectorAll('table tbody tr').forEach(r => r.style.display = '');
                 document.querySelectorAll('.drug-section').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                const first = document.querySelector('.drug-section');
-                const firstTab = document.querySelector('.tab');
-                if (first) first.classList.add('active');
-                if (firstTab) firstTab.classList.add('active');
+                document.getElementById('sec-' + currentCat).classList.add('active');
+                buildTabs();
+                countEl.textContent = '';
                 return;
             }
-
-            // Count matches per section and hide empty ones
-            const sections = document.querySelectorAll('.drug-section');
-            let firstMatch = null;
-            let totalMatches = 0;
-            sections.forEach(sec => {
-                const rows = sec.querySelectorAll('tbody tr');
-                let secMatches = 0;
-                rows.forEach(row => {
+            let firstMatch = null, total = 0;
+            document.querySelectorAll('.drug-section').forEach(sec => {
+                let n = 0;
+                sec.querySelectorAll('tbody tr').forEach(row => {
                     const show = row.textContent.toLowerCase().includes(input);
                     row.style.display = show ? '' : 'none';
-                    if (show) secMatches++;
+                    if (show) n++;
                 });
-                totalMatches += secMatches;
-                if (secMatches > 0 && !firstMatch) firstMatch = sec;
+                total += n;
+                if (n > 0 && !firstMatch) firstMatch = sec.id;
             });
-
-            // Auto-activate the first section that has matches
             if (firstMatch) {
                 document.querySelectorAll('.drug-section').forEach(s => s.classList.remove('active'));
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                firstMatch.classList.add('active');
-                // Match and highlight the corresponding tab
-                document.querySelectorAll('.tab').forEach(t => {
-                    const m = t.getAttribute('onclick').match(/'([^']+)'/);
-                    if (m && m[1] === firstMatch.id) t.classList.add('active');
-                });
+                document.getElementById(firstMatch).classList.add('active');
+                currentCat = firstMatch.replace('sec-','');
+                buildTabs();
             }
-
-            // Show count of matches
-            const resultInfo = document.getElementById('searchCount');
-            if (resultInfo) {
-                resultInfo.textContent = input ? `${totalMatches} drug(s) found` : '';
-                resultInfo.style.display = input ? 'block' : 'none';
-            }
+            countEl.textContent = input ? total + ' drug(s) found' : '';
         }
 
-        // Analytics tracking
+        // Init
+        document.getElementById('headerCount').textContent = 'Updated: August 2026 | ' + totalCount() + ' Drugs | HD verified vs Lippincott';
+        buildTabs();
+        buildSections();
+    </script>
+
+    <!-- Analytics -->
+    <script>
         fetch('https://api.countapi.xyz/hit/clinical-apps-renal/drug-dialyzability')
             .then(r => r.json())
             .then(data => console.log('Drug reference views:', data.value))
