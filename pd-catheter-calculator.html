@@ -81,6 +81,7 @@
         <div class="formula-box">
             <h3>📊 Formula:</h3>
             <div class="formula">Fill Volume (mL) = Catheter Length × 0.0548 + Transfer Set (mL)</div>
+            <p style="font-size: 11px; color: #666; margin-top: 8px;">Constant: 0.0548 mL/cm (manufacturer spec). Length entered in inches.</p>
         </div>
 
         <!-- Form -->
@@ -168,6 +169,16 @@
 
             if (!catheterLength || !transferSet) {
                 alert('Please fill in all fields');
+                return;
+            }
+
+            // Input validation
+            if (catheterLength < 5 || catheterLength > 40) {
+                alert('Please enter a valid catheter length (5-40 inches)');
+                return;
+            }
+            if (transferSet < 0 || transferSet > 20) {
+                alert('Please enter a valid transfer set volume (0-20 mL)');
                 return;
             }
 
