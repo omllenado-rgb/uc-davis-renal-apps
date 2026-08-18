@@ -272,9 +272,9 @@
             
             // Estimate clearance (K) from Kt/V
             const t = time * 60; // minutes
-            const v = 0.6 * weight; // approximate V (total body water)
-            const k = (results.ktv * v) / t;
-            document.getElementById('clearanceRate').textContent = `${Math.round(k)} mL/min`;
+            const v = 0.6 * weight; // approximate V (total body water, L)
+            const k = (results.ktv * v) / t; // L/min
+            document.getElementById('clearanceRate').textContent = `${Math.round(k * 1000)} mL/min`;
 
             // Show results
             document.getElementById('resultCard').classList.add('show');
