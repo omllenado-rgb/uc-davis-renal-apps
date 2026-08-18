@@ -16,12 +16,6 @@
         .header p { color: #666; font-size: 14px; }
         .uc-logo { background: #003087; color: white; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
         
-        /* Calculator Type Selector */
-        .calc-type { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
-        .calc-btn { padding: 15px; border: 2px solid #E5E5EA; border-radius: 12px; background: white; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .calc-btn.active { border-color: #007AFF; background: #E3F2FD; color: #007AFF; }
-        .calc-btn:hover { border-color: #007AFF; }
-        
         /* Form */
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
@@ -49,9 +43,13 @@
         .status-good { background: rgba(255,255,255,0.3); }
         .status-warning { background: #FFC107; color: #333; }
         .status-bad { background: #FF3B30; color: white; }
-        .result-urr { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 15px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .urr-label { font-size: 14px; opacity: 0.9; }
-        .urr-value { font-size: 24px; font-weight: 700; }
+        
+        /* Dual Result Boxes */
+        .dual-results { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .result-box { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; text-align: center; }
+        .result-box .box-label { font-size: 13px; opacity: 0.9; margin-bottom: 8px; }
+        .result-box .box-value { font-size: 36px; font-weight: 700; }
+        .result-box .box-status { font-size: 12px; margin-top: 8px; font-weight: 600; }
         
         /* Details Section */
         .details-section { background: #F2F2F7; border-radius: 12px; padding: 20px; margin-top: 20px; }
@@ -77,7 +75,7 @@
         /* Responsive */
         @media (max-width: 480px) {
             .input-row { grid-template-columns: 1fr; }
-            .calc-type { grid-template-columns: 1fr; }
+            .dual-results { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -89,12 +87,6 @@
             <div class="header-icon">📊</div>
             <h1>Kt/V Calculator</h1>
             <p>Dialysis Adequacy Assessment</p>
-        </div>
-
-        <!-- Calculator Type -->
-        <div class="calc-type">
-            <button class="calc-btn active" onclick="setCalcType('ktv', this)">Kt/V<br><span style="font-size: 11px; font-weight: normal;">Dialysis Dose</span></button>
-            <button class="calc-btn" onclick="setCalcType('urr', this)">URR<br><span style="font-size: 11px; font-weight: normal;">Urea Reduction</span></button>
         </div>
 
         <!-- Form -->
@@ -143,21 +135,27 @@
                 </div>
             </div>
 
-            <button type="submit" class="calculate-btn">Calculate Kt/V</button>
+            <button type="submit" class="calculate-btn">Calculate Kt/V & URR</button>
         </form>
 
         <!-- Results -->
         <div class="result-card" id="resultCard">
             <div class="result-header">
                 <div class="result-icon">✅</div>
-                <div class="result-label" id="resultType">Kt/V Result</div>
-                <div class="result-value" id="ktvValue">0.00</div>
-                <div class="result-unit" id="resultStatus">Adequate</div>
+                <div class="result-label">Dialysis Adequacy</div>
+                <div class="result-status status-good" id="statusBadge">✓ Meets KDOQI Guidelines</div>
             </div>
-            <div class="result-status status-good" id="statusBadge">✓ Meets KDOQI Guidelines</div>
-            <div class="result-urr">
-                <span class="urr-label">URR (Urea Reduction Ratio)</span>
-                <span class="urr-value" id="urrBig">--%</span>
+            <div class="dual-results">
+                <div class="result-box">
+                    <div class="box-label">Kt/V</div>
+                    <div class="box-value" id="ktvValue">0.00</div>
+                    <div class="box-status" id="ktvStatus">--</div>
+                </div>
+                <div class="result-box">
+                    <div class="box-label">URR (Urea Reduction Ratio)</div>
+                    <div class="box-value" id="urrValue">--%</div>
+                    <div class="box-status" id="urrStatus">--</div>
+                </div>
             </div>
         </div>
 
@@ -165,12 +163,8 @@
         <div class="details-section" id="detailsSection" style="display: none;">
             <h3 class="details-title">📊 Calculation Details</h3>
             <div class="detail-item">
-                <span class="detail-label">URR (Urea Reduction Ratio)</span>
-                <span class="detail-value" id="urrValue">--%</span>
-            </div>
-            <div class="detail-item">
                 <span class="detail-label">Formula Used</span>
-                <span class="detail-value" id="formulaUsed">Daugirdas II</span>
+                <span class="detail-value" id="formulaUsed">Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5×(Post/Pre)) × (UF/Weight)</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Dialysis Dose</span>
@@ -186,11 +180,9 @@
         <div class="guidelines">
             <h4>📋 KDOQI Guidelines (2025)</h4>
             <ul>
-                <li><strong>spKt/V:</strong> Minimum 1.2 per session (3x/week)</li>
-                <li><strong>eKt/V:</strong> Minimum 1.05 per session</li>
-                <li><strong>stdKt/V:</strong> Minimum 2.0 per week</li>
+                <li><strong>Kt/V:</strong> Minimum 1.2 per session (3x/week)</li>
                 <li><strong>URR:</strong> Minimum 65% per session</li>
-                <li><strong>Target:</strong> spKt/V ≥ 1.4 for better outcomes</li>
+                <li><strong>Target:</strong> Kt/V ≥ 1.4 for better outcomes</li>
             </ul>
         </div>
 
@@ -204,21 +196,6 @@
     </div>
 
     <script>
-        let currentCalcType = 'ktv';
-
-        function setCalcType(type, el) {
-            currentCalcType = type;
-            document.querySelectorAll('.calc-btn').forEach(btn => btn.classList.remove('active'));
-            (el || event.currentTarget).closest('.calc-btn').classList.add('active');
-            
-            // Update form labels based on type
-            const titles = {
-                'ktv': 'Kt/V Calculator',
-                'urr': 'URR Calculator'
-            };
-            document.querySelector('.header h1').textContent = titles[type];
-        }
-
         function calculateKTv(preBun, postBun, weight, time, uf, gender, age) {
             // URR calculation
             const urr = ((preBun - postBun) / preBun) * 100;
@@ -231,23 +208,16 @@
             return { urr, ktv };
         }
 
-        function getStatus(value, type) {
-            const thresholds = {
-                'ktv': { min: 1.2, target: 1.4 },
-                'urr': { min: 65, target: 70 }
-            };
-            
-            const t = thresholds[type];
-            if (value >= t.target) return { status: 'good', text: '✓ Exceeds Guidelines', class: 'status-good' };
-            if (value >= t.min) return { status: 'adequate', text: '✓ Meets Guidelines', class: 'status-good' };
-            return { status: 'bad', text: '✗ Below Minimum', class: 'status-bad' };
+        function getStatus(value, min, target) {
+            if (value >= target) return { text: '✓ Exceeds', cls: 'status-good' };
+            if (value >= min) return { text: '✓ Meets', cls: 'status-good' };
+            return { text: '✗ Below', cls: 'status-bad' };
         }
 
         function resetForm() {
             document.getElementById('ktvForm').reset();
             document.getElementById('resultCard').classList.remove('show');
             document.getElementById('detailsSection').style.display = 'none';
-            setCalcType('ktv');
         }
 
         document.getElementById('ktvForm').addEventListener('submit', function(e) {
@@ -273,40 +243,37 @@
 
             // Calculate
             const results = calculateKTv(preBun, postBun, weight, time, uf, gender, age);
-            
-            // Get current type result
-            let displayValue, resultType;
-            if (currentCalcType === 'urr') {
-                displayValue = results.urr;
-                resultType = 'URR';
-            } else {
-                displayValue = results.ktv;
-                resultType = 'Kt/V';
-            }
 
-            // Get status
-            const status = getStatus(displayValue, currentCalcType);
+            // Status for each
+            const ktvStatus = getStatus(results.ktv, 1.2, 1.4);
+            const urrStatus = getStatus(results.urr, 65, 70);
 
-            // Display results
-            document.getElementById('resultType').textContent = `${resultType} Result`;
-            const displayStr = currentCalcType === 'urr' ? `${displayValue.toFixed(1)}%` : displayValue.toFixed(2);
-            document.getElementById('ktvValue').textContent = displayStr;
-            document.getElementById('resultStatus').textContent = status.text;
-            document.getElementById('statusBadge').textContent = status.text;
-            document.getElementById('statusBadge').className = `result-status ${status.class}`;
+            // Overall badge
+            const overall = (results.ktv >= 1.2 && results.urr >= 65) ? '✓ Meets KDOQI Guidelines' : '✗ Below Minimum';
+            const overallCls = (results.ktv >= 1.2 && results.urr >= 65) ? 'status-good' : 'status-bad';
 
-            // Show URR alongside Kt/V
-            document.getElementById('urrBig').textContent = `${results.urr.toFixed(1)}%`;
+            // Display Kt/V
+            document.getElementById('ktvValue').textContent = results.ktv.toFixed(2);
+            document.getElementById('ktvStatus').textContent = ktvStatus.text;
+            document.getElementById('ktvStatus').className = 'box-status ' + ktvStatus.cls;
+
+            // Display URR
+            document.getElementById('urrValue').textContent = results.urr.toFixed(1) + '%';
+            document.getElementById('urrStatus').textContent = urrStatus.text;
+            document.getElementById('urrStatus').className = 'box-status ' + urrStatus.cls;
+
+            // Overall badge
+            document.getElementById('statusBadge').textContent = overall;
+            document.getElementById('statusBadge').className = 'result-status ' + overallCls;
 
             // Details
-            document.getElementById('urrValue').textContent = `${results.urr.toFixed(1)}%`;
             document.getElementById('formulaUsed').textContent = 'Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5×(Post/Pre)) × (UF/Weight)';
-            document.getElementById('dialysisDose').textContent = displayValue >= 1.2 ? '✓ Adequate' : '✗ Inadequate';
+            document.getElementById('dialysisDose').textContent = results.ktv >= 1.2 ? '✓ Adequate' : '✗ Inadequate';
             
             // Estimate clearance (K) from Kt/V
             const t = time * 60; // minutes
             const v = 0.6 * weight; // approximate V (total body water)
-            const k = (displayValue * v) / t;
+            const k = (results.ktv * v) / t;
             document.getElementById('clearanceRate').textContent = `${Math.round(k)} mL/min`;
 
             // Show results
