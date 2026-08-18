@@ -49,6 +49,9 @@
         .status-good { background: rgba(255,255,255,0.3); }
         .status-warning { background: #FFC107; color: #333; }
         .status-bad { background: #FF3B30; color: white; }
+        .result-urr { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 15px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .urr-label { font-size: 14px; opacity: 0.9; }
+        .urr-value { font-size: 24px; font-weight: 700; }
         
         /* Details Section */
         .details-section { background: #F2F2F7; border-radius: 12px; padding: 20px; margin-top: 20px; }
@@ -90,9 +93,7 @@
 
         <!-- Calculator Type -->
         <div class="calc-type">
-            <button class="calc-btn active" onclick="setCalcType('spktv', this)">spKt/V<br><span style="font-size: 11px; font-weight: normal;">Single-Pool</span></button>
-            <button class="calc-btn" onclick="setCalcType('ektv', this)">eKt/V<br><span style="font-size: 11px; font-weight: normal;">Equilibrated</span></button>
-            <button class="calc-btn" onclick="setCalcType('stdktv', this)">stdKt/V<br><span style="font-size: 11px; font-weight: normal;">Standardized</span></button>
+            <button class="calc-btn active" onclick="setCalcType('ktv', this)">Kt/V<br><span style="font-size: 11px; font-weight: normal;">Dialysis Dose</span></button>
             <button class="calc-btn" onclick="setCalcType('urr', this)">URR<br><span style="font-size: 11px; font-weight: normal;">Urea Reduction</span></button>
         </div>
 
@@ -149,11 +150,15 @@
         <div class="result-card" id="resultCard">
             <div class="result-header">
                 <div class="result-icon">✅</div>
-                <div class="result-label" id="resultType">spKt/V Result</div>
+                <div class="result-label" id="resultType">Kt/V Result</div>
                 <div class="result-value" id="ktvValue">0.00</div>
                 <div class="result-unit" id="resultStatus">Adequate</div>
             </div>
             <div class="result-status status-good" id="statusBadge">✓ Meets KDOQI Guidelines</div>
+            <div class="result-urr">
+                <span class="urr-label">URR (Urea Reduction Ratio)</span>
+                <span class="urr-value" id="urrBig">--%</span>
+            </div>
         </div>
 
         <!-- Details -->
@@ -199,7 +204,7 @@
     </div>
 
     <script>
-        let currentCalcType = 'spktv';
+        let currentCalcType = 'ktv';
 
         function setCalcType(type, el) {
             currentCalcType = type;
@@ -208,10 +213,8 @@
             
             // Update form labels based on type
             const titles = {
-                'spktv': 'Single-Pool Kt/V',
-                'ektv': 'Equilibrated Kt/V',
-                'stdktv': 'Standardized Kt/V',
-                'urr': 'Urea Reduction Ratio'
+                'ktv': 'Kt/V Calculator',
+                'urr': 'URR Calculator'
             };
             document.querySelector('.header h1').textContent = titles[type];
         }
@@ -220,29 +223,17 @@
             // URR calculation
             const urr = ((preBun - postBun) / preBun) * 100;
 
-            // spKt/V (Daugirdas II formula) - t in HOURS
+            // Kt/V (Omni standard formula)
+            // Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5 × (Post/Pre)) × (UF/Weight)
             const R = postBun / preBun;
-            const tHr = time; // hours (Daugirdas II requires hours)
-            const spktv = -Math.log(R - 0.008 * tHr) + (4 - 3.5 * R) * (uf / weight);
+            const ktv = -Math.log(R - 0.03) + (4 - 3.5 * R) * (uf / weight);
 
-            // eKt/V (equilibrated - accounts for urea rebound) - t in minutes
-            const tMin = time * 60;
-            const ektv = spktv - 0.6 * (spktv / tMin) + 0.03;
-
-            // stdKt/V (standardized weekly - Leypoldt formula)
-            // stdKt/V = (spKt/V * N * 10080) / (t_min * N + 10080)
-            // where N = sessions/week, t_min = treatment time in minutes, 10080 = min/week
-            const sessionsPerWeek = 3;
-            const stdktv = (spktv * sessionsPerWeek * 10080) / ((tMin * sessionsPerWeek) + 10080);
-
-            return { urr, spktv, ektv, stdktv };
+            return { urr, ktv };
         }
 
         function getStatus(value, type) {
             const thresholds = {
-                'spktv': { min: 1.2, target: 1.4 },
-                'ektv': { min: 1.05, target: 1.2 },
-                'stdktv': { min: 2.0, target: 2.3 },
+                'ktv': { min: 1.2, target: 1.4 },
                 'urr': { min: 65, target: 70 }
             };
             
@@ -256,7 +247,7 @@
             document.getElementById('ktvForm').reset();
             document.getElementById('resultCard').classList.remove('show');
             document.getElementById('detailsSection').style.display = 'none';
-            setCalcType('spktv');
+            setCalcType('ktv');
         }
 
         document.getElementById('ktvForm').addEventListener('submit', function(e) {
@@ -285,18 +276,12 @@
             
             // Get current type result
             let displayValue, resultType;
-            if (currentCalcType === 'spktv') {
-                displayValue = results.spktv;
-                resultType = 'spKt/V';
-            } else if (currentCalcType === 'ektv') {
-                displayValue = results.ektv;
-                resultType = 'eKt/V';
-            } else if (currentCalcType === 'stdktv') {
-                displayValue = results.stdktv;
-                resultType = 'stdKt/V';
-            } else {
+            if (currentCalcType === 'urr') {
                 displayValue = results.urr;
                 resultType = 'URR';
+            } else {
+                displayValue = results.ktv;
+                resultType = 'Kt/V';
             }
 
             // Get status
@@ -310,9 +295,12 @@
             document.getElementById('statusBadge').textContent = status.text;
             document.getElementById('statusBadge').className = `result-status ${status.class}`;
 
+            // Show URR alongside Kt/V
+            document.getElementById('urrBig').textContent = `${results.urr.toFixed(1)}%`;
+
             // Details
             document.getElementById('urrValue').textContent = `${results.urr.toFixed(1)}%`;
-            document.getElementById('formulaUsed').textContent = 'Daugirdas II (spKt/V)';
+            document.getElementById('formulaUsed').textContent = 'Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5×(Post/Pre)) × (UF/Weight)';
             document.getElementById('dialysisDose').textContent = displayValue >= 1.2 ? '✓ Adequate' : '✗ Inadequate';
             
             // Estimate clearance (K) from Kt/V
