@@ -6,21 +6,22 @@
     <title>Drug Dialyzability Reference - Clinical Calculator Suite</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        body { background: linear-gradient(135deg, #022851, #13639e); min-height: 100vh; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
 
         /* Header */
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #003087; padding-bottom: 20px; }
-        .uc-logo { background: #003087; color: white; padding: 8px 25px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
-        .header h1 { color: #003087; font-size: 28px; margin-bottom: 8px; }
-        .header h2 { color: #007AFF; font-size: 18px; margin-bottom: 10px; }
-        .header p { color: #666; font-size: 14px; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #00b2e3; padding-bottom: 20px; }
+        .uc-logo { background: #022851; color: white; padding: 8px 25px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
+        .header-icon { width: 84px; height: 84px; line-height: 84px; font-size: 40px; margin: 0 auto 14px; background: #00b2e3; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,178,227,0.35); }
+        .header h1 { color: #022851; font-size: 28px; margin-bottom: 8px; }
+        .header h2 { color: #13639e; font-size: 18px; margin-bottom: 10px; }
+        .header p { color: #55565b; font-size: 14px; }
 
         /* Search */
         .search-box { background: #F2F2F7; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        .search-box input { width: 100%; padding: 15px; border: 2px solid #E5E5EA; border-radius: 10px; font-size: 16px; }
-        .search-box input:focus { outline: none; border-color: #007AFF; }
-        #searchCount { margin-top: 10px; font-size: 13px; font-weight: 600; color: #007AFF; }
+        .search-box input { width: 100%; padding: 15px; border: 2px solid #e5e5e5; border-radius: 10px; font-size: 16px; }
+        .search-box input:focus { outline: none; border-color: #13639e; }
+        #searchCount { margin-top: 10px; font-size: 13px; font-weight: 600; color: #13639e; }
 
         /* Quick Reference */
         .quick-ref { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
@@ -45,21 +46,21 @@
 
         /* Filter chips */
         .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
-        .filter-chip { padding: 8px 16px; background: #F2F2F7; border: 2px solid #E5E5EA; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .filter-chip.active { background: #003087; color: white; border-color: #003087; }
+        .filter-chip { padding: 8px 16px; background: #F2F2F7; border: 2px solid #e5e5e5; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .filter-chip.active { background: #022851; color: white; border-color: #022851; }
 
         /* Section Tabs */
         .tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 10px; }
         .tab { padding: 10px 20px; background: #F2F2F7; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; color: #666; }
-        .tab.active { background: #003087; color: white; }
+        .tab.active { background: #022851; color: white; }
 
         /* Tables */
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: #003087; color: white; padding: 12px 8px; text-align: left; font-weight: 600; }
-        td { padding: 10px 8px; border-bottom: 1px solid #E5E5EA; }
+        th { background: #022851; color: white; padding: 12px 8px; text-align: left; font-weight: 600; }
+        td { padding: 10px 8px; border-bottom: 1px solid #e5e5e5; }
         tr:nth-child(even) { background: #F8F9FA; }
-        tr:hover { background: #E3F2FD; }
+        tr:hover { background: #eaf2f9; }
         .dialyzable { color: #34C759; font-weight: 700; }
         .moderate { color: #FFC107; font-weight: 700; }
         .not-dialyzable { color: #FF3B30; font-weight: 700; }
@@ -67,13 +68,13 @@
 
         .drug-section { display: none; }
         .drug-section.active { display: block; }
-        .section-title { font-size: 20px; color: #003087; margin-bottom: 15px; font-weight: 700; }
+        .section-title { font-size: 20px; color: #022851; margin-bottom: 15px; font-weight: 700; }
 
         /* Footer */
-        .footer { border-top: 2px solid #003087; padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
+        .footer { border-top: 2px solid #022851; padding-top: 20px; margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
 
         /* Download Button */
-        .download-btn { background: linear-gradient(135deg, #003087, #007AFF); color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 20px; }
+        .download-btn { background: linear-gradient(135deg, #022851, #13639e); color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; font-weight: 700; display: inline-block; margin-top: 20px; }
         .download-btn:hover { opacity: 0.9; }
 
         /* Responsive */
@@ -88,6 +89,7 @@
         <!-- Header -->
         <div class="header">
             <div class="uc-logo">CLINICAL APPS</div>
+            <div class="header-icon">💊</div>
             <h1>Drug Dialyzability Reference</h1>
             <h2>Conventional HD • High-Flux HD • CRRT</h2>
             <p id="headerCount">Updated: August 2026 | Loading drug count...</p>
