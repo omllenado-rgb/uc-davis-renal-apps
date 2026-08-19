@@ -6,27 +6,48 @@
     <title>Clinical Calculator Suite - Clinical Apps</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background: linear-gradient(135deg, #003087, #007AFF); min-height: 100vh; padding: 20px; }
+        body { background: #ffffff; min-height: 100vh; color: #191919; }
         .container { max-width: 1200px; margin: 0 auto; }
-        .header { text-align: center; padding: 40px 20px; color: white; }
-        .header-icon { font-size: 80px; margin-bottom: 15px; }
-        .header h1 { font-size: 36px; margin-bottom: 10px; font-weight: 700; }
-        .header p { font-size: 18px; opacity: 0.95; max-width: 600px; margin: 0 auto; }
-        .uc-logo { background: white; color: #003087; padding: 10px 30px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 14px; margin-bottom: 20px; letter-spacing: 1px; }
-        .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px; margin-top: 20px; }
-        .app-card { background: white; border-radius: 16px; padding: 30px; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
-        .app-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
-        .app-icon { font-size: 60px; margin-bottom: 15px; }
-        .app-title { font-size: 22px; color: #003087; margin-bottom: 10px; font-weight: 700; }
-        .app-description { color: #666; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+
+        /* Header - Primary navy blue band */
+        .header { background: linear-gradient(135deg, #022851 0%, #13639e 100%); color: #ffffff; text-align: center; padding: 48px 20px 40px; }
+        .uc-logo { background: #ffbf00; color: #022851; padding: 10px 30px; border-radius: 6px; display: inline-block; font-weight: 800; font-size: 13px; margin-bottom: 22px; letter-spacing: 2px; text-transform: uppercase; }
+        .header-icon { font-size: 72px; margin-bottom: 14px; }
+        .header h1 { font-size: 38px; margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px; }
+        .header p { font-size: 17px; opacity: 0.95; max-width: 620px; margin: 0 auto; color: #b0d0ed; }
+        .header-rule { width: 60px; height: 4px; background: #ffbf00; margin: 18px auto 0; border-radius: 2px; }
+
+        /* Section intro */
+        .section-intro { text-align: center; padding: 36px 20px 10px; }
+        .section-intro h2 { color: #022851; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
+        .section-intro p { color: #4c4c4c; font-size: 15px; max-width: 640px; margin: 0 auto; }
+
+        .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; padding: 24px 20px 20px; }
+        .app-card {
+            background: #ffffff; border: 1px solid #e5e5e5; border-top: 4px solid #022851;
+            border-radius: 10px; padding: 28px; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; cursor: pointer;
+        }
+        .app-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(2,40,81,0.12); border-top-color: #ffbf00; }
+        .app-icon { font-size: 56px; margin-bottom: 14px; }
+        .app-title { font-size: 21px; color: #022851; margin-bottom: 10px; font-weight: 700; }
+        .app-description { color: #55565b; font-size: 14.5px; line-height: 1.6; margin-bottom: 18px; }
         .app-features { list-style: none; margin-bottom: 20px; }
-        .app-features li { padding: 5px 0; color: #555; font-size: 14px; }
-        .app-features li:before { content: "✅ "; margin-right: 5px; }
-        .app-link { display: inline-block; background: linear-gradient(135deg, #003087, #007AFF); color: white; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 600; transition: transform 0.2s; }
-        .app-link:hover { transform: scale(1.05); }
-        .app-badge { background: #34C759; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 10px; }
-        .footer { text-align: center; padding: 40px 20px; color: white; opacity: 0.9; }
-        .footer p { margin: 5px 0; font-size: 14px; }
+        .app-features li { padding: 4px 0; color: #4c4c4c; font-size: 13.5px; }
+        .app-features li:before { content: "✓ "; color: #13639e; font-weight: 700; margin-right: 5px; }
+        .app-link {
+            display: inline-block; background: #022851; color: #ffffff;
+            padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600;
+            font-size: 14px; transition: background 0.2s, transform 0.2s;
+        }
+        .app-link:hover { background: #13639e; transform: translateY(-1px); }
+        .app-badge { background: #3dae2b; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 10px; letter-spacing: 0.5px; }
+
+        /* Footer - navy band */
+        .footer { background: #022851; color: #ffffff; text-align: center; padding: 40px 20px; margin-top: 30px; }
+        .footer p { margin: 6px 0; font-size: 14px; }
+        .footer strong { color: #ffbf00; }
+        .footer .disclaimer { margin-top: 14px; font-size: 11.5px; color: #b0d0ed; }
+
         @media (max-width: 768px) { .header h1 { font-size: 28px; } .apps-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -34,15 +55,22 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="uc-logo">CLINICAL APPS</div>
+            <div class="uc-logo">Clinical Apps</div>
             <div class="header-icon">🏥</div>
             <h1>Clinical Calculator Suite</h1>
-            <p>Healthcare Professional Tools - Testing & Approval Phase</p>
+            <p>Healthcare Professional Tools - Testing &amp; Approval Phase</p>
+            <div class="header-rule"></div>
+        </div>
+
+        <!-- Section Intro -->
+        <div class="section-intro">
+            <h2>Evidence-Based Clinical Tools</h2>
+            <p>Free calculators and references for dialysis and kidney care professionals.</p>
         </div>
 
         <!-- Apps Grid -->
         <div class="apps-grid">
-            
+
             <!-- App 1: TBW Calculator -->
             <div class="app-card">
                 <span class="app-badge">LIVE</span>
@@ -148,7 +176,7 @@
             <p><strong>Clinical Calculator Suite</strong></p>
             <p>Healthcare Professional Tools | Updated: August 2026</p>
             <p>For clinical use only. Verify all calculations. Oliver Llenado, BSN RN</p>
-            <p style="margin-top: 15px; font-size: 11px; color: rgba(255,255,255,0.7);">⚠️ Currently in testing and approval phase. Not affiliated with any institution.</p>
+            <p class="disclaimer">⚠️ Currently in testing and approval phase. Not affiliated with any institution.</p>
         </div>
     </div>
 
