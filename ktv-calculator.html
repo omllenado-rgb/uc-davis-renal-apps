@@ -164,7 +164,7 @@
             <h3 class="details-title">📊 Calculation Details</h3>
             <div class="detail-item">
                 <span class="detail-label">Formula Used</span>
-                <span class="detail-value" id="formulaUsed">Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5×(Post/Pre)) × (UF/Weight)</span>
+                <span class="detail-value" id="formulaUsed">Kt/V = -ln((Post/Pre) - 0.008×t) + (4 - 3.5×(Post/Pre)) × (UF/Weight)</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Dialysis Dose</span>
@@ -200,10 +200,11 @@
             // URR calculation
             const urr = ((preBun - postBun) / preBun) * 100;
 
-            // Kt/V (Omni standard formula)
-            // Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5 × (Post/Pre)) × (UF/Weight)
+            // Kt/V — Daugirdas 2nd-generation (single-pool) formula
+            // Kt/V = -ln(R - 0.008 × t) + (4 - 3.5 × R) × (UF / W)
+            // R = post-BUN / pre-BUN, t = dialysis time in HOURS, UF in L, W in kg
             const R = postBun / preBun;
-            const ktv = -Math.log(R - 0.03) + (4 - 3.5 * R) * (uf / weight);
+            const ktv = -Math.log(R - 0.008 * time) + (4 - 3.5 * R) * (uf / weight);
 
             return { urr, ktv };
         }
@@ -267,7 +268,7 @@
             document.getElementById('statusBadge').className = 'result-status ' + overallCls;
 
             // Details
-            document.getElementById('formulaUsed').textContent = 'Kt/V = -ln((Post/Pre) - 0.03) + (4 - 3.5×(Post/Pre)) × (UF/Weight)';
+            document.getElementById('formulaUsed').textContent = 'Kt/V = -ln((Post/Pre) - 0.008×t) + (4 - 3.5×(Post/Pre)) × (UF/Weight)';
             document.getElementById('dialysisDose').textContent = results.ktv >= 1.2 ? '✓ Adequate' : '✗ Inadequate';
             
             // Estimate clearance (K) from Kt/V

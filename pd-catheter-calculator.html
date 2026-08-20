@@ -77,11 +77,11 @@
             <p>Calculate fill volume for peritoneal dialysis catheters</p>
         </div>
 
-        <!-- Formula -->
+        /* Formula */
         <div class="formula-box">
             <h3>📊 Formula:</h3>
-            <div class="formula">Fill Volume (mL) = Catheter Length × 0.0548 + Transfer Set (mL)</div>
-            <p style="font-size: 11px; color: #666; margin-top: 8px;">Constant: 0.0548 mL/cm (manufacturer spec). Length entered in inches.</p>
+            <div class="formula">Fill Volume (mL) = (Length inches × 2.54) × 0.0548 + Transfer Set (mL)</div>
+            <p style="font-size: 11px; color: #666; margin-top: 8px;">Constant: 0.0548 mL/cm (manufacturer spec). Catheter length converted from inches to cm (× 2.54).</p>
         </div>
 
         <!-- Form -->
@@ -181,8 +181,8 @@
                 return;
             }
 
-            // Calculate catheter volume (length in inches × 0.0548)
-            const catheterVolume = catheterLength * CATHETER_CONSTANT;
+            // Calculate catheter volume — convert inches to cm (× 2.54) then apply mL/cm constant
+            const catheterVolume = catheterLength * 2.54 * CATHETER_CONSTANT;
             
             // Calculate total fill volume
             const totalVolume = catheterVolume + transferSet;
