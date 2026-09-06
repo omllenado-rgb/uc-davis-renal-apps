@@ -1,189 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinical Calculator Suite - Clinical Apps</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { background: #ffffff; min-height: 100vh; color: #191919; }
-        .container { max-width: 1200px; margin: 0 auto; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Calculator Suite — Dialysis &amp; Kidney Care Tools</title>
+<meta name="description" content="Free evidence-based calculators and references for dialysis and kidney care professionals. TBW, Kt/V, recirculation, PD catheter volume, drug dialyzability, and patient nutrition education.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#022851; --navy-2:#0a3d6b; --navy-3:#0e5a8a;
+    --gold:#ffbf00; --gold-soft:#fff4d6; --cyan:#00b2e3;
+    --ink:#16222e; --muted:#5b6b7a; --bg:#fbfcfe; --card:#ffffff;
+    --border:#e6ebf1; --green:#2e7d32;
+    --serif:'Fraunces',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+  a{text-decoration:none;color:inherit;}
+  .container{max-width:1140px;margin:0 auto;padding:0 28px;}
 
-        /* Header - Primary navy blue band */
-        .header { background: linear-gradient(135deg, #022851 0%, #13639e 100%); color: #ffffff; text-align: center; padding: 48px 20px 40px; }
-        .uc-logo { background: #ffbf00; color: #022851; padding: 10px 30px; border-radius: 6px; display: inline-block; font-weight: 800; font-size: 13px; margin-bottom: 22px; letter-spacing: 2px; text-transform: uppercase; }
-        .header-icon { font-size: 72px; margin-bottom: 14px; }
-        .header h1 { font-size: 38px; margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px; }
-        .header p { font-size: 17px; opacity: 0.95; max-width: 620px; margin: 0 auto; color: #b0d0ed; }
-        .header-rule { width: 60px; height: 4px; background: #ffbf00; margin: 18px auto 0; border-radius: 2px; }
+  /* ===== NAV ===== */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,40,81,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:17px;letter-spacing:.2px;}
+  .logo .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#ffd54d);display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:800;font-size:15px;font-family:var(--serif);}
+  .nav-links{display:flex;gap:30px;align-items:center;}
+  .nav-links a{color:rgba(255,255,255,.82);font-size:14px;font-weight:500;transition:color .2s;}
+  .nav-links a:hover{color:var(--gold);}
+  .nav-cta{background:var(--gold);color:var(--navy);padding:10px 22px;border-radius:9px;font-weight:700;font-size:14px;transition:transform .2s,box-shadow .2s;}
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,191,0,.35);}
+  .hamburger{display:none;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;}
 
-        /* Section intro */
-        .section-intro { text-align: center; padding: 36px 20px 10px; }
-        .section-intro h2 { color: #022851; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
-        .section-intro p { color: #4c4c4c; font-size: 15px; max-width: 640px; margin: 0 auto; }
+  /* ===== HERO ===== */
+  .hero{background:linear-gradient(160deg,#022851 0%,#06305f 45%,#0a3d6b 100%);color:#fff;padding:150px 0 90px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-20%;right:-8%;width:640px;height:640px;background:radial-gradient(circle,rgba(0,178,227,.18),transparent 62%);}
+  .hero::after{content:'';position:absolute;bottom:-25%;left:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(255,191,0,.12),transparent 60%);}
+  .hero-inner{position:relative;z-index:2;text-align:center;max-width:760px;margin:0 auto;}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,191,0,.14);color:var(--gold);border:1px solid rgba(255,191,0,.35);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;margin-bottom:24px;letter-spacing:.4px;}
+  .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
+  .hero h1{font-family:var(--serif);font-size:54px;line-height:1.08;font-weight:700;margin-bottom:22px;letter-spacing:-1px;}
+  .hero h1 .accent{color:var(--gold);font-style:italic;}
+  .hero p.lead{font-size:18px;color:rgba(255,255,255,.86);max-width:560px;margin:0 auto 34px;line-height:1.65;}
+  .hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .btn-primary{background:var(--gold);color:var(--navy);padding:16px 34px;border-radius:11px;font-weight:700;font-size:16px;transition:transform .2s,box-shadow .2s;display:inline-block;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,191,0,.4);}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:14px 30px;border-radius:11px;font-weight:600;font-size:16px;transition:all .2s;display:inline-block;}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
 
-        .apps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; padding: 24px 20px 20px; }
-        .app-card {
-            background: #ffffff; border: 1px solid #e5e5e5; border-top: 4px solid #022851;
-            border-radius: 10px; padding: 28px; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s; cursor: pointer;
-        }
-        .app-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(2,40,81,0.12); border-top-color: #ffbf00; }
-        .app-icon { font-size: 56px; margin-bottom: 14px; }
-        .app-title { font-size: 21px; color: #022851; margin-bottom: 10px; font-weight: 700; }
-        .app-description { color: #55565b; font-size: 14.5px; line-height: 1.6; margin-bottom: 18px; }
-        .app-features { list-style: none; margin-bottom: 20px; }
-        .app-features li { padding: 4px 0; color: #4c4c4c; font-size: 13.5px; }
-        .app-features li:before { content: "✓ "; color: #13639e; font-weight: 700; margin-right: 5px; }
-        .app-link {
-            display: inline-block; background: #022851; color: #ffffff;
-            padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600;
-            font-size: 14px; transition: background 0.2s, transform 0.2s;
-        }
-        .app-link:hover { background: #13639e; transform: translateY(-1px); }
-        .app-badge { background: #3dae2b; color: #ffffff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 10px; letter-spacing: 0.5px; }
+  /* ===== STATS STRIP ===== */
+  .stats{background:#fff;border-bottom:1px solid var(--border);}
+  .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);padding:44px 0;}
+  .stat{padding:0 24px;border-right:1px solid var(--border);text-align:center;}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--serif);font-size:40px;font-weight:700;color:var(--navy);line-height:1;}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:8px;font-weight:500;}
 
-        /* Footer - navy band */
-        .footer { background: #022851; color: #ffffff; text-align: center; padding: 40px 20px; margin-top: 30px; }
-        .footer p { margin: 6px 0; font-size: 14px; }
-        .footer strong { color: #ffbf00; }
+  /* ===== SECTIONS ===== */
+  section{padding:88px 0;}
+  .section-label{color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+  .section-title{font-family:var(--serif);font-size:40px;font-weight:700;color:var(--navy);margin-bottom:18px;letter-spacing:-.5px;line-height:1.15;}
+  .section-sub{font-size:17px;color:var(--muted);max-width:620px;margin-bottom:48px;line-height:1.65;}
 
-        @media (max-width: 768px) { .header h1 { font-size: 28px; } .apps-grid { grid-template-columns: 1fr; } }
-    </style>
+  /* ===== APP CARDS ===== */
+  .apps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .app-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s,border-color .25s;}
+  .app-card:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(2,40,81,.1);border-color:#d5dde6;}
+  .app-badge{display:inline-block;background:#eef7ef;color:var(--green);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:16px;align-self:flex-start;}
+  .app-icon{width:48px;height:48px;border-radius:12px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px;}
+  .app-title{font-family:var(--serif);font-size:21px;color:var(--navy);margin-bottom:10px;font-weight:700;line-height:1.25;}
+  .app-description{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:18px;flex:1;}
+  .app-features{list-style:none;margin-bottom:22px;}
+  .app-features li{font-size:13px;color:var(--ink);padding:4px 0;display:flex;gap:9px;align-items:flex-start;}
+  .app-features li::before{content:"✓";color:var(--cyan);font-weight:700;flex:0 0 auto;}
+  .app-link{display:inline-block;background:var(--navy);color:#fff;padding:12px 24px;border-radius:9px;font-weight:600;font-size:14px;text-align:center;transition:background .2s,transform .2s;}
+  .app-link:hover{background:var(--navy-3);transform:translateY(-1px);}
+
+  /* ===== CTA ===== */
+  .cta-band{background:linear-gradient(150deg,#022851,#0a3d6b);color:#fff;text-align:center;padding:88px 28px;border-radius:24px;margin:0 28px;position:relative;overflow:hidden;}
+  .cta-band::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(255,191,0,.15),transparent 60%);}
+  .cta-band h2{font-family:var(--serif);font-size:42px;font-weight:700;margin-bottom:18px;position:relative;}
+  .cta-band p{font-size:18px;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 34px;position:relative;}
+  .cta-band .btn-primary{font-size:18px;padding:18px 44px;position:relative;}
+
+  /* ===== FOOTER ===== */
+  footer{background:var(--navy);color:rgba(255,255,255,.65);padding:48px 0;text-align:center;font-size:14px;}
+  footer .f-brand{font-family:var(--serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
+  footer strong{color:var(--gold);}
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:900px){
+    .hero h1{font-size:40px;}
+    .apps-grid{grid-template-columns:1fr;}
+    .stats-inner{grid-template-columns:repeat(2,1fr);gap:28px 0;}
+    .stat{border-right:none;}
+    .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;gap:16px;}
+    .nav-links.open{display:flex;}
+    .hamburger{display:block;}
+  }
+  @media(max-width:500px){
+    .hero h1{font-size:32px;}
+    .section-title{font-size:30px;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="uc-logo">Clinical Apps</div>
-            <div class="header-icon">🏥</div>
-            <h1>Clinical Calculator Suite</h1>
-            <p>Healthcare Professional Tools for Dialysis &amp; Kidney Care</p>
-            <div class="header-rule"></div>
-        </div>
 
-        <!-- Section Intro -->
-        <div class="section-intro">
-            <h2>Evidence-Based Clinical Tools</h2>
-            <p>Free calculators and references for dialysis and kidney care professionals.</p>
-        </div>
-
-        <!-- Apps Grid -->
-        <div class="apps-grid">
-
-            <!-- App 1: TBW Calculator -->
-            <div class="app-card">
-                <span class="app-badge">LIVE</span>
-                <div class="app-icon">💧</div>
-                <h3 class="app-title">TBW Calculator</h3>
-                <p class="app-description">Total Body Water calculator using Watson formula. Essential for dialysis prescription.</p>
-                <ul class="app-features">
-                    <li>Watson formula (Male/Female)</li>
-                    <li>BMI calculation</li>
-                    <li>TBW % assessment</li>
-                    <li>KDOQI-aligned</li>
-                    <li>Instant results</li>
-                </ul>
-                <a href="tbw-calculator.html" class="app-link" target="_blank">Open TBW Calculator →</a>
-            </div>
-
-            <!-- App 2: Kt/V Calculator -->
-            <div class="app-card">
-                <span class="app-badge">LIVE</span>
-                <div class="app-icon">📊</div>
-                <h3 class="app-title">Kt/V Calculator</h3>
-                <p class="app-description">Dialysis adequacy calculator showing Kt/V and URR together for a complete assessment.</p>
-                <ul class="app-features">
-                    <li>Kt/V (dialysis dose)</li>
-                    <li>URR (urea reduction ratio)</li>
-                    <li>Both results shown together</li>
-                    <li>Clearance rate (mL/min)</li>
-                    <li>KDOQI guidelines integrated</li>
-                </ul>
-                <a href="ktv-calculator.html" class="app-link" target="_blank">Open Kt/V Calculator →</a>
-            </div>
-
-            <!-- App 3: HD Recirculation Calculator -->
-            <div class="app-card">
-                <span class="app-badge">LIVE</span>
-                <div class="app-icon">🔄</div>
-                <h3 class="app-title">HD Recirculation Calculator</h3>
-                <p class="app-description">Assess hemodialysis access recirculation using the two-needle (stop-flow) method.</p>
-                <ul class="app-features">
-                    <li>Two-needle stop-flow method</li>
-                    <li>Recirculation formula displayed</li>
-                    <li>Normal / borderline / significant flags</li>
-                    <li>Access dysfunction screening</li>
-                </ul>
-                <a href="hd-recirculation.html" class="app-link" target="_blank">Open Recirculation Calculator →</a>
-            </div>
-
-            <!-- App 4: PD Catheter Volume Calculator -->
-            <div class="app-card">
-                <span class="app-badge">LIVE</span>
-                <div class="app-icon">💉</div>
-                <h3 class="app-title">PD Catheter Volume Calculator</h3>
-                <p class="app-description">Calculate fill volume for peritoneal dialysis catheters. Accounts for catheter length and transfer set volume.</p>
-                <ul class="app-features">
-                    <li>Formula: Length (inches) × 0.0548 + Transfer Set</li>
-                    <li>Preset catheter sizes (12"-22")</li>
-                    <li>Custom transfer set volume</li>
-                    <li>Volume breakdown display</li>
-                    <li>Essential for accurate PD prescriptions</li>
-                </ul>
-                <a href="pd-catheter-calculator.html" class="app-link" target="_blank">Open PD Calculator →</a>
-            </div>
-
-            <!-- App 5: Drug Dialyzability Reference -->
-            <div class="app-card">
-                <span class="app-badge">LIVE</span>
-                <div class="app-icon">💊</div>
-                <h3 class="app-title">Drug Dialyzability Reference</h3>
-                <p class="app-description">Comprehensive guide to drug removal during hemodialysis and CRRT. 317 drugs with dialyzability ratings.</p>
-                <ul class="app-features">
-                    <li>317 drugs with dialyzability ratings</li>
-                    <li>HD, High-Flux, CRRT dialyzability</li>
-                    <li>Filter by dialyzability (Y/M/N)</li>
-                    <li>New drugs 2020-2026</li>
-                    <li>Dosing recommendations</li>
-                    <li>Downloadable PDF reference</li>
-                </ul>
-                <a href="drug-dialyzability.html" class="app-link" target="_blank">Open Drug Reference →</a>
-            </div>
-
-            <!-- App 6: RenalEd -->
-            <div class="app-card">
-                <span class="app-badge">LIVE</span>
-                <div class="app-icon">🍎</div>
-                <h3 class="app-title">RenalEd</h3>
-                <p class="app-description">Patient nutrition education for kidney disease. Track potassium, phosphorus, sodium, and fluid.</p>
-                <ul class="app-features">
-                    <li>213 foods with traffic light ratings</li>
-                    <li>Potassium, phosphorus, sodium, fluid tracking</li>
-                    <li>Personalized daily budgets (KDOQI-aligned)</li>
-                    <li>Search + smarter swap suggestions</li>
-                    <li>Clinical tips on every food</li>
-                    <li>Gamification (points, badges, streaks)</li>
-                    <li>Progress saved automatically</li>
-                </ul>
-                <a href="renaled.html" class="app-link" target="_blank">Open RenalEd →</a>
-            </div>
-
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p><strong>Clinical Calculator Suite</strong></p>
-            <p>Healthcare Professional Tools | Updated: August 2026</p>
-            <p>For clinical use only. Verify all calculations. Oliver Llenado, BSN RN</p>
-        </div>
+<nav>
+  <div class="container nav-inner">
+    <div class="logo"><span class="mark">CC</span> Clinical<span style="color:var(--gold)">Suite</span></div>
+    <div class="nav-links" id="navLinks">
+      <a href="#apps">Tools</a>
+      <a href="#about">About</a>
+      <a href="#apps" class="nav-cta">Open a Tool</a>
     </div>
+    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+  </div>
+</nav>
 
-    <script>
-        // Analytics tracking
-        fetch('https://api.countapi.xyz/hit/clinical-apps/landing-page')
-            .then(r => r.json())
-            .then(data => console.log('Landing page views:', data.value))
-            .catch(e => console.log('Analytics:', e));
-    </script>
+<!-- HERO -->
+<header class="hero">
+  <div class="container hero-inner">
+    <span class="hero-badge"><span class="dot"></span> For Dialysis &amp; Kidney Care Professionals</span>
+    <h1>Clinical tools for <span class="accent">dialysis</span> and kidney care.</h1>
+    <p class="lead">Free, evidence-based calculators and references — built for nurses and clinicians who need accurate answers at the point of care.</p>
+    <div class="hero-ctas">
+      <a href="#apps" class="btn-primary">Browse the Tools</a>
+      <a href="#about" class="btn-ghost">Learn More</a>
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="container stats-inner">
+    <div class="stat"><div class="num">6</div><div class="lbl">Clinical Tools</div></div>
+    <div class="stat"><div class="num">317</div><div class="lbl">Drugs Referenced</div></div>
+    <div class="stat"><div class="num">213</div><div class="lbl">Foods Rated</div></div>
+    <div class="stat"><div class="num">100%</div><div class="lbl">Free to Use</div></div>
+  </div>
+</div>
+
+<!-- APPS -->
+<section id="apps">
+  <div class="container">
+    <div class="section-label">The Tool Suite</div>
+    <h2 class="section-title">Evidence-based clinical tools</h2>
+    <p class="section-sub">Free calculators and references for dialysis and kidney care professionals — accurate, KDOQI-aligned, and built for the point of care.</p>
+    <div class="apps-grid">
+
+      <div class="app-card">
+        <span class="app-badge">LIVE</span>
+        <div class="app-icon">💧</div>
+        <h3 class="app-title">TBW Calculator</h3>
+        <p class="app-description">Total Body Water using the Watson formula — essential for dialysis prescription.</p>
+        <ul class="app-features">
+          <li>Watson formula (Male/Female)</li>
+          <li>BMI calculation</li>
+          <li>TBW % assessment</li>
+          <li>KDOQI-aligned</li>
+        </ul>
+        <a href="tbw-calculator.html" class="app-link" target="_blank">Open TBW Calculator →</a>
+      </div>
+
+      <div class="app-card">
+        <span class="app-badge">LIVE</span>
+        <div class="app-icon">📊</div>
+        <h3 class="app-title">Kt/V Calculator</h3>
+        <p class="app-description">Dialysis adequacy showing Kt/V and URR together for a complete assessment.</p>
+        <ul class="app-features">
+          <li>Kt/V (dialysis dose)</li>
+          <li>URR (urea reduction ratio)</li>
+          <li>Clearance rate (mL/min)</li>
+          <li>KDOQI guidelines integrated</li>
+        </ul>
+        <a href="ktv-calculator.html" class="app-link" target="_blank">Open Kt/V Calculator →</a>
+      </div>
+
+      <div class="app-card">
+        <span class="app-badge">LIVE</span>
+        <div class="app-icon">🔄</div>
+        <h3 class="app-title">HD Recirculation</h3>
+        <p class="app-description">Assess hemodialysis access recirculation using the two-needle stop-flow method.</p>
+        <ul class="app-features">
+          <li>Two-needle stop-flow method</li>
+          <li>Recirculation formula displayed</li>
+          <li>Normal / borderline / significant flags</li>
+          <li>Access dysfunction screening</li>
+        </ul>
+        <a href="hd-recirculation.html" class="app-link" target="_blank">Open Recirculation Calculator →</a>
+      </div>
+
+      <div class="app-card">
+        <span class="app-badge">LIVE</span>
+        <div class="app-icon">💉</div>
+        <h3 class="app-title">PD Catheter Volume</h3>
+        <p class="app-description">Calculate fill volume for peritoneal dialysis catheters, accounting for length and transfer set.</p>
+        <ul class="app-features">
+          <li>Length (in) × 0.0548 + transfer set</li>
+          <li>Preset catheter sizes (12"–22")</li>
+          <li>Custom transfer set volume</li>
+          <li>Volume breakdown display</li>
+        </ul>
+        <a href="pd-catheter-calculator.html" class="app-link" target="_blank">Open PD Calculator →</a>
+      </div>
+
+      <div class="app-card">
+        <span class="app-badge">LIVE</span>
+        <div class="app-icon">💊</div>
+        <h3 class="app-title">Drug Dialyzability</h3>
+        <p class="app-description">Comprehensive guide to drug removal during hemodialysis and CRRT — 317 drugs with ratings.</p>
+        <ul class="app-features">
+          <li>317 drugs with dialyzability ratings</li>
+          <li>HD, High-Flux, CRRT dialyzability</li>
+          <li>Filter by dialyzability (Y/M/N)</li>
+          <li>Downloadable PDF reference</li>
+        </ul>
+        <a href="drug-dialyzability.html" class="app-link" target="_blank">Open Drug Reference →</a>
+      </div>
+
+      <div class="app-card">
+        <span class="app-badge">LIVE</span>
+        <div class="app-icon">🍎</div>
+        <h3 class="app-title">RenalEd</h3>
+        <p class="app-description">Patient nutrition education for kidney disease — track potassium, phosphorus, sodium, and fluid.</p>
+        <ul class="app-features">
+          <li>213 foods with traffic-light ratings</li>
+          <li>Personalized daily budgets (KDOQI)</li>
+          <li>Search + smarter swap suggestions</li>
+          <li>Gamification (points, badges, streaks)</li>
+        </ul>
+        <a href="renaled.html" class="app-link" target="_blank">Open RenalEd →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background:#fff;border-top:1px solid var(--border);">
+  <div class="container" style="text-align:center;max-width:720px;">
+    <div class="section-label">Why These Tools</div>
+    <h2 class="section-title">Built for the point of care</h2>
+    <p class="section-sub" style="margin:0 auto;">Every tool is grounded in current clinical guidelines and designed to give you a fast, accurate answer when you need it — no sign-up, no cost, no clutter.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="cta-band">
+    <h2>Ready to use the tools?</h2>
+    <p>Free, evidence-based calculators and references for dialysis and kidney care professionals.</p>
+    <a href="#apps" class="btn-primary">Browse the Tools →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="f-brand">Clinical Calculator Suite</div>
+    <p>Healthcare Professional Tools | Updated: September 2026</p>
+    <p style="margin-top:8px">For clinical use only. Verify all calculations. <strong>Oliver Llenado, BSN RN</strong></p>
+  </div>
+</footer>
+
+<script>
+fetch('https://api.countapi.xyz/hit/clinical-apps/landing-page')
+  .then(r => r.json())
+  .then(data => console.log('Landing page views:', data.value))
+  .catch(e => console.log('Analytics:', e));
+</script>
 </body>
 </html>
