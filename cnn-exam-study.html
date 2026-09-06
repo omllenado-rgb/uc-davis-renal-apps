@@ -4,117 +4,156 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CNN Exam Prep — Certified Nephrology Nurse Study App</title>
-<meta name="description" content="The complete study app for nephrology nurses preparing for the CNN exam. 898 practice questions, 759 flashcards, 90 lessons, and smart trackers.">
+<meta name="description" content="The complete study app for nephrology nurses preparing for the CNN exam. 898 practice questions, 759 flashcards, 90 lessons, full exam simulations, and smart trackers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#022851; --navy-2:#0a3d6b; --gold:#ffbf00; --cyan:#00b2e3;
-    --ink:#1c2b39; --muted:#5b6b7a; --bg:#f5f7fa; --card:#fff;
-    --border:#e3e8ee; --green:#2e7d32; --red:#c62828;
+    --navy:#022851; --navy-2:#0a3d6b; --navy-3:#0e5a8a;
+    --gold:#ffbf00; --gold-soft:#fff4d6; --cyan:#00b2e3;
+    --ink:#16222e; --muted:#5b6b7a; --bg:#fbfcfe; --card:#ffffff;
+    --border:#e6ebf1; --green:#2e7d32; --red:#c62828;
+    --serif:'Fraunces',Georgia,'Times New Roman',serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;}
+  body{font-family:var(--sans);color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
   a{text-decoration:none;color:inherit;}
-  .container{max-width:1100px;margin:0 auto;padding:0 24px;}
+  .container{max-width:1140px;margin:0 auto;padding:0 28px;}
 
   /* ===== NAV ===== */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,40,81,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.1);}
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
-  .logo{color:#fff;font-weight:800;font-size:18px;letter-spacing:.5px;}
-  .logo span{color:var(--gold);}
-  .nav-links{display:flex;gap:28px;align-items:center;}
-  .nav-links a{color:rgba(255,255,255,.85);font-size:14px;font-weight:500;transition:color .2s;}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,40,81,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:17px;letter-spacing:.2px;}
+  .logo .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#ffd54d);display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:800;font-size:15px;font-family:var(--serif);}
+  .nav-links{display:flex;gap:30px;align-items:center;}
+  .nav-links a{color:rgba(255,255,255,.82);font-size:14px;font-weight:500;transition:color .2s;}
   .nav-links a:hover{color:var(--gold);}
-  .nav-cta{background:var(--gold);color:var(--navy);padding:9px 20px;border-radius:8px;font-weight:700;font-size:14px;transition:transform .2s,box-shadow .2s;}
-  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,191,0,.3);}
-  .hamburger{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;}
+  .nav-cta{background:var(--gold);color:var(--navy);padding:10px 22px;border-radius:9px;font-weight:700;font-size:14px;transition:transform .2s,box-shadow .2s;}
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,191,0,.35);}
+  .hamburger{display:none;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;}
 
   /* ===== HERO ===== */
-  .hero{background:linear-gradient(135deg,#022851 0%,#0a3d6b 55%,#0e5a8a 100%);color:#fff;padding:140px 0 90px;position:relative;overflow:hidden;}
-  .hero::before{content:'';position:absolute;top:-40%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(0,178,227,.25),transparent 60%);animation:float 8s ease-in-out infinite;}
-  .hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(255,191,0,.15),transparent 60%);animation:float 10s ease-in-out infinite reverse;}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
-  .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;}
-  .hero-badge{display:inline-block;background:rgba(255,191,0,.15);color:var(--gold);border:1px solid rgba(255,191,0,.4);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:20px;letter-spacing:.5px;}
-  .hero h1{font-size:52px;line-height:1.1;font-weight:800;margin-bottom:20px;letter-spacing:-1px;}
-  .hero h1 .accent{color:var(--gold);}
-  .hero p.lead{font-size:19px;color:rgba(255,255,255,.9);max-width:520px;margin-bottom:30px;}
-  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;}
-  .btn-primary{background:var(--gold);color:var(--navy);padding:15px 32px;border-radius:10px;font-weight:700;font-size:16px;transition:transform .2s,box-shadow .2s;display:inline-block;}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,191,0,.35);}
-  .btn-ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4);padding:13px 30px;border-radius:10px;font-weight:600;font-size:16px;transition:all .2s;display:inline-block;}
+  .hero{background:linear-gradient(160deg,#022851 0%,#06305f 45%,#0a3d6b 100%);color:#fff;padding:150px 0 90px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-20%;right:-8%;width:640px;height:640px;background:radial-gradient(circle,rgba(0,178,227,.18),transparent 62%);}
+  .hero::after{content:'';position:absolute;bottom:-25%;left:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(255,191,0,.12),transparent 60%);}
+  .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,191,0,.14);color:var(--gold);border:1px solid rgba(255,191,0,.35);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;margin-bottom:24px;letter-spacing:.4px;}
+  .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
+  .hero h1{font-family:var(--serif);font-size:56px;line-height:1.06;font-weight:700;margin-bottom:22px;letter-spacing:-1px;}
+  .hero h1 .accent{color:var(--gold);font-style:italic;}
+  .hero p.lead{font-size:18px;color:rgba(255,255,255,.86);max-width:520px;margin-bottom:34px;line-height:1.65;}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+  .btn-primary{background:var(--gold);color:var(--navy);padding:16px 34px;border-radius:11px;font-weight:700;font-size:16px;transition:transform .2s,box-shadow .2s;display:inline-block;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,191,0,.4);}
+  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:14px 30px;border-radius:11px;font-weight:600;font-size:16px;transition:all .2s;display:inline-block;}
   .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
-  .hero-stats{display:flex;gap:40px;margin-top:40px;}
-  .hero-stat .num{font-size:34px;font-weight:800;color:var(--gold);}
-  .hero-stat .lbl{font-size:13px;color:rgba(255,255,255,.7);}
-  .hero-visual{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:30px;backdrop-filter:blur(4px);animation:rise 1s ease-out;}
-  @keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-  .mini-card{background:rgba(255,255,255,.1);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;}
-  .mini-card .ic{font-size:26px;}
-  .mini-card .t{font-weight:600;font-size:15px;}
-  .mini-card .s{font-size:12px;color:rgba(255,255,255,.7);}
-  .mini-bar{height:8px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden;margin-top:6px;}
-  .mini-bar>div{height:100%;background:var(--gold);border-radius:4px;}
+  .hero-note{margin-top:22px;font-size:13px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:8px;}
+  .hero-note svg{flex:0 0 auto;}
+
+  /* Phone mockup */
+  .phone-wrap{display:flex;justify-content:center;}
+  .phone{width:300px;background:#0b1a2b;border-radius:40px;padding:12px;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 80px rgba(0,0,0,.45);position:relative;}
+  .phone-screen{background:#fff;border-radius:30px;overflow:hidden;height:560px;display:flex;flex-direction:column;}
+  .phone-top{background:var(--navy);color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+  .phone-top .t{font-weight:700;font-size:13px;}
+  .phone-top .s{font-size:10px;color:rgba(255,255,255,.6);}
+  .phone-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:12px;}
+  .q-label{font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.8px;}
+  .q-text{font-size:13px;font-weight:600;color:var(--ink);line-height:1.5;}
+  .opt{font-size:12px;color:var(--ink);padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-weight:500;}
+  .opt.correct{border-color:var(--green);background:#eef7ef;color:var(--green);font-weight:600;}
+  .opt.wrong{border-color:var(--red);background:#fdeeee;color:var(--red);}
+  .explain{font-size:11px;color:var(--muted);background:var(--gold-soft);border-radius:10px;padding:11px 13px;line-height:1.5;}
+  .explain b{color:var(--navy);}
+  .phone-bar{height:6px;background:#eef1f5;border-radius:3px;overflow:hidden;}
+  .phone-bar>div{height:100%;background:var(--gold);border-radius:3px;}
+
+  /* ===== STATS STRIP ===== */
+  .stats{background:#fff;border-bottom:1px solid var(--border);}
+  .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);padding:44px 0;}
+  .stat{padding:0 24px;border-right:1px solid var(--border);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--serif);font-size:40px;font-weight:700;color:var(--navy);line-height:1;}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:8px;font-weight:500;}
 
   /* ===== SECTIONS ===== */
-  section{padding:80px 0;}
-  .section-label{color:var(--cyan);font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
-  .section-title{font-size:36px;font-weight:800;color:var(--navy);margin-bottom:16px;letter-spacing:-.5px;}
-  .section-sub{font-size:17px;color:var(--muted);max-width:640px;margin-bottom:40px;}
+  section{padding:88px 0;}
+  .section-label{color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+  .section-title{font-family:var(--serif);font-size:40px;font-weight:700;color:var(--navy);margin-bottom:18px;letter-spacing:-.5px;line-height:1.15;}
+  .section-sub{font-size:17px;color:var(--muted);max-width:620px;margin-bottom:48px;line-height:1.65;}
 
-  /* Features */
-  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-  .feature{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:transform .3s,box-shadow .3s;opacity:0;transform:translateY(30px);}
-  .feature.visible{opacity:1;transform:translateY(0);}
-  .feature:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(2,40,81,.12);}
-  .feature .ic{font-size:34px;margin-bottom:14px;}
-  .feature h3{font-size:19px;color:var(--navy);margin-bottom:8px;font-weight:700;}
-  .feature p{font-size:14.5px;color:var(--muted);}
+  /* Feature spotlight (asymmetric) */
+  .spotlight{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  .spotlight .copy h3{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--navy);margin-bottom:14px;line-height:1.2;}
+  .spotlight .copy p{font-size:16px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
+  .spotlight .copy ul{list-style:none;}
+  .spotlight .copy li{font-size:15px;color:var(--ink);padding:9px 0;display:flex;gap:12px;align-items:flex-start;}
+  .spotlight .copy li .chk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--gold-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;margin-top:2px;}
+  .spotlight .visual{background:var(--navy);border-radius:20px;padding:36px;color:#fff;position:relative;overflow:hidden;}
+  .spotlight .visual::before{content:'';position:absolute;top:-30%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(0,178,227,.2),transparent 60%);}
+  .spotlight .visual .v-label{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:16px;}
+  .spotlight .visual .v-num{font-family:var(--serif);font-size:64px;font-weight:800;color:var(--gold);line-height:1;}
+  .spotlight .visual .v-cap{font-size:15px;color:rgba(255,255,255,.8);margin-top:10px;}
+
+  /* Feature grid (varied, not uniform) */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .feature{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;transition:transform .25s,box-shadow .25s,border-color .25s;}
+  .feature:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(2,40,81,.1);border-color:#d5dde6;}
+  .feature .f-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .feature .f-ic{width:40px;height:40px;border-radius:10px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto;}
+  .feature h3{font-size:17px;color:var(--navy);font-weight:700;line-height:1.3;}
+  .feature p{font-size:14px;color:var(--muted);line-height:1.6;}
 
   /* Topics */
-  .topics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-  .topic{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center;transition:all .3s;opacity:0;transform:scale(.9);}
-  .topic.visible{opacity:1;transform:scale(1);}
-  .topic:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(2,40,81,.1);}
-  .topic .ic{font-size:28px;margin-bottom:8px;}
+  .topics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .topic{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 16px;text-align:left;transition:all .25s;}
+  .topic:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(2,40,81,.08);}
   .topic .t{font-size:14px;font-weight:600;color:var(--navy);}
 
-  /* How it works */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:step;}
-  .step{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;opacity:0;transform:translateY(30px);}
-  .step.visible{opacity:1;transform:translateY(0);}
-  .step::before{counter-increment:step;content:counter(step);position:absolute;top:-18px;left:24px;background:var(--navy);color:var(--gold);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;}
-  .step h3{font-size:18px;color:var(--navy);margin-bottom:8px;font-weight:700;}
-  .step p{font-size:14.5px;color:var(--muted);}
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .step{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;}
+  .step .s-num{font-family:var(--serif);font-size:44px;font-weight:800;color:var(--gold);line-height:1;margin-bottom:14px;}
+  .step h3{font-size:18px;color:var(--navy);margin-bottom:10px;font-weight:700;}
+  .step p{font-size:14.5px;color:var(--muted);line-height:1.6;}
 
-  /* CTA band */
-  .cta-band{background:linear-gradient(135deg,#022851,#0a3d6b);color:#fff;text-align:center;padding:80px 24px;border-radius:24px;margin:0 24px;}
-  .cta-band h2{font-size:36px;font-weight:800;margin-bottom:16px;}
-  .cta-band p{font-size:18px;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 30px;}
-  .cta-band .btn-primary{font-size:18px;padding:17px 40px;}
+  /* CTA */
+  .cta-band{background:linear-gradient(150deg,#022851,#0a3d6b);color:#fff;text-align:center;padding:88px 28px;border-radius:24px;margin:0 28px;position:relative;overflow:hidden;}
+  .cta-band::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(255,191,0,.15),transparent 60%);}
+  .cta-band h2{font-family:var(--serif);font-size:42px;font-weight:700;margin-bottom:18px;position:relative;}
+  .cta-band p{font-size:18px;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 34px;position:relative;}
+  .cta-band .btn-primary{font-size:18px;padding:18px 44px;position:relative;}
 
   /* Footer */
-  footer{background:var(--navy);color:rgba(255,255,255,.7);padding:40px 0;text-align:center;font-size:14px;}
+  footer{background:var(--navy);color:rgba(255,255,255,.65);padding:48px 0;text-align:center;font-size:14px;}
+  footer .f-brand{font-family:var(--serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
   footer strong{color:var(--gold);}
 
   /* ===== RESPONSIVE ===== */
   @media(max-width:900px){
     .hero-inner{grid-template-columns:1fr;padding-top:20px;}
-    .hero h1{font-size:38px;}
+    .hero h1{font-size:40px;}
+    .spotlight{grid-template-columns:1fr;}
     .features,.steps{grid-template-columns:1fr;}
     .topics{grid-template-columns:repeat(2,1fr);}
-    .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;gap:16px;}
+    .stats-inner{grid-template-columns:repeat(2,1fr);gap:28px 0;}
+    .stat{border-right:none;}
+    .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;gap:16px;}
     .nav-links.open{display:flex;}
     .hamburger{display:block;}
   }
   @media(max-width:500px){
-    .hero h1{font-size:30px;}
-    .hero-stats{flex-wrap:wrap;gap:20px;}
+    .hero h1{font-size:32px;}
+    .section-title{font-size:30px;}
     .topics{grid-template-columns:1fr;}
+    .phone{width:260px;}
+    .phone-screen{height:500px;}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important;}
-    .feature,.step,.topic{opacity:1;transform:none;}
   }
 </style>
 </head>
@@ -122,9 +161,10 @@
 
 <nav>
   <div class="container nav-inner">
-    <div class="logo">CNN<span>Prep</span></div>
+    <div class="logo"><span class="mark">CN</span> CNN<span style="color:var(--gold)">Prep</span></div>
     <div class="nav-links" id="navLinks">
       <a href="#features">Features</a>
+      <a href="#exam">Exam Simulator</a>
       <a href="#topics">Topics</a>
       <a href="#how">How It Works</a>
       <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="nav-cta">Open the App</a>
@@ -137,80 +177,123 @@
 <header class="hero">
   <div class="container hero-inner">
     <div>
-      <span class="hero-badge">For Nephrology Nurses</span>
-      <h1>Pass the <span class="accent">CNN Exam</span> with confidence.</h1>
-      <p class="lead">A complete study app built for dialysis and nephrology nurses. Practice questions, full exam simulations, flashcards, lessons, and smart trackers — all in one place, on any device.</p>
+      <span class="hero-badge"><span class="dot"></span> For Nephrology Nurses</span>
+      <h1>Pass the <span class="accent">CNN exam</span> with confidence.</h1>
+      <p class="lead">A complete study app built for dialysis and nephrology nurses — practice questions, full exam simulations, flashcards, lessons, and smart trackers. All in one place, on any device.</p>
       <div class="hero-ctas">
         <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="btn-primary">Start Studying Free</a>
         <a href="#features" class="btn-ghost">See What's Inside</a>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="num">898</div><div class="lbl">Practice Questions</div></div>
-        <div class="hero-stat"><div class="num">759</div><div class="lbl">Flashcards</div></div>
-        <div class="hero-stat"><div class="num">90</div><div class="lbl">Study Lessons</div></div>
+      <div class="hero-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        No credit card. No setup. Just open and study.
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="mini-card"><div class="ic">📝</div><div><div class="t">Practice Quiz</div><div class="s">Hemodialysis · Question 12 of 20</div><div class="mini-bar"><div style="width:60%"></div></div></div></div>
-      <div class="mini-card"><div class="ic">🃏</div><div><div class="t">Flashcards</div><div class="s">Kt/V · 759 cards</div></div></div>
-      <div class="mini-card"><div class="ic">📊</div><div><div class="t">Your Progress</div><div class="s">Accuracy 82% · 12h studied</div><div class="mini-bar"><div style="width:82%"></div></div></div></div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-top">
+            <div><div class="t">Practice Test</div><div class="s">Exam 1 · Question 12 of 150</div></div>
+            <div class="s">⏱ 2:41:08</div>
+          </div>
+          <div class="phone-body">
+            <div class="q-label">Hemodialysis</div>
+            <div class="q-text">Which immunosuppressant can cause gingival hyperplasia?</div>
+            <div class="opt">A. Tacrolimus</div>
+            <div class="opt correct">B. Cyclosporine ✓</div>
+            <div class="opt">C. Sirolimus</div>
+            <div class="opt">D. Prednisone</div>
+            <div class="explain"><b>Correct.</b> Cyclosporine causes gingival hyperplasia, hypertension, and hirsutism.</div>
+            <div class="phone-bar"><div style="width:68%"></div></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="container stats-inner">
+    <div class="stat"><div class="num">898</div><div class="lbl">Practice Questions</div></div>
+    <div class="stat"><div class="num">759</div><div class="lbl">Flashcards</div></div>
+    <div class="stat"><div class="num">90</div><div class="lbl">Study Lessons</div></div>
+    <div class="stat"><div class="num">3</div><div class="lbl">Full Exam Simulations</div></div>
+  </div>
+</div>
 
 <!-- FEATURES -->
 <section id="features">
   <div class="container">
     <div class="section-label">Everything You Need</div>
     <h2 class="section-title">Built for how nurses actually study</h2>
-    <p class="section-sub">Whether you have 10 minutes between shifts or a full evening, the app adapts to your schedule and your learning style.</p>
+    <p class="section-sub">Whether you have ten minutes between shifts or a full evening, the app adapts to your schedule and your learning style.</p>
     <div class="features">
-      <div class="feature"><div class="ic">📝</div><h3>Practice Questions</h3><p>898 questions across 12 topics, each with a clear explanation. Questions shuffle every time so you truly learn the material.</p></div>
-      <div class="feature"><div class="ic">🃏</div><h3>Smart Flashcards</h3><p>759 flashcards with spaced repetition — cards you miss come back sooner, so you master them faster.</p></div>
-      <div class="feature"><div class="ic">📚</div><h3>Study Lessons</h3><p>90 concise lessons with diagrams that teach key concepts in plain language.</p></div>
-      <div class="feature"><div class="ic">📋</div><h3>Practice Test Simulator</h3><p>Three full 150-question exams in the real 3-hour CNN format, weighted to the official blueprint.</p></div>
-      <div class="feature"><div class="ic">🎯</div><h3>Exam-Day Simulation</h3><p>A locked mode with no feedback until the end — practice under real test conditions.</p></div>
-      <div class="feature"><div class="ic">💪</div><h3>Weak-Area Drills</h3><p>After each test, the app builds a focused quiz on your weakest subjects automatically.</p></div>
-      <div class="feature"><div class="ic">🎯</div><h3>Focus Suggestions</h3><p>The app analyzes your wrong answers and tells you exactly which topics to study next.</p></div>
-      <div class="feature"><div class="ic">⏱️</div><h3>80-Hour Goal Tracker</h3><p>A visual progress bar toward your 80-hour study goal, with milestones to keep you motivated.</p></div>
-      <div class="feature"><div class="ic">🔊</div><h3>Read-Aloud Mode</h3><p>Listen to lessons and flashcards hands-free — perfect for between shifts or on the go.</p></div>
+      <div class="feature"><div class="f-top"><div class="f-ic">📝</div><h3>Practice Questions</h3></div><p>898 questions across 12 topics, each with a clear explanation. Questions shuffle every time so you truly learn the material.</p></div>
+      <div class="feature"><div class="f-top"><div class="f-ic">🃏</div><h3>Smart Flashcards</h3></div><p>759 flashcards with spaced repetition — cards you miss come back sooner, so you master them faster.</p></div>
+      <div class="feature"><div class="f-top"><div class="f-ic">📚</div><h3>Study Lessons</h3></div><p>90 concise lessons with diagrams that teach key concepts in plain language.</p></div>
+      <div class="feature"><div class="f-top"><div class="f-ic">🎯</div><h3>Focus Suggestions</h3></div><p>The app analyzes your wrong answers and tells you exactly which topics to study next.</p></div>
+      <div class="feature"><div class="f-top"><div class="f-ic">⏱️</div><h3>80-Hour Goal Tracker</h3></div><p>A visual progress bar toward your 80-hour study goal, with milestones to keep you motivated.</p></div>
+      <div class="feature"><div class="f-top"><div class="f-ic">🔊</div><h3>Read-Aloud Mode</h3></div><p>Listen to lessons and flashcards hands-free — perfect for between shifts or on the go.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXAM SIMULATOR SPOTLIGHT -->
+<section id="exam" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container spotlight">
+    <div class="copy">
+      <div class="section-label">The Real Test, Rehearsed</div>
+      <h3>Full exam simulations that mirror the CNN exam</h3>
+      <p>Three complete 150-question exams in the real 3-hour format, weighted to the official exam blueprint. Practice under real conditions so there are no surprises on exam day.</p>
+      <ul>
+        <li><span class="chk">✓</span><span><strong>Blueprint-weighted</strong> — questions match the official exam's subject distribution</span></li>
+        <li><span class="chk">✓</span><span><strong>Exam-day simulation mode</strong> — no feedback until the end, just like the real test</span></li>
+        <li><span class="chk">✓</span><span><strong>Readiness gauge</strong> — a clear score that tells you when you're exam-ready</span></li>
+        <li><span class="chk">✓</span><span><strong>Weak-area drills</strong> — after each test, the app builds a focused quiz on your weakest subjects</span></li>
+      </ul>
+    </div>
+    <div class="visual">
+      <div class="v-label">Exam Readiness</div>
+      <div class="v-num">82%</div>
+      <div class="v-cap">On track — keep reinforcing your weak areas to reach exam-ready.</div>
     </div>
   </div>
 </section>
 
 <!-- TOPICS -->
-<section id="topics" style="background:#fff;">
+<section id="topics">
   <div class="container">
     <div class="section-label">12 Core Topics</div>
     <h2 class="section-title">Complete CNN exam coverage</h2>
     <p class="section-sub">From the fundamentals to advanced nephrology, every topic the exam covers is here.</p>
     <div class="topics">
-      <div class="topic"><div class="ic">🫘</div><div class="t">Kidney Disease</div></div>
-      <div class="topic"><div class="ic">🩸</div><div class="t">Hemodialysis</div></div>
-      <div class="topic"><div class="ic">💧</div><div class="t">Peritoneal Dialysis</div></div>
-      <div class="topic"><div class="ic">🫀</div><div class="t">Transplant</div></div>
-      <div class="topic"><div class="ic">⚡</div><div class="t">Acute Therapies</div></div>
-      <div class="topic"><div class="ic">🧬</div><div class="t">CKD Complications</div></div>
-      <div class="topic"><div class="ic">👶</div><div class="t">Pediatric Nephrology</div></div>
-      <div class="topic"><div class="ic">🤰</div><div class="t">Pregnancy & Kidney</div></div>
-      <div class="topic"><div class="ic">💊</div><div class="t">Drug Dosing</div></div>
-      <div class="topic"><div class="ic">⚖️</div><div class="t">Acid-Base</div></div>
-      <div class="topic"><div class="ic">🧂</div><div class="t">Fluid & Electrolytes</div></div>
-      <div class="topic"><div class="ic">🛡️</div><div class="t">Transplant Pharm</div></div>
+      <div class="topic"><div class="t">Kidney Disease</div></div>
+      <div class="topic"><div class="t">Hemodialysis</div></div>
+      <div class="topic"><div class="t">Peritoneal Dialysis</div></div>
+      <div class="topic"><div class="t">Transplant</div></div>
+      <div class="topic"><div class="t">Acute Therapies</div></div>
+      <div class="topic"><div class="t">CKD Complications</div></div>
+      <div class="topic"><div class="t">Pediatric Nephrology</div></div>
+      <div class="topic"><div class="t">Pregnancy &amp; Kidney</div></div>
+      <div class="topic"><div class="t">Drug Dosing</div></div>
+      <div class="topic"><div class="t">Acid-Base</div></div>
+      <div class="topic"><div class="t">Fluid &amp; Electrolytes</div></div>
+      <div class="topic"><div class="t">Transplant Pharm</div></div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how">
+<section id="how" style="background:#fff;border-top:1px solid var(--border);">
   <div class="container">
     <div class="section-label">Simple to Start</div>
     <h2 class="section-title">Three steps to exam-ready</h2>
     <p class="section-sub">No complicated setup. Just open the app and start building your knowledge.</p>
     <div class="steps">
-      <div class="step"><h3>Sign in</h3><p>Create your account with a name and password. Your progress saves automatically.</p></div>
-      <div class="step"><h3>Study your way</h3><p>Start with lessons, drill with flashcards, or test yourself with practice questions.</p></div>
-      <div class="step"><h3>Track your progress</h3><p>Watch your accuracy improve and log your study hours toward your goal.</p></div>
+      <div class="step"><div class="s-num">01</div><h3>Sign in</h3><p>Create your account with a name and password. Your progress saves automatically.</p></div>
+      <div class="step"><div class="s-num">02</div><h3>Study your way</h3><p>Start with lessons, drill with flashcards, or test yourself with practice questions.</p></div>
+      <div class="step"><div class="s-num">03</div><h3>Track your progress</h3><p>Watch your accuracy improve and log your study hours toward your goal.</p></div>
     </div>
   </div>
 </section>
@@ -226,18 +309,18 @@
 
 <footer>
   <div class="container">
-    <p><strong>CNN Prep</strong> — Certified Nephrology Nurse Exam Study</p>
-    <p>For clinical use only. Verify all information. Oliver Llenado, BSN RN</p>
+    <div class="f-brand">CNN Prep</div>
+    <p>Certified Nephrology Nurse Exam Study</p>
+    <p style="margin-top:8px">For clinical use only. Verify all information. <strong>Oliver Llenado, BSN RN</strong></p>
   </div>
 </footer>
 
 <script>
-// Scroll reveal
 const observer = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{
     if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
   });
-},{threshold:.15});
+},{threshold:.12});
 document.querySelectorAll('.feature,.step,.topic').forEach(el=>observer.observe(el));
 </script>
 </body>
