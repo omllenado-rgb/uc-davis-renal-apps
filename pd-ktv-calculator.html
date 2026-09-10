@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PD Kt/V Calculator - Clinical Calculator Suite</title>
+    <meta name="description" content="Peritoneal dialysis adequacy calculator. Weekly Kt/V with collection guide and result interpretation.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #022851, #13639e); min-height: 100vh; padding: 20px; }
+        .container { max-width: 640px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+
+        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #00b2e3; }
+        .header-icon { width: 84px; height: 84px; line-height: 84px; font-size: 40px; margin: 0 auto 14px; background: #00b2e3; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,178,227,0.35); }
+        .header h1 { color: #022851; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
+        .header p { color: #55565b; font-size: 14px; }
+        .uc-logo { background: #022851; color: white; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
+
+        .section-title { font-size: 17px; color: #022851; font-weight: 700; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #e5e5e5; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .input-field { width: 100%; padding: 15px; border: 2px solid #e5e5e5; border-radius: 12px; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+        .input-field:focus { outline: none; border-color: #13639e; box-shadow: 0 0 0 3px rgba(19,99,158,0.15); }
+        .helper-text { font-size: 12px; color: #999; margin-top: 5px; }
+
+        .calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #022851, #13639e); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: transform 0.2s; margin-top: 10px; }
+        .calculate-btn:hover { transform: scale(1.02); }
+        .calculate-btn:active { transform: scale(0.98); }
+
+        .result-card { display: none; background: linear-gradient(135deg, #34C759, #30B46C); border-radius: 16px; padding: 25px; margin-top: 25px; color: white; }
+        .result-card.show { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .result-header { text-align: center; margin-bottom: 20px; }
+        .result-icon { font-size: 50px; margin-bottom: 10px; }
+        .result-label { font-size: 14px; opacity: 0.9; margin-bottom: 5px; }
+        .result-value { font-size: 48px; font-weight: 700; margin-bottom: 5px; }
+        .result-unit { font-size: 16px; opacity: 0.9; }
+        .result-status { background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; font-weight: 600; font-size: 14px; }
+        .status-good { background: rgba(255,255,255,0.3); }
+        .status-warning { background: #FFC107; color: #333; }
+        .status-bad { background: #FF3B30; color: white; }
+
+        .dual-results { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .result-box { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; text-align: center; }
+        .result-box .box-label { font-size: 13px; opacity: 0.9; margin-bottom: 8px; }
+        .result-box .box-value { font-size: 30px; font-weight: 700; }
+        .result-box .box-status { font-size: 12px; margin-top: 8px; font-weight: 600; }
+
+        .details-section { background: #F2F2F7; border-radius: 12px; padding: 20px; margin-top: 20px; }
+        .details-title { font-size: 16px; color: #022851; margin-bottom: 15px; font-weight: 700; }
+        .detail-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e5e5; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { color: #666; font-size: 14px; }
+        .detail-value { color: #333; font-weight: 600; font-size: 14px; }
+
+        .guidelines { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .guidelines h4 { color: #E65100; font-size: 14px; margin-bottom: 10px; }
+        .guidelines ul { list-style: none; }
+        .guidelines li { padding: 5px 0; font-size: 13px; color: #666; }
+        .guidelines li:before { content: "📋 "; margin-right: 5px; }
+
+        .collection-guide { background: #E8F4FD; border-left: 4px solid #00b2e3; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .collection-guide h4 { color: #022851; font-size: 14px; margin-bottom: 10px; }
+        .collection-guide ol { padding-left: 20px; }
+        .collection-guide li { padding: 5px 0; font-size: 13px; color: #555; line-height: 1.5; }
+
+        .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #022851; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        .footer { text-align: center; margin-top: 25px; color: #999; font-size: 12px; }
+
+        @media (max-width: 480px) {
+            .input-row { grid-template-columns: 1fr; }
+            .dual-results { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="uc-logo">CLINICAL APPS</div>
+            <div class="header-icon">💧</div>
+            <h1>PD Kt/V Calculator</h1>
+            <p>Peritoneal Dialysis Adequacy (Weekly)</p>
+        </div>
+
+        <!-- Collection Guide -->
+        <div class="collection-guide">
+            <h4>📋 How to Collect (24-Hour Collection)</h4>
+            <ol>
+                <li><strong>Dialysate:</strong> Collect ALL drained dialysate over 24 hours. Mix thoroughly, then take a small sample for urea measurement. Record the total drain volume (L).</li>
+                <li><strong>Urine:</strong> Collect ALL urine over the same 24 hours (if the patient still makes urine). Record volume and take a sample for urea.</li>
+                <li><strong>Blood:</strong> Draw a serum BUN at the midpoint of the collection period.</li>
+                <li><strong>Send:</strong> Label all samples (dialysate urea, urine urea, serum BUN) and send to lab.</li>
+            </ol>
+        </div>
+
+        <!-- Form -->
+        <form id="pdKtvForm">
+            <div class="section-title">Patient Demographics</div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="gender" class="input-field" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age (years)</label>
+                    <input type="number" id="age" class="input-field" placeholder="e.g., 55" required>
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Height (cm)</label>
+                    <input type="number" id="height" class="input-field" placeholder="e.g., 170" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" class="input-field" placeholder="e.g., 70" step="0.1" required>
+                </div>
+            </div>
+
+            <div class="section-title">Peritoneal Clearance</div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>24-hr Drain Volume (L)</label>
+                    <input type="number" id="drainVolume" class="input-field" placeholder="e.g., 10" step="0.1" required>
+                    <div class="helper-text">Total dialysate drained in 24 hrs</div>
+                </div>
+                <div class="form-group">
+                    <label>D/P Urea Ratio</label>
+                    <input type="number" id="dpRatio" class="input-field" placeholder="e.g., 0.95" step="0.01" required>
+                    <div class="helper-text">Dialysate urea ÷ plasma urea</div>
+                </div>
+            </div>
+
+            <div class="section-title">Residual Renal Function (optional)</div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>24-hr Urine Volume (L)</label>
+                    <input type="number" id="urineVolume" class="input-field" placeholder="e.g., 0.5" step="0.1" value="0">
+                    <div class="helper-text">0 if anuric</div>
+                </div>
+                <div class="form-group">
+                    <label>Urine Urea (mg/dL)</label>
+                    <input type="number" id="urineUrea" class="input-field" placeholder="e.g., 500" step="1" value="0">
+                    <div class="helper-text">0 if anuric</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Serum BUN (mg/dL)</label>
+                <input type="number" id="serumBun" class="input-field" placeholder="e.g., 60" step="1" required>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Weekly Kt/V</button>
+        </form>
+
+        <!-- Results -->
+        <div class="result-card" id="resultCard">
+            <div class="result-header">
+                <div class="result-icon">✅</div>
+                <div class="result-label">Weekly Kt/V</div>
+                <div class="result-value" id="totalKtv">0.00</div>
+                <div class="result-unit">target ≥ 1.7</div>
+                <div class="result-status status-good" id="statusBadge">✓ Meets KDOQI Guidelines</div>
+            </div>
+            <div class="dual-results">
+                <div class="result-box">
+                    <div class="box-label">Peritoneal Kt/V</div>
+                    <div class="box-value" id="peritonealKtv">0.00</div>
+                    <div class="box-status" id="peritonealStatus">--</div>
+                </div>
+                <div class="result-box">
+                    <div class="box-label">Renal Kt/V</div>
+                    <div class="box-value" id="renalKtv">0.00</div>
+                    <div class="box-status" id="renalStatus">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="details-section" id="detailsSection" style="display: none;">
+            <h3 class="details-title">📊 Calculation Details</h3>
+            <div class="detail-item">
+                <span class="detail-label">Total Body Water (V)</span>
+                <span class="detail-value" id="tbwValue">-- L</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Formula</span>
+                <span class="detail-value">Weekly Kt/V = (Peritoneal + Renal) × 7 ÷ V</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Peritoneal Clearance</span>
+                <span class="detail-value" id="peritonealClearance">-- L/day</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Renal Clearance</span>
+                <span class="detail-value" id="renalClearance">-- L/day</span>
+            </div>
+        </div>
+
+        <!-- Guidelines -->
+        <div class="guidelines">
+            <h4>📋 KDOQI Guidelines — PD Adequacy</h4>
+            <ul>
+                <li><strong>Weekly Kt/V:</strong> ≥ 1.7 (target)</li>
+                <li><strong>Peritoneal Kt/V:</strong> contributes most of the clearance</li>
+                <li><strong>Renal Kt/V:</strong> residual kidney function counts — preserve it</li>
+                <li><strong>Below 1.7:</strong> consider increasing dwell volume, exchanges, or cycler time</li>
+            </ul>
+        </div>
+
+        <button type="button" class="reset-btn" onclick="resetForm()">🔄 Calculate Again</button>
+
+        <div class="footer">
+            <p>Clinical Calculator Suite © 2026</p>
+            <p>For clinical use only. Verify all calculations. Oliver Llenado, BSN RN</p>
+        </div>
+    </div>
+
+    <script>
+        // Watson formula for total body water (V) in liters
+        function watsonTBW(gender, age, heightCm, weightKg) {
+            if (gender === 'male') {
+                return 2.447 - (0.09156 * age) + (0.1074 * heightCm) + (0.3362 * weightKg);
+            } else {
+                return -2.097 + (0.1069 * heightCm) + (0.2466 * weightKg);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('pdKtvForm').reset();
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('detailsSection').style.display = 'none';
+        }
+
+        document.getElementById('pdKtvForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const drainVolume = parseFloat(document.getElementById('drainVolume').value);
+            const dpRatio = parseFloat(document.getElementById('dpRatio').value);
+            const urineVolume = parseFloat(document.getElementById('urineVolume').value) || 0;
+            const urineUrea = parseFloat(document.getElementById('urineUrea').value) || 0;
+            const serumBun = parseFloat(document.getElementById('serumBun').value);
+
+            if (!age || !height || !weight || !drainVolume || !dpRatio || !serumBun) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Total body water (V) via Watson formula
+            const V = watsonTBW(gender, age, height, weight);
+
+            // Peritoneal clearance (L/day) = D/P ratio × drain volume
+            const peritonealClearance = dpRatio * drainVolume;
+
+            // Renal clearance (L/day) = (urine urea / serum BUN) × urine volume
+            const renalClearance = serumBun > 0 ? (urineUrea / serumBun) * urineVolume : 0;
+
+            // Weekly Kt/V = (clearance × 7 days) / V
+            const peritonealKtv = (peritonealClearance * 7) / V;
+            const renalKtv = (renalClearance * 7) / V;
+            const totalKtv = peritonealKtv + renalKtv;
+
+            // Status
+            const totalStatus = totalKtv >= 1.7 ? '✓ Meets KDOQI Guidelines' : '✗ Below Target (1.7)';
+            const totalCls = totalKtv >= 1.7 ? 'status-good' : 'status-bad';
+
+            // Display
+            document.getElementById('totalKtv').textContent = totalKtv.toFixed(2);
+            document.getElementById('statusBadge').textContent = totalStatus;
+            document.getElementById('statusBadge').className = 'result-status ' + totalCls;
+
+            document.getElementById('peritonealKtv').textContent = peritonealKtv.toFixed(2);
+            document.getElementById('peritonealStatus').textContent = peritonealKtv >= 1.7 ? '✓ Adequate' : '—';
+            document.getElementById('peritonealStatus').className = 'box-status ' + (peritonealKtv >= 1.7 ? 'status-good' : 'status-warning');
+
+            document.getElementById('renalKtv').textContent = renalKtv.toFixed(2);
+            document.getElementById('renalStatus').textContent = renalKtv > 0 ? '✓ Contributing' : 'Anuric';
+            document.getElementById('renalStatus').className = 'box-status ' + (renalKtv > 0 ? 'status-good' : 'status-warning');
+
+            // Details
+            document.getElementById('tbwValue').textContent = V.toFixed(1) + ' L';
+            document.getElementById('peritonealClearance').textContent = peritonealClearance.toFixed(2) + ' L/day';
+            document.getElementById('renalClearance').textContent = renalClearance.toFixed(2) + ' L/day';
+
+            // Show
+            document.getElementById('resultCard').classList.add('show');
+            document.getElementById('detailsSection').style.display = 'block';
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        fetch('https://api.countapi.xyz/hit/clinical-apps/pd-ktv-calculator')
+            .then(r => r.json())
+            .then(data => console.log('PD KtV views:', data.value))
+            .catch(e => console.log('Analytics:', e));
+    </script>
+</body>
+</html>
