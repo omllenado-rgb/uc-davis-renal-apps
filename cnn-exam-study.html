@@ -7,15 +7,20 @@
 <meta name="description" content="The complete study app for nephrology nurses preparing for the CNN exam. 898 practice questions, 759 flashcards, 90 lessons, full exam simulations, and smart trackers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#022851; --navy-2:#0a3d6b; --navy-3:#0e5a8a;
-    --gold:#ffbf00; --gold-soft:#fff4d6; --cyan:#00b2e3;
-    --ink:#16222e; --muted:#5b6b7a; --bg:#fbfcfe; --card:#ffffff;
-    --border:#e6ebf1; --green:#2e7d32; --red:#c62828;
+    --ink:#13111d; --ink-2:#241f33;
+    --bg:#f6f4fb; --card:#ffffff;
+    --border:#ece7f5;
+    --violet:#7c3aed; --fuchsia:#c026d3; --coral:#ff5e3a; --amber:#ffb020; --aqua:#2dd4bf;
+    --grad:linear-gradient(135deg,#7c3aed 0%,#c026d3 55%,#ff5e3a 100%);
+    --grad-soft:linear-gradient(135deg,rgba(124,58,237,.12),rgba(192,38,211,.12),rgba(255,94,58,.12));
+    --muted:#5b6472; --line:#e9e4f3;
     --serif:'Fraunces',Georgia,'Times New Roman',serif;
     --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --shadow:0 22px 50px -18px rgba(72,40,160,.28);
+    --shadow-sm:0 8px 22px -12px rgba(72,40,160,.22);
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
@@ -23,145 +28,193 @@
   a{text-decoration:none;color:inherit;}
   .container{max-width:1140px;margin:0 auto;padding:0 28px;}
 
+  /* Gradient text helper */
+  .gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+
   /* ===== NAV ===== */
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,40,81,.96);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transition:box-shadow .3s;}
+  nav.scrolled{box-shadow:0 10px 34px -18px rgba(72,40,160,.34);}
   .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px;}
-  .logo{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:17px;letter-spacing:.2px;}
-  .logo .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#ffd54d);display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:800;font-size:15px;font-family:var(--serif);}
-  .nav-links{display:flex;gap:30px;align-items:center;}
-  .nav-links a{color:rgba(255,255,255,.82);font-size:14px;font-weight:500;transition:color .2s;}
-  .nav-links a:hover{color:var(--gold);}
-  .nav-cta{background:var(--gold);color:var(--navy);padding:10px 22px;border-radius:9px;font-weight:700;font-size:14px;transition:transform .2s,box-shadow .2s;}
-  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,191,0,.35);}
-  .hamburger{display:none;background:none;border:none;color:#fff;font-size:26px;cursor:pointer;}
+  .logo{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:800;font-size:17px;letter-spacing:.2px;}
+  .logo .mark{width:32px;height:32px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;font-family:var(--serif);box-shadow:var(--shadow-sm);}
+  .nav-links{display:flex;gap:28px;align-items:center;}
+  .nav-links a{color:var(--ink-2);font-size:14px;font-weight:600;transition:color .2s;}
+  .nav-links a:hover{color:var(--fuchsia);}
+  .nav-cta{position:relative;overflow:hidden;background:var(--grad);color:#fff;padding:10px 22px;border-radius:11px;font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);transition:transform .25s;}
+  .nav-cta:hover{transform:translateY(-2px);}
+  .hamburger{display:none;background:none;border:none;color:var(--ink);font-size:26px;cursor:pointer;}
 
-  /* ===== HERO ===== */
-  .hero{background:linear-gradient(160deg,#022851 0%,#06305f 45%,#0a3d6b 100%);color:#fff;padding:150px 0 90px;position:relative;overflow:hidden;}
-  .hero::before{content:'';position:absolute;top:-20%;right:-8%;width:640px;height:640px;background:radial-gradient(circle,rgba(0,178,227,.18),transparent 62%);}
-  .hero::after{content:'';position:absolute;bottom:-25%;left:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(255,191,0,.12),transparent 60%);}
+  /* ===== HERO (animated gradient mesh) ===== */
+  .hero{background:linear-gradient(170deg,#161129 0%,#241d3a 45%,#33204d 100%);color:#fff;padding:158px 0 96px;position:relative;overflow:hidden;}
+  .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform;animation:float 16s ease-in-out infinite;}
+  .orb-1{width:520px;height:520px;top:-160px;right:-120px;background:#7c3aed;}
+  .orb-2{width:460px;height:460px;bottom:-180px;left:-120px;background:#c026d3;animation-delay:-4s;}
+  .orb-3{width:320px;height:320px;top:30%;left:46%;background:#ff5e3a;opacity:.35;animation-delay:-8s;}
+  .grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%);-webkit-mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%);}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-36px) scale(1.08);}66%{transform:translate(-28px,24px) scale(.95);}}
   .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
-  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,191,0,.14);color:var(--gold);border:1px solid rgba(255,191,0,.35);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;margin-bottom:24px;letter-spacing:.4px;}
-  .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
-  .hero h1{font-family:var(--serif);font-size:56px;line-height:1.06;font-weight:700;margin-bottom:22px;letter-spacing:-1px;}
-  .hero h1 .accent{color:var(--gold);font-style:italic;}
-  .hero p.lead{font-size:18px;color:rgba(255,255,255,.86);max-width:520px;margin-bottom:34px;line-height:1.65;}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;margin-bottom:24px;letter-spacing:.4px;color:#fff;backdrop-filter:blur(6px);}
+  .hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--aqua);box-shadow:0 0 0 0 rgba(45,212,191,.7);animation:pulse 2s infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(45,212,191,.7);}70%{box-shadow:0 0 0 9px rgba(45,212,191,0);}100%{box-shadow:0 0 0 0 rgba(45,212,191,0);}}
+  .hero h1{font-family:var(--serif);font-size:58px;line-height:1.05;font-weight:700;margin-bottom:22px;letter-spacing:-1px;}
+  .hero p.lead{font-size:18px;color:rgba(255,255,255,.85);max-width:520px;margin-bottom:34px;line-height:1.65;}
   .hero-ctas{display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
-  .btn-primary{background:var(--gold);color:var(--navy);padding:16px 34px;border-radius:11px;font-weight:700;font-size:16px;transition:transform .2s,box-shadow .2s;display:inline-block;}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,191,0,.4);}
-  .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:14px 30px;border-radius:11px;font-weight:600;font-size:16px;transition:all .2s;display:inline-block;}
-  .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
-  .hero-note{margin-top:22px;font-size:13px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:8px;}
-  .hero-note svg{flex:0 0 auto;}
 
-  /* Phone mockup */
-  .phone-wrap{display:flex;justify-content:center;}
-  .phone{width:300px;background:#0b1a2b;border-radius:40px;padding:12px;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 80px rgba(0,0,0,.45);position:relative;}
+  .btn{position:relative;overflow:hidden;border-radius:12px;font-weight:700;font-size:16px;display:inline-block;transition:transform .25s,box-shadow .25s;color:#fff;padding:16px 34px;}
+  .btn::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);transition:left .6s ease;}
+  .btn:hover::after{left:130%;}
+  .btn-primary{background:var(--grad);box-shadow:0 14px 38px -12px rgba(192,38,211,.55);}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 20px 48px -14px rgba(192,38,211,.6);}
+  .btn-ghost{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.35);backdrop-filter:blur(6px);}
+  .btn-ghost:hover{border-color:var(--aqua);color:var(--aqua);}
+  .hero-note{margin-top:22px;font-size:13.5px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px;}
+  .hero-note svg{flex:0 0 auto;color:var(--aqua);}
+
+  /* Phone mockup — floating + cycling */
+  .phone-wrap{display:flex;justify-content:center;animation:phoneFloat 7s ease-in-out infinite;}
+  @keyframes phoneFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
+  .phone{width:300px;background:#1c1830;border-radius:42px;padding:12px;border:1px solid rgba(255,255,255,.16);box-shadow:0 44px 96px rgba(0,0,0,.5);position:relative;}
+  .phone::before{content:'';position:absolute;inset:0;border-radius:42px;padding:1.5px;background:linear-gradient(160deg,rgba(124,58,237,.6),rgba(255,94,58,.5));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
   .phone-screen{background:#fff;border-radius:30px;overflow:hidden;height:560px;display:flex;flex-direction:column;}
-  .phone-top{background:var(--navy);color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
-  .phone-top .t{font-weight:700;font-size:13px;}
-  .phone-top .s{font-size:10px;color:rgba(255,255,255,.6);}
+  .phone-top{background:linear-gradient(120deg,var(--violet),var(--fuchsia));color:#fff;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+  .phone-top .t{font-weight:800;font-size:13px;}
+  .phone-top .s{font-size:10.5px;color:rgba(255,255,255,.75);}
   .phone-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:12px;}
-  .q-label{font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.8px;}
-  .q-text{font-size:13px;font-weight:600;color:var(--ink);line-height:1.5;}
-  .opt{font-size:12px;color:var(--ink);padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-weight:500;}
-  .opt.correct{border-color:var(--green);background:#eef7ef;color:var(--green);font-weight:600;}
-  .opt.wrong{border-color:var(--red);background:#fdeeee;color:var(--red);}
-  .explain{font-size:11px;color:var(--muted);background:var(--gold-soft);border-radius:10px;padding:11px 13px;line-height:1.5;}
-  .explain b{color:var(--navy);}
-  .phone-bar{height:6px;background:#eef1f5;border-radius:3px;overflow:hidden;}
-  .phone-bar>div{height:100%;background:var(--gold);border-radius:3px;}
+  .q-label{font-size:10px;font-weight:800;color:var(--violet);text-transform:uppercase;letter-spacing:.9px;}
+  .q-text{font-size:13px;font-weight:600;color:var(--ink);line-height:1.5;min-height:40px;}
+  .opt{font-size:12px;color:var(--ink);padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-weight:500;transition:all .35s;}
+  .opt.correct{border-color:var(--violet);background:linear-gradient(120deg,rgba(124,58,237,.09),rgba(192,38,211,.09));color:var(--violet);font-weight:700;transform:translateX(4px);}
+  .opt.wrong{border-color:var(--coral);background:rgba(255,94,58,.08);color:var(--coral);}
+  .explain{font-size:11px;color:var(--muted);background:var(--grad-soft);border-radius:10px;padding:11px 13px;line-height:1.5;}
+  .explain b{color:var(--fuchsia);}
+  .phone-bar{height:6px;background:#eef1f8;border-radius:3px;overflow:hidden;}
+  .phone-bar>div{height:100%;background:var(--grad);border-radius:3px;transition:width .5s ease;}
+  .fade{animation:fadeIn .5s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-  /* ===== STATS STRIP ===== */
-  .stats{background:#fff;border-bottom:1px solid var(--border);}
-  .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);padding:44px 0;}
-  .stat{padding:0 24px;border-right:1px solid var(--border);}
+  /* ===== STATS STRIP (count-up) ===== */
+  .stats{background:#fff;border-bottom:1px solid var(--line);}
+  .stats-inner{display:grid;grid-template-columns:repeat(4,1fr);padding:46px 0;}
+  .stat{padding:0 24px;border-right:1px solid var(--line);text-align:center;}
   .stat:last-child{border-right:none;}
-  .stat .num{font-family:var(--serif);font-size:40px;font-weight:700;color:var(--navy);line-height:1;}
-  .stat .lbl{font-size:13px;color:var(--muted);margin-top:8px;font-weight:500;}
+  .stat .num{font-family:var(--serif);font-size:44px;font-weight:800;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+  .stat .lbl{font-size:13px;color:var(--muted);margin-top:8px;font-weight:600;}
 
   /* ===== SECTIONS ===== */
-  section{padding:88px 0;}
-  .section-label{color:var(--cyan);font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
-  .section-title{font-family:var(--serif);font-size:40px;font-weight:700;color:var(--navy);margin-bottom:18px;letter-spacing:-.5px;line-height:1.15;}
-  .section-sub{font-size:17px;color:var(--muted);max-width:620px;margin-bottom:48px;line-height:1.65;}
+  section{padding:92px 0;position:relative;}
+  .section-label{color:var(--fuchsia);font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+  .section-title{font-family:var(--serif);font-size:42px;font-weight:700;color:var(--ink);margin-bottom:18px;letter-spacing:-.5px;line-height:1.12;}
+  .section-sub{font-size:17px;color:var(--muted);max-width:640px;margin-bottom:50px;line-height:1.65;}
 
   /* Feature spotlight (asymmetric) */
   .spotlight{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
-  .spotlight .copy h3{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--navy);margin-bottom:14px;line-height:1.2;}
-  .spotlight .copy p{font-size:16px;color:var(--muted);line-height:1.7;margin-bottom:18px;}
+  .spotlight .copy h3{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--ink);margin-bottom:14px;line-height:1.2;}
+  .spotlight .copy p{font-size:16px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
   .spotlight .copy ul{list-style:none;}
   .spotlight .copy li{font-size:15px;color:var(--ink);padding:9px 0;display:flex;gap:12px;align-items:flex-start;}
-  .spotlight .copy li .chk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--gold-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;margin-top:2px;}
-  .spotlight .visual{background:var(--navy);border-radius:20px;padding:36px;color:#fff;position:relative;overflow:hidden;}
-  .spotlight .visual::before{content:'';position:absolute;top:-30%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(0,178,227,.2),transparent 60%);}
-  .spotlight .visual .v-label{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:16px;}
-  .spotlight .visual .v-num{font-family:var(--serif);font-size:64px;font-weight:800;color:var(--gold);line-height:1;}
-  .spotlight .visual .v-cap{font-size:15px;color:rgba(255,255,255,.8);margin-top:10px;}
+  .spotlight .copy li .chk{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;margin-top:2px;box-shadow:var(--shadow-sm);}
+  .visual{background:#1c1830;border-radius:22px;padding:40px;color:#fff;position:relative;overflow:hidden;}
+  .visual::before{content:'';position:absolute;top:-30%;right:-20%;width:320px;height:320px;background:radial-gradient(circle,rgba(124,58,237,.45),transparent 60%);filter:blur(20px);}
+  .visual::after{content:'';position:absolute;bottom:-30%;left:-20%;width:280px;height:280px;background:radial-gradient(circle,rgba(255,94,58,.4),transparent 60%);filter:blur(20px);}
+  .visual>div{position:relative;z-index:2;}
+  .v-label{font-size:11px;color:var(--aqua);text-transform:uppercase;letter-spacing:1.5px;font-weight:800;margin-bottom:18px;}
+  .v-num{font-family:var(--serif);font-size:72px;font-weight:800;line-height:1;}
+  .gauge{height:12px;border-radius:8px;background:rgba(255,255,255,.14);margin:22px 0 14px;overflow:hidden;position:relative;}
+  .gauge>div{height:100%;width:0;border-radius:8px;background:var(--grad);transition:width 1.4s cubic-bezier(.2,.8,.2,1);}
+  .v-cap{font-size:15px;color:rgba(255,255,255,.82);}
+  .v-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--aqua);margin-top:14px;}
 
-  /* Feature grid (varied, not uniform) */
+  /* Feature grid */
   .features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .feature{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;transition:transform .25s,box-shadow .25s,border-color .25s;}
-  .feature:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(2,40,81,.1);border-color:#d5dde6;}
+  .feature{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;}
+  .feature::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad);opacity:0;transition:opacity .3s;}
+  .feature:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:transparent;}
+  .feature:hover::before{opacity:1;}
   .feature .f-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-  .feature .f-ic{width:40px;height:40px;border-radius:10px;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;font-size:20px;flex:0 0 auto;}
-  .feature h3{font-size:17px;color:var(--navy);font-weight:700;line-height:1.3;}
+  .feature .f-ic{width:46px;height:46px;border-radius:13px;background:var(--grad-soft);display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto;transition:transform .3s;}
+  .feature:hover .f-ic{transform:scale(1.1) rotate(-4deg);}
+  .feature h3{font-size:17px;color:var(--ink);font-weight:700;line-height:1.3;}
   .feature p{font-size:14px;color:var(--muted);line-height:1.6;}
 
   /* Topics */
   .topics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-  .topic{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 16px;text-align:left;transition:all .25s;}
-  .topic:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(2,40,81,.08);}
-  .topic .t{font-size:14px;font-weight:600;color:var(--navy);}
+  .topic{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:20px 16px;text-align:left;transition:all .25s;position:relative;}
+  .topic:hover{border-color:transparent;box-shadow:var(--shadow-sm);transform:translateY(-4px);}
+  .topic:hover::before{opacity:1;}
+  .topic::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad);border-radius:3px 3px 0 0;opacity:0;transition:opacity .25s;}
+  .topic .t{font-size:14px;font-weight:600;color:var(--ink);}
 
   /* Steps */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .step{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;}
-  .step .s-num{font-family:var(--serif);font-size:44px;font-weight:800;color:var(--gold);line-height:1;margin-bottom:14px;}
-  .step h3{font-size:18px;color:var(--navy);margin-bottom:10px;font-weight:700;}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;position:relative;}
+  .step{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:34px;position:relative;transition:transform .3s,box-shadow .3s;}
+  .step:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+  .step .s-num{font-family:var(--serif);font-size:46px;font-weight:800;line-height:1;margin-bottom:16px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+  .step h3{font-size:18px;color:var(--ink);margin-bottom:10px;font-weight:700;}
   .step p{font-size:14.5px;color:var(--muted);line-height:1.6;}
 
+  /* Marquee ribbon */
+  .ribbon{overflow:hidden;background:#17132b;padding:16px 0;position:relative;}
+  .ribbon::before,.ribbon::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;}
+  .ribbon::before{left:0;background:linear-gradient(90deg,#17132b,transparent);}
+  .ribbon::after{right:0;background:linear-gradient(-90deg,#17132b,transparent);}
+  .ribbon-track{display:flex;gap:56px;white-space:nowrap;animation:marquee 26s linear infinite;width:max-content;}
+  .ribbon-track span{color:rgba(255,255,255,.7);font-weight:700;font-size:14px;letter-spacing:1px;}
+  .ribbon-track .sep{color:var(--fuchsia);}
+  @keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
   /* CTA */
-  .cta-band{background:linear-gradient(150deg,#022851,#0a3d6b);color:#fff;text-align:center;padding:88px 28px;border-radius:24px;margin:0 28px;position:relative;overflow:hidden;}
-  .cta-band::before{content:'';position:absolute;top:-30%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(255,191,0,.15),transparent 60%);}
-  .cta-band h2{font-family:var(--serif);font-size:42px;font-weight:700;margin-bottom:18px;position:relative;}
-  .cta-band p{font-size:18px;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 34px;position:relative;}
-  .cta-band .btn-primary{font-size:18px;padding:18px 44px;position:relative;}
+  .cta-band{position:relative;overflow:hidden;background:linear-gradient(150deg,#1c1830,#2c1f4a);color:#fff;text-align:center;padding:92px 28px;border-radius:26px;margin:0 28px;}
+  .cta-band::before,.cta-band::after{content:'';position:absolute;border-radius:50%;filter:blur(60px);animation:float 14s ease-in-out infinite;}
+  .cta-band::before{width:420px;height:420px;top:-120px;left:-80px;background:#7c3aed;opacity:.5;}
+  .cta-band::after{width:400px;height:400px;bottom:-120px;right:-70px;background:#ff5e3a;opacity:.4;animation-delay:-5s;}
+  .cta-band h2{font-family:var(--serif);font-size:44px;font-weight:700;margin-bottom:18px;position:relative;z-index:2;}
+  .cta-band p{font-size:18px;color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px;position:relative;z-index:2;}
+  .cta-band .btn-primary{font-size:18px;padding:18px 46px;z-index:2;position:relative;}
 
   /* Footer */
-  footer{background:var(--navy);color:rgba(255,255,255,.65);padding:48px 0;text-align:center;font-size:14px;}
-  footer .f-brand{font-family:var(--serif);font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
-  footer strong{color:var(--gold);}
+  footer{background:#13111d;color:rgba(255,255,255,.6);padding:52px 0;text-align:center;font-size:14px;}
+  footer .f-brand{font-family:var(--serif);font-size:22px;font-weight:800;margin-bottom:8px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+  footer strong{color:var(--aqua);}
+
+  /* Scroll reveal */
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+  .d4{transition-delay:.32s}.d5{transition-delay:.4s}.d6{transition-delay:.48s}
 
   /* ===== RESPONSIVE ===== */
   @media(max-width:900px){
     .hero-inner{grid-template-columns:1fr;padding-top:20px;}
-    .hero h1{font-size:40px;}
+    .hero h1{font-size:42px;}
     .spotlight{grid-template-columns:1fr;}
-    .features,.steps{grid-template-columns:1fr;}
+    .features,.steps{grid-template-columns:1fr;gap:16px;}
     .topics{grid-template-columns:repeat(2,1fr);}
     .stats-inner{grid-template-columns:repeat(2,1fr);gap:28px 0;}
     .stat{border-right:none;}
-    .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:var(--navy);flex-direction:column;padding:20px;gap:16px;}
+    .nav-links{display:none;position:absolute;top:68px;left:0;right:0;background:#fff;flex-direction:column;padding:20px;gap:16px;box-shadow:var(--shadow);}
     .nav-links.open{display:flex;}
     .hamburger{display:block;}
+    .cta-band{margin:0;}
   }
   @media(max-width:500px){
-    .hero h1{font-size:32px;}
-    .section-title{font-size:30px;}
+    .hero h1{font-size:34px;}
+    .hero{padding-top:130px;}
+    .section-title{font-size:31px;}
     .topics{grid-template-columns:1fr;}
     .phone{width:260px;}
     .phone-screen{height:500px;}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important;}
+    .orb,.phone-wrap,.cta-band::before,.cta-band::after{animation:none!important;}
   }
 </style>
 </head>
 <body>
 
-<nav>
+<nav id="nav">
   <div class="container nav-inner">
-    <div class="logo"><span class="mark">CN</span> CNN<span style="color:var(--gold)">Prep</span></div>
+    <div class="logo"><span class="mark">CN</span> CNN<span class="gradient-text">Prep</span></div>
     <div class="nav-links" id="navLinks">
       <a href="#features">Features</a>
       <a href="#exam">Exam Simulator</a>
@@ -175,36 +228,38 @@
 
 <!-- HERO -->
 <header class="hero">
+  <div class="grid-overlay"></div>
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
   <div class="container hero-inner">
-    <div>
+    <div class="reveal">
       <span class="hero-badge"><span class="dot"></span> For Nephrology Nurses</span>
-      <h1>Pass the <span class="accent">CNN exam</span> with confidence.</h1>
+      <h1>Pass the <span class="gradient-text">CNN exam</span> with confidence.</h1>
       <p class="lead">A complete study app built for dialysis and nephrology nurses — practice questions, full exam simulations, flashcards, lessons, and smart trackers. All in one place, on any device.</p>
       <div class="hero-ctas">
-        <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="btn-primary">Start Studying Free</a>
-        <a href="#features" class="btn-ghost">See What's Inside</a>
+        <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="btn btn-primary">Start Studying Free</a>
+        <a href="#features" class="btn btn-ghost">See What's Inside</a>
       </div>
       <div class="hero-note">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
         No credit card. No setup. Just open and study.
       </div>
     </div>
-    <div class="phone-wrap">
+    <div class="phone-wrap reveal">
       <div class="phone">
         <div class="phone-screen">
           <div class="phone-top">
-            <div><div class="t">Practice Test</div><div class="s">Exam 1 · Question 12 of 150</div></div>
+            <div><div class="t">Practice Test</div><div class="s">Exam 1 · Question <span id="qCount">1</span> of 150</div></div>
             <div class="s">⏱ 2:41:08</div>
           </div>
-          <div class="phone-body">
-            <div class="q-label">Hemodialysis</div>
-            <div class="q-text">Which immunosuppressant can cause gingival hyperplasia?</div>
-            <div class="opt">A. Tacrolimus</div>
-            <div class="opt correct">B. Cyclosporine ✓</div>
-            <div class="opt">C. Sirolimus</div>
-            <div class="opt">D. Prednisone</div>
-            <div class="explain"><b>Correct.</b> Cyclosporine causes gingival hyperplasia, hypertension, and hirsutism.</div>
-            <div class="phone-bar"><div style="width:68%"></div></div>
+          <div class="phone-body" id="phoneBody">
+            <div class="q-label" id="pLabel">Hemodialysis</div>
+            <div class="q-text" id="pQ">Loading…</div>
+            <div class="opt" id="pA"></div>
+            <div class="opt" id="pB"></div>
+            <div class="opt" id="pC"></div>
+            <div class="opt" id="pD"></div>
+            <div class="explain" id="pExplain"></div>
+            <div class="phone-bar"><div id="pBar"></div></div>
           </div>
         </div>
       </div>
@@ -215,48 +270,64 @@
 <!-- STATS -->
 <div class="stats">
   <div class="container stats-inner">
-    <div class="stat"><div class="num">898</div><div class="lbl">Practice Questions</div></div>
-    <div class="stat"><div class="num">759</div><div class="lbl">Flashcards</div></div>
-    <div class="stat"><div class="num">90</div><div class="lbl">Study Lessons</div></div>
-    <div class="stat"><div class="num">3</div><div class="lbl">Full Exam Simulations</div></div>
+    <div class="stat reveal"><div class="num" data-count="898">0</div><div class="lbl">Practice Questions</div></div>
+    <div class="stat reveal d1"><div class="num" data-count="759">0</div><div class="lbl">Flashcards</div></div>
+    <div class="stat reveal d2"><div class="num" data-count="90">0</div><div class="lbl">Study Lessons</div></div>
+    <div class="stat reveal d3"><div class="num" data-count="3">0</div><div class="lbl">Full Exam Simulations</div></div>
+  </div>
+</div>
+
+<!-- RIBBON -->
+<div class="ribbon">
+  <div class="ribbon-track" id="ribbonTrack">
+    <span>Blueprint-Weighted</span><span class="sep">✦</span>
+    <span>Spaced Repetition</span><span class="sep">✦</span>
+    <span>Weak-Area Drills</span><span class="sep">✦</span>
+    <span>Readiness Gauge</span><span class="sep">✦</span>
+    <span>Offline-ish &amp; Snappy</span><span class="sep">✦</span>
+    <span>Made for Shifts</span><span class="sep">✦</span>
   </div>
 </div>
 
 <!-- FEATURES -->
 <section id="features">
   <div class="container">
-    <div class="section-label">Everything You Need</div>
-    <h2 class="section-title">Built for how nurses actually study</h2>
-    <p class="section-sub">Whether you have ten minutes between shifts or a full evening, the app adapts to your schedule and your learning style.</p>
+    <div class="section-label reveal">Everything You Need</div>
+    <h2 class="section-title reveal">Built for how nurses actually study</h2>
+    <p class="section-sub reveal">Whether you have ten minutes between shifts or a full evening, the app adapts to your schedule and your learning style.</p>
     <div class="features">
-      <div class="feature"><div class="f-top"><div class="f-ic">📝</div><h3>Practice Questions</h3></div><p>898 questions across 12 topics, each with a clear explanation. Questions shuffle every time so you truly learn the material.</p></div>
-      <div class="feature"><div class="f-top"><div class="f-ic">🃏</div><h3>Smart Flashcards</h3></div><p>759 flashcards with spaced repetition — cards you miss come back sooner, so you master them faster.</p></div>
-      <div class="feature"><div class="f-top"><div class="f-ic">📚</div><h3>Study Lessons</h3></div><p>90 concise lessons with diagrams that teach key concepts in plain language.</p></div>
-      <div class="feature"><div class="f-top"><div class="f-ic">🎯</div><h3>Focus Suggestions</h3></div><p>The app analyzes your wrong answers and tells you exactly which topics to study next.</p></div>
-      <div class="feature"><div class="f-top"><div class="f-ic">⏱️</div><h3>80-Hour Goal Tracker</h3></div><p>A visual progress bar toward your 80-hour study goal, with milestones to keep you motivated.</p></div>
-      <div class="feature"><div class="f-top"><div class="f-ic">🔊</div><h3>Read-Aloud Mode</h3></div><p>Listen to lessons and flashcards hands-free — perfect for between shifts or on the go.</p></div>
+      <div class="feature reveal"><div class="f-top"><div class="f-ic">📝</div><h3>Practice Questions</h3></div><p>898 questions across 12 topics, each with a clear explanation. Questions shuffle every time so you truly learn the material.</p></div>
+      <div class="feature reveal d1"><div class="f-top"><div class="f-ic">🃏</div><h3>Smart Flashcards</h3></div><p>759 flashcards with spaced repetition — cards you miss come back sooner, so you master them faster.</p></div>
+      <div class="feature reveal d2"><div class="f-top"><div class="f-ic">📚</div><h3>Study Lessons</h3></div><p>90 concise lessons with diagrams that teach key concepts in plain language.</p></div>
+      <div class="feature reveal"><div class="f-top"><div class="f-ic">🎯</div><h3>Focus Suggestions</h3></div><p>The app analyzes your wrong answers and tells you exactly which topics to study next.</p></div>
+      <div class="feature reveal d1"><div class="f-top"><div class="f-ic">⏱️</div><h3>80-Hour Goal Tracker</h3></div><p>A visual progress bar toward your 80-hour study goal, with milestones to keep you motivated.</p></div>
+      <div class="feature reveal d2"><div class="f-top"><div class="f-ic">🔊</div><h3>Read-Aloud Mode</h3></div><p>Listen to lessons and flashcards hands-free — perfect for between shifts or on the go.</p></div>
     </div>
   </div>
 </section>
 
 <!-- EXAM SIMULATOR SPOTLIGHT -->
-<section id="exam" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+<section id="exam" style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
   <div class="container spotlight">
-    <div class="copy">
+    <div class="copy reveal">
       <div class="section-label">The Real Test, Rehearsed</div>
       <h3>Full exam simulations that mirror the CNN exam</h3>
       <p>Three complete 150-question exams in the real 3-hour format, weighted to the official exam blueprint. Practice under real conditions so there are no surprises on exam day.</p>
       <ul>
-        <li><span class="chk">✓</span><span><strong>Blueprint-weighted</strong> — questions match the official exam's subject distribution</span></li>
-        <li><span class="chk">✓</span><span><strong>Exam-day simulation mode</strong> — no feedback until the end, just like the real test</span></li>
-        <li><span class="chk">✓</span><span><strong>Readiness gauge</strong> — a clear score that tells you when you're exam-ready</span></li>
-        <li><span class="chk">✓</span><span><strong>Weak-area drills</strong> — after each test, the app builds a focused quiz on your weakest subjects</span></li>
+        <li class="reveal"><span class="chk">✓</span><span><strong>Blueprint-weighted</strong> — questions match the official exam's subject distribution</span></li>
+        <li class="reveal d1"><span class="chk">✓</span><span><strong>Exam-day simulation mode</strong> — no feedback until the end, just like the real test</span></li>
+        <li class="reveal d2"><span class="chk">✓</span><span><strong>Readiness gauge</strong> — a clear score that tells you when you're exam-ready</span></li>
+        <li class="reveal d3"><span class="chk">✓</span><span><strong>Weak-area drills</strong> — after each test, the app builds a focused quiz on your weakest subjects</span></li>
       </ul>
     </div>
-    <div class="visual">
-      <div class="v-label">Exam Readiness</div>
-      <div class="v-num">82%</div>
-      <div class="v-cap">On track — keep reinforcing your weak areas to reach exam-ready.</div>
+    <div class="visual reveal">
+      <div>
+        <div class="v-label">Exam Readiness</div>
+        <div class="v-num" id="gaugeNum">82%</div>
+        <div class="gauge"><div id="gaugeFill"></div></div>
+        <div class="v-cap">On track — keep reinforcing your weak areas to reach exam-ready.</div>
+        <div class="v-tag"><span class="dot" style="width:7px;height:7px;border-radius:50%;background:var(--aqua);display:inline-block;"></span> Live readiness tracking</div>
+      </div>
     </div>
   </div>
 </section>
@@ -264,36 +335,36 @@
 <!-- TOPICS -->
 <section id="topics">
   <div class="container">
-    <div class="section-label">12 Core Topics</div>
-    <h2 class="section-title">Complete CNN exam coverage</h2>
-    <p class="section-sub">From the fundamentals to advanced nephrology, every topic the exam covers is here.</p>
+    <div class="section-label reveal">12 Core Topics</div>
+    <h2 class="section-title reveal">Complete CNN exam coverage</h2>
+    <p class="section-sub reveal">From the fundamentals to advanced nephrology, every topic the exam covers is here.</p>
     <div class="topics">
-      <div class="topic"><div class="t">Kidney Disease</div></div>
-      <div class="topic"><div class="t">Hemodialysis</div></div>
-      <div class="topic"><div class="t">Peritoneal Dialysis</div></div>
-      <div class="topic"><div class="t">Transplant</div></div>
-      <div class="topic"><div class="t">Acute Therapies</div></div>
-      <div class="topic"><div class="t">CKD Complications</div></div>
-      <div class="topic"><div class="t">Pediatric Nephrology</div></div>
-      <div class="topic"><div class="t">Pregnancy &amp; Kidney</div></div>
-      <div class="topic"><div class="t">Drug Dosing</div></div>
-      <div class="topic"><div class="t">Acid-Base</div></div>
-      <div class="topic"><div class="t">Fluid &amp; Electrolytes</div></div>
-      <div class="topic"><div class="t">Transplant Pharm</div></div>
+      <div class="topic reveal"><div class="t">Kidney Disease</div></div>
+      <div class="topic reveal d1"><div class="t">Hemodialysis</div></div>
+      <div class="topic reveal d2"><div class="t">Peritoneal Dialysis</div></div>
+      <div class="topic reveal d3"><div class="t">Transplant</div></div>
+      <div class="topic reveal"><div class="t">Acute Therapies</div></div>
+      <div class="topic reveal d1"><div class="t">CKD Complications</div></div>
+      <div class="topic reveal d2"><div class="t">Pediatric Nephrology</div></div>
+      <div class="topic reveal d3"><div class="t">Pregnancy &amp; Kidney</div></div>
+      <div class="topic reveal"><div class="t">Drug Dosing</div></div>
+      <div class="topic reveal d1"><div class="t">Acid-Base</div></div>
+      <div class="topic reveal d2"><div class="t">Fluid &amp; Electrolytes</div></div>
+      <div class="topic reveal d3"><div class="t">Transplant Pharm</div></div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" style="background:#fff;border-top:1px solid var(--border);">
+<section id="how" style="background:#fff;border-top:1px solid var(--line);">
   <div class="container">
-    <div class="section-label">Simple to Start</div>
-    <h2 class="section-title">Three steps to exam-ready</h2>
-    <p class="section-sub">No complicated setup. Just open the app and start building your knowledge.</p>
+    <div class="section-label reveal">Simple to Start</div>
+    <h2 class="section-title reveal">Three steps to exam-ready</h2>
+    <p class="section-sub reveal">No complicated setup. Just open the app and start building your knowledge.</p>
     <div class="steps">
-      <div class="step"><div class="s-num">01</div><h3>Sign in</h3><p>Create your account with a name and password. Your progress saves automatically.</p></div>
-      <div class="step"><div class="s-num">02</div><h3>Study your way</h3><p>Start with lessons, drill with flashcards, or test yourself with practice questions.</p></div>
-      <div class="step"><div class="s-num">03</div><h3>Track your progress</h3><p>Watch your accuracy improve and log your study hours toward your goal.</p></div>
+      <div class="step reveal"><div class="s-num">01</div><h3>Sign in</h3><p>Create your account with a name and password. Your progress saves automatically.</p></div>
+      <div class="step reveal d1"><div class="s-num">02</div><h3>Study your way</h3><p>Start with lessons, drill with flashcards, or test yourself with practice questions.</p></div>
+      <div class="step reveal d2"><div class="s-num">03</div><h3>Track your progress</h3><p>Watch your accuracy improve and log your study hours toward your goal.</p></div>
     </div>
   </div>
 </section>
@@ -303,7 +374,7 @@
   <div class="cta-band">
     <h2>Ready to pass the CNN exam?</h2>
     <p>Join your fellow nephrology nurses. Start studying free today — your future certification is one click away.</p>
-    <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="btn-primary">Open the CNN Study App →</a>
+    <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="btn btn-primary">Open the CNN Study App →</a>
   </div>
 </section>
 
@@ -316,12 +387,88 @@
 </footer>
 
 <script>
-const observer = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
-  });
+// Nav shadow on scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20);},{passive:true});
+
+// Scroll reveal
+const revObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObserver.unobserve(e.target);}});
 },{threshold:.12});
-document.querySelectorAll('.feature,.step,.topic').forEach(el=>observer.observe(el));
+document.querySelectorAll('.reveal,.feature,.step,.topic').forEach(el=>revObserver.observe(el));
+
+// Count-up stats (interval-driven so it works even where rAF throttles)
+function animateCount(el){
+  const target=+el.dataset.count;
+  const dur=1400;
+  const steps=Math.max(40,Math.round(dur/16));
+  let step=0;
+  const ease=p=>1-Math.pow(1-p,3);
+  const iv=setInterval(()=>{
+    step++;
+    const p=step/steps;
+    if(p>=1){el.textContent=target;clearInterval(iv);}
+    else el.textContent=Math.round(target*ease(p));
+  },Math.round(dur/steps));
+}
+const counted=new Set();
+const countObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){animateCount(e.target);counted.add(e.target);countObserver.unobserve(e.target);}});
+},{threshold:.4});
+document.querySelectorAll('[data-count]').forEach(el=>countObserver.observe(el));
+
+// Readiness gauge fill
+function fillGauge(){
+  const fill=document.getElementById('gaugeFill');
+  if(!fill.style.width)fill.style.width='82%';
+}
+const gaugeObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      fillGauge();
+      gaugeObserver.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+gaugeObserver.observe(document.querySelector('.visual'));
+
+// Safety fallback: if IO is flaky (some environments), animate anyway after load
+setTimeout(()=>{
+  document.querySelectorAll('[data-count]').forEach(el=>{if(!counted.has(el)){animateCount(el);counted.add(el);}});
+  fillGauge();
+},1200);
+
+// Duplicate ribbon track for seamless marquee
+const rt=document.getElementById('ribbonTrack');
+rt.innerHTML+=rt.innerHTML;
+
+// Cycling phone mockup questions
+const demo=[
+  {label:'Hemodialysis',q:'Which immunosuppressant can cause gingival hyperplasia?',a:'Tacrolimus',b:'Cyclosporine ✓',c:'Sirolimus',d:'Prednisone',ex:'Correct. Cyclosporine causes gingival hyperplasia, hypertension, and hirsutism.',bar:68},
+  {label:'Acid-Base',q:'A patient has metabolic acidosis with a normal anion gap. What is the most likely cause?',a:'Ketoacidosis',b:'Diarrhea ✓',c:'Lactic acidosis',d:'Salicylate toxicity',ex:'Correct. Normal anion gap acidosis points to GI bicarbonate loss from diarrhea.',bar:52},
+  {label:'Drug Dosing',q:'Which drug requires dose adjustment in severe CKD?',a:'Fentanyl',b:'Penicillin',c:'Gabapentin ✓',d:'Acetaminophen',ex:'Correct. Gabapentin is renally cleared and needs downward adjustment in CKD.',bar:79},
+  {label:'Transplant',q:'Which sign suggests acute rejection?',a:'Rising creatinine ✓',b:'Weight loss',c:'Improved urine output',d:'Normal BP',ex:'Correct. A rising creatinine is a hallmark early sign of acute rejection.',bar:44}
+];
+let dIdx=0;
+function cycleQ(){
+  const d=demo[dIdx];
+  const body=document.getElementById('phoneBody');
+  body.classList.remove('fade');void body.offsetWidth;body.classList.add('fade');
+  document.getElementById('qCount').textContent=dIdx+1;
+  document.getElementById('pLabel').textContent=d.label;
+  document.getElementById('pQ').textContent=d.q;
+  document.getElementById('pA').textContent=d.a;
+  document.getElementById('pB').textContent=d.b;
+  document.getElementById('pC').textContent=d.c;
+  document.getElementById('pD').textContent=d.d;
+  document.getElementById('pExplain').textContent=d.ex;
+  const bar=document.getElementById('pBar');
+  bar.style.width=pBarTarget+'%';
+  dIdx=(dIdx+1)%demo.length;
+}
+let pBarTarget=68;
+setInterval(()=>{const d=demo[dIdx];pBarTarget=d.bar;cycleQ();},3800);
+cycleQ();
 </script>
 </body>
 </html>
