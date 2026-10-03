@@ -14,6 +14,12 @@
     --bg:#f6f4fb; --card:#ffffff;
     --border:#ece7f5;
     --violet:#7c3aed; --fuchsia:#c026d3; --coral:#ff5e3a; --amber:#ffb020; --aqua:#2dd4bf;
+    /* --coral is the decorative coral: the hero and CTA orbs, and the gradient's
+       third stop. It sits on dark grounds, where it is vivid and fine. Small text
+       on a light tint needs 4.5:1, which #ff5e3a cannot reach -- it is 2.78:1 on
+       the wrong-answer chip in the phone mockup, and its border was 2.78:1 there
+       too, under the 3:1 non-text minimum. Text and rules use --coral-ink. */
+    --coral-ink:#bf472c;
     --grad:linear-gradient(135deg,#7c3aed 0%,#c026d3 55%,#ff5e3a 100%);
     --grad-soft:linear-gradient(135deg,rgba(124,58,237,.12),rgba(192,38,211,.12),rgba(255,94,58,.12));
     --muted:#5b6472; --line:#e9e4f3;
@@ -84,7 +90,7 @@
   .q-text{font-size:13px;font-weight:600;color:var(--ink);line-height:1.5;min-height:40px;}
   .opt{font-size:12px;color:var(--ink);padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-weight:500;transition:all .35s;}
   .opt.correct{border-color:var(--violet);background:linear-gradient(120deg,rgba(124,58,237,.09),rgba(192,38,211,.09));color:var(--violet);font-weight:700;transform:translateX(4px);}
-  .opt.wrong{border-color:var(--coral);background:rgba(255,94,58,.08);color:var(--coral);}
+  .opt.wrong{border-color:var(--coral-ink);background:rgba(255,94,58,.08);color:var(--coral-ink);}
   .explain{font-size:11px;color:var(--muted);background:var(--grad-soft);border-radius:10px;padding:11px 13px;line-height:1.5;}
   .explain b{color:var(--fuchsia);}
   .phone-bar{height:6px;background:#eef1f8;border-radius:3px;overflow:hidden;}
