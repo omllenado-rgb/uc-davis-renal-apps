@@ -228,7 +228,10 @@
       <a href="#how">How It Works</a>
       <a href="https://omllenado-rgb.github.io/cnn-exam-study/" class="nav-cta">Open the App</a>
     </div>
-    <button class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+    <!-- aria-label: "☰" is announced as an unpronounceable symbol. aria-expanded
+         is set because a menu button that never reports its state leaves a screen
+         reader user unable to tell whether the menu opened. -->
+    <button class="hamburger" aria-label="Menu" aria-expanded="false" onclick="var n=document.getElementById('navLinks');this.setAttribute('aria-expanded',n.classList.toggle('open'))">☰</button>
   </div>
 </nav>
 
