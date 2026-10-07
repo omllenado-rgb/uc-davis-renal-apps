@@ -10,33 +10,39 @@
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
 
         /* Header */
-        .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #00b2e3; }
+        .header { text-align: center; margin-bottom: 26px; padding-bottom: 20px; border-bottom: 3px solid #00b2e3; }
         .header-icon { width: 84px; height: 84px; line-height: 84px; font-size: 40px; margin: 0 auto 14px; background: #00b2e3; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,178,227,0.35); }
         .header h1 { color: #022851; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
         .header p { color: #55565b; font-size: 14px; }
         .uc-logo { background: #022851; color: white; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
 
+        /* Now box */
+        .now-box { background: #F2F2F7; border-radius: 12px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; }
+        .now-label { color: #666; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+        .now-value { color: #022851; font-size: 15px; font-weight: 700; }
+        .now-btn { background: #fff; border: 1px solid #d5dde6; color: #13639e; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+        /* Mode switch */
+        .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #F2F2F7; padding: 6px; border-radius: 12px; margin-bottom: 20px; }
+        .mode { border: none; background: transparent; color: #55565b; padding: 11px 8px; border-radius: 9px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all .18s; line-height: 1.25; }
+        .mode.active { background: #fff; color: #022851; box-shadow: 0 2px 8px rgba(2,40,81,.14); }
+
         /* Form */
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
-        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .input-field { width: 100%; padding: 15px; border: 2px solid #e5e5e5; border-radius: 12px; font-size: 16px; font-weight: 500; transition: all 0.3s; background: #fff; }
         .input-field:focus { outline: none; border-color: #13639e; box-shadow: 0 0 0 3px rgba(19,99,158,0.15); }
         .input-field.error { border-color: #FF3B30; }
-        .helper-text { font-size: 12px; color: #999; margin-top: 5px; }
+        .helper-text { font-size: 12px; color: #999; margin-top: 6px; line-height: 1.5; }
+        .parsed { font-size: 13px; color: #0f7a4f; font-weight: 700; margin-top: 6px; }
+        .parsed.bad { color: #B71C1C; }
 
         /* Presets */
         .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .preset { background: #F2F2F7; border: 1px solid #e2e2ea; color: #022851; border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
         .preset:hover { background: #13639e; color: #fff; border-color: #13639e; }
 
-        /* Now row */
-        .now-box { background: #F2F2F7; border-radius: 12px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .now-label { color: #666; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
-        .now-value { color: #022851; font-size: 15px; font-weight: 700; }
-        .now-btn { background: #fff; border: 1px solid #d5dde6; color: #13639e; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
-
-        /* Calculate Button */
+        /* Calculate */
         .calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #022851, #13639e); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: transform 0.2s; margin-top: 10px; }
         .calculate-btn:hover { transform: scale(1.02); }
         .calculate-btn:active { transform: scale(0.98); }
@@ -46,16 +52,14 @@
         .result-card.show { display: block; animation: slideUp 0.4s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .result-icon { font-size: 42px; text-align: center; margin-bottom: 6px; }
-        .result-label { font-size: 13px; opacity: 0.85; text-align: center; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .big-time { font-size: 44px; font-weight: 700; text-align: center; line-height: 1.1; letter-spacing: -1px; }
-        .big-day { font-size: 20px; text-align: center; opacity: 0.95; margin-top: 4px; font-weight: 600; }
-        .big-date { font-size: 15px; text-align: center; opacity: 0.8; margin-top: 6px; }
-
+        .result-label { font-size: 12.5px; opacity: 0.85; text-align: center; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .big-time { font-size: 46px; font-weight: 700; text-align: center; line-height: 1.05; letter-spacing: -1.5px; }
+        .big-day { font-size: 20px; text-align: center; opacity: 0.95; margin-top: 6px; font-weight: 600; }
+        .big-date { font-size: 15px; text-align: center; opacity: 0.82; margin-top: 5px; }
         .window-badge { display: block; text-align: center; margin: 18px auto 0; padding: 9px 18px; border-radius: 20px; font-weight: 700; font-size: 13.5px; width: fit-content; }
         .w-green { background: #34C759; color: #fff; }
         .w-amber { background: #FFC107; color: #333; }
         .w-red   { background: #FF3B30; color: #fff; }
-        .w-grey  { background: rgba(255,255,255,.22); color: #fff; }
 
         /* Details */
         .details-section { background: #F2F2F7; border-radius: 12px; padding: 20px; margin-top: 20px; }
@@ -64,8 +68,9 @@
         .detail-item:last-child { border-bottom: none; }
         .detail-label { color: #666; font-size: 14px; }
         .detail-value { color: #333; font-weight: 600; font-size: 14px; text-align: right; }
+        .progress-track { height: 12px; background: #e2e2ea; border-radius: 7px; overflow: hidden; margin-top: 12px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #34C759, #FFC107); border-radius: 7px; transition: width .4s; }
 
-        /* Copy */
         .copy-btn { width: 100%; padding: 13px; background: #fff; color: #022851; border: 2px solid #022851; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 14px; }
         .copy-btn:hover { background: #022851; color: #fff; }
 
@@ -76,22 +81,18 @@
         .guidelines li { padding: 5px 0; font-size: 13px; color: #666; }
         .guidelines li:before { content: "📋 "; margin-right: 5px; }
 
-        /* Reset */
         .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #022851; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
         .reset-btn:hover { background: #e8e8f0; }
 
-        /* Error */
         .error-msg { display: none; background: #FFEBEE; border-left: 4px solid #FF3B30; color: #B71C1C; padding: 12px 15px; border-radius: 8px; font-size: 14px; margin-top: 15px; font-weight: 600; }
         .error-msg.show { display: block; }
 
-        /* Footer */
         .footer { text-align: center; margin-top: 25px; color: #999; font-size: 12px; }
-        .footer a { color: #13639e; text-decoration: none; }
 
         @media (max-width: 480px) {
-            .input-row { grid-template-columns: 1fr; }
-            .big-time { font-size: 36px; }
+            .big-time { font-size: 38px; }
             .container { padding: 22px; }
+            .mode { font-size: 12.5px; }
         }
     </style>
 </head>
@@ -102,10 +103,10 @@
             <div class="uc-logo">CLINICAL APPS</div>
             <div class="header-icon">⏱️</div>
             <h1>CRRT Circuit Change</h1>
-            <p>When is the circuit due — date and time</p>
+            <p>When the circuit comes due — date and time</p>
         </div>
 
-        <!-- Live clock -->
+        <!-- Now -->
         <div class="now-box">
             <div>
                 <div class="now-label">Now</div>
@@ -114,19 +115,27 @@
             <button type="button" class="now-btn" onclick="tick()">⟳ Refresh clock</button>
         </div>
 
+        <!-- Mode -->
+        <div class="modes">
+            <button type="button" class="mode active" id="modeLeft" onclick="setMode('left')">
+                Time LEFT on circuit<br><span style="font-weight:600;font-size:11.5px;opacity:.75">read it off the machine</span>
+            </button>
+            <button type="button" class="mode" id="modeElapsed" onclick="setMode('elapsed')">
+                Time ALREADY running<br><span style="font-weight:600;font-size:11.5px;opacity:.75">if your machine shows age</span>
+            </button>
+        </div>
+
         <!-- Form -->
         <form id="circuitForm">
             <div class="form-group">
-                <label>Circuit age at this moment (hours)</label>
-                <input type="number" id="hours" class="input-field" placeholder="e.g., 48" step="0.1" min="0" inputmode="decimal">
-                <div class="helper-text">How long the circuit has already been running. Enter 0 if you are starting it now.</div>
-                <div class="presets">
-                    <button type="button" class="preset" onclick="setHours(24)">24 h</button>
-                    <button type="button" class="preset" onclick="setHours(48)">48 h</button>
-                    <button type="button" class="preset" onclick="setHours(72)">72 h</button>
-                    <button type="button" class="preset" onclick="setHours(96)">96 h</button>
-                    <button type="button" class="preset" onclick="setHours(0)">Starting now (0)</button>
+                <label id="inputLabel">Time left on the circuit</label>
+                <input type="text" id="value" class="input-field" placeholder="e.g., 45:46" autocomplete="off" inputmode="numeric">
+                <div class="helper-text" id="inputHelper">
+                    Type it just as the machine shows it — <b>45:46</b> means 45 hours 46 minutes.
+                    You can also enter <b>45.5</b> (decimal hours) or <b>45h 46m</b>.
                 </div>
+                <div class="parsed" id="parsed"></div>
+                <div class="presets" id="presets"></div>
             </div>
 
             <div class="form-group">
@@ -137,13 +146,7 @@
                     <option value="24">24 hours — shorter protocol change</option>
                     <option value="96">96 hours — extended, where protocol allows</option>
                 </select>
-                <div class="helper-text">Use whatever your unit protocol specifies. The result is the date and time the circuit comes due.</div>
-            </div>
-
-            <div class="form-group">
-                <label>Started at (optional)</label>
-                <input type="datetime-local" id="startAt" class="input-field">
-                <div class="helper-text">Set when you began the circuit, and the count is based on that time instead of the age above.</div>
+                <div class="helper-text">Used to show how much of the circuit's life has been used. Follow your unit protocol.</div>
             </div>
 
             <button type="submit" class="calculate-btn">Calculate Change Time</button>
@@ -167,42 +170,43 @@
         <div class="details-section" id="detailsSection" style="display: none;">
             <h3 class="details-title">📊 Calculation details</h3>
             <div class="detail-item">
-                <span class="detail-label">Lifespan used</span>
-                <span class="detail-value" id="dLifespan">--</span>
+                <span class="detail-label" id="dEnteredLabel">Shown on the machine</span>
+                <span class="detail-value" id="dEntered">--</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">Age at this moment</span>
-                <span class="detail-value" id="dAge">--</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Time remaining</span>
+                <span class="detail-label">Time left</span>
                 <span class="detail-value" id="dRemaining">--</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">Change window</span>
-                <span class="detail-value" id="dWindow">--</span>
+                <span class="detail-label">Already run</span>
+                <span class="detail-value" id="dElapsed">--</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">Lifespan basis</span>
-                <span class="detail-value" id="dBasis">--</span>
+                <span class="detail-label">Lifespan in use</span>
+                <span class="detail-value" id="dLifespan">--</span>
             </div>
+            <div class="detail-item">
+                <span class="detail-label">Circuit due</span>
+                <span class="detail-value" id="dDue">--</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            <div class="helper-text" id="progressNote" style="text-align:center"></div>
         </div>
 
         <!-- Guidelines -->
         <div class="guidelines">
             <h4>📋 Circuit lifespan — what to use</h4>
             <ul>
-                <li><strong>48 h</strong> — the common default when a change is due at 48 hours, provided the circuit is still running well</li>
-                <li><strong>72 h</strong> — typical maximum on a well-functioning circuit per KDIGO / manufacturer guidance</li>
-                <li><strong>Up to 96 h</strong> — some units and device makers allow it when pressures, access and filter performance stay stable</li>
-                <li><strong>Change sooner</strong> — for clotted filter, rising transmembrane pressure, declining effluent rate, or suspected infection</li>
-                <li>Always follow your unit protocol and the ordering provider</li>
+                <li><strong>48 h</strong> — the common default change time on a circuit that is still running well</li>
+                <li><strong>72 h</strong> — typical maximum per KDIGO / manufacturer guidance</li>
+                <li><strong>Up to 96 h</strong> — where unit protocol and device maker allow it, with stable pressures</li>
+                <li><strong>Change sooner</strong> — clotted filter, rising transmembrane pressure, falling effluent rate, or suspected infection</li>
+                <li>The machine's countdown is the authoritative reference for the prescribed lifespan</li>
             </ul>
         </div>
 
         <button type="button" class="reset-btn" onclick="resetForm()">🔄 Calculate Again</button>
 
-        <!-- Footer -->
         <div class="footer">
             <p>Clinical Calculator Suite © 2026</p>
             <p>For clinical use only. Verify all calculations. Oliver Llenado, BSN RN</p>
@@ -210,128 +214,173 @@
     </div>
 
     <script>
-        // Lifespan presets in hours. The user picks the one their unit uses; the
-        // calculator then answers the question that actually matters at the
-        // bedside: at what date and time does this circuit come due?
-        var LIFESPANS = [24, 48, 72, 96];
-        var DEFAULT_LIFESPAN = 48;
+        var mode = 'left';   // 'left' = the machine's countdown, 'elapsed' = age so far
 
         function pad(n){ return String(n).padStart(2, '0'); }
-
         function fmtTime(d){ return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+        function fmtDay(d){ return d.toLocaleDateString('en-US', { weekday: 'long' }); }
+        function fmtDate(d){ return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+        function fmtDT(d){ return fmtDay(d) + ', ' + fmtDate(d) + ' at ' + fmtTime(d); }
 
-        function fmtDay(d){
-            return d.toLocaleDateString('en-US', { weekday: 'long' });
-        }
-
-        function fmtDate(d){
-            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-
-        function fmtDT(d){
-            return fmtDay(d) + ', ' + fmtDate(d) + ' at ' + fmtTime(d);
-        }
-
-        // Human "in 3 h 20 min" from a millisecond gap.
-        function humanGap(ms){
-            var mins = Math.round(ms / 60000);
+        function humanMins(mins){
             var over = mins < 0;
-            mins = Math.abs(mins);
-            var h = Math.floor(mins / 60), m = mins % 60;
-            var txt = h > 0 ? (h + ' h' + (m ? ' ' + m + ' min' : '')) : (m + ' min');
-            return over ? txt + ' overdue' : 'in ' + txt;
+            mins = Math.abs(Math.round(mins));
+            var d = Math.floor(mins / 1440), h = Math.floor((mins % 1440) / 60), m = mins % 60;
+            var parts = [];
+            if(d) parts.push(d + ' d');
+            if(h || !d) parts.push(h + ' h');
+            if(m) parts.push(m + ' min');
+            var txt = parts.join(' ');
+            return over ? txt + ' overdue' : txt;
         }
 
-        // Fill the "Now" box. Called at load and every 30 s; the calculation
-        // always re-reads the real clock at submit time, so this is display only.
+        // Fill the "Now" box. The calculation always re-reads the clock at submit.
         function tick(){
             document.getElementById('nowValue').textContent = fmtDT(new Date());
         }
 
-        function setHours(h){
-            document.getElementById('hours').value = h;
-            document.getElementById('startAt').value = '';
-            document.getElementById('hours').classList.remove('error');
-            document.getElementById('errorMsg').classList.remove('show');
+        // Accept what the machine actually shows: 45:46, 45h 46m, 45.5, or plain 45.
+        // Returns minutes, or null if it cannot be read.
+        function parseDuration(raw){
+            if(raw == null) return null;
+            var s = String(raw).trim().toLowerCase();
+            if(!s) return null;
+            s = s.replace(/hours?|hrs?/g, 'h').replace(/minutes?|mins?/g, 'm').replace(/\s+/g, ' ').trim();
+
+            var m;
+            // 45:46  |  45.46 style clock (colon always wins)
+            if((m = s.match(/^(\d+)\s*:\s*(\d{1,2})$/))){
+                var hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
+                if(mm > 59) return null;
+                return hh * 60 + mm;
+            }
+            // 45h 46m  |  45h  |  46m
+            if((m = s.match(/^(\d+)\s*h(?:\s*(\d+)\s*m?)?$/))){
+                var h2 = parseInt(m[1], 10), m2 = m[2] ? parseInt(m[2], 10) : 0;
+                if(m2 > 59) return null;
+                return h2 * 60 + m2;
+            }
+            if((m = s.match(/^(\d+)\s*m$/))) return parseInt(m[1], 10);
+            // 45.5 decimal hours
+            if((m = s.match(/^(\d+(?:\.\d+)?)$/))){
+                var val = parseFloat(m[1]);
+                if(!isFinite(val) || val < 0) return null;
+                // A bare number over 60 is almost certainly a typo for minutes vs hours;
+                // treat it as hours (that is how the field is labelled) but keep it valid.
+                return Math.round(val * 60);
+            }
+            return null;
         }
 
-        function getLifespan(){
-            var sel = document.getElementById('lifespan');
-            return sel ? parseFloat(sel.value) : DEFAULT_LIFESPAN;
+        function setMode(m){
+            mode = m;
+            document.getElementById('modeLeft').classList.toggle('active', m === 'left');
+            document.getElementById('modeElapsed').classList.toggle('active', m === 'elapsed');
+            document.getElementById('inputLabel').textContent =
+                m === 'left' ? 'Time left on the circuit' : 'Time the circuit has already been running';
+            document.getElementById('value').placeholder = m === 'left' ? 'e.g., 45:46' : 'e.g., 2:14';
+            document.getElementById('inputHelper').innerHTML = m === 'left'
+                ? 'Type it just as the machine shows it — <b>45:46</b> means 45 hours 46 minutes. You can also enter <b>45.5</b> (decimal hours) or <b>45h 46m</b>.'
+                : 'How long the circuit has already run — <b>2:14</b> means 2 hours 14 minutes. You can also enter <b>2.5</b> or <b>2h 30m</b>.';
+            document.getElementById('dEnteredLabel').textContent =
+                m === 'left' ? 'Shown on the machine' : 'You entered (age)';
+            renderPresets();
+            updateParsed();
+            clearError();
+        }
+
+        function renderPresets(){
+            var el = document.getElementById('presets');
+            var opts = mode === 'left'
+                ? ['47:59','36:00','24:00','12:00','6:00']
+                : ['0:00','12:00','24:00','36:00','47:59'];
+            var labels = mode === 'left'
+                ? ['Start of life','12 h used','24 h used','36 h used','42 h used']
+                : ['Just started','12 h','24 h','36 h','Nearly due'];
+            el.innerHTML = opts.map(function(v,i){
+                return '<button type="button" class="preset" data-v="'+v+'">'+labels[i]+'</button>';
+            }).join('');
+            [...el.querySelectorAll('.preset')].forEach(function(b){
+                b.addEventListener('click', function(){
+                    document.getElementById('value').value = b.dataset.v;
+                    updateParsed();
+                    clearError();
+                });
+            });
+        }
+
+        function updateParsed(){
+            var raw = document.getElementById('value').value;
+            var el = document.getElementById('parsed');
+            if(!raw.trim()){ el.textContent = ''; el.className = 'parsed'; return; }
+            var mins = parseDuration(raw);
+            if(mins == null){
+                el.textContent = 'Not understood — try a format like 45:46';
+                el.className = 'parsed bad';
+            } else {
+                var d = Math.floor(mins/1440), h = Math.floor((mins%1440)/60), m = mins%60;
+                el.textContent = '= ' + (d?d+' d ':'') + h + ' h ' + m + ' min';
+                el.className = 'parsed';
+            }
         }
 
         function showError(msg){
             var e = document.getElementById('errorMsg');
             e.textContent = msg;
             e.classList.add('show');
-            // Hide any previous answer. Leaving stale numbers on screen next to an
-            // error is how someone reads the wrong change time off a clinical tool.
+            // Never leave a previous answer on screen beside an error — that is how
+            // someone reads the wrong change time off a clinical tool.
             document.getElementById('resultCard').classList.remove('show');
             document.getElementById('detailsSection').style.display = 'none';
             window.__due = null;
         }
-
         function clearError(){
             document.getElementById('errorMsg').classList.remove('show');
-            document.getElementById('hours').classList.remove('error');
+            document.getElementById('value').classList.remove('error');
         }
+
+        document.getElementById('value').addEventListener('input', updateParsed);
 
         document.getElementById('circuitForm').addEventListener('submit', function(ev){
             ev.preventDefault();
             clearError();
 
-            var hoursRaw = document.getElementById('hours').value;
-            var startRaw = document.getElementById('startAt').value;
-            var lifespan = getLifespan();
+            var raw = document.getElementById('value').value;
+            var lifespan = parseFloat(document.getElementById('lifespan').value) || 48;
+            var mins = parseDuration(raw);
 
-            var now = new Date();
-            var started, ageHours, ageSource;
-
-            if(startRaw){
-                started = new Date(startRaw);
-                if(isNaN(started.getTime())){ showError('That start date and time could not be read. Try again.'); return; }
-                if(started.getTime() > now.getTime() + 60000){
-                    showError('The start time is in the future. Check the date and time, or use the hours box instead.');
-                    document.getElementById('startAt').classList.add('error');
-                    return;
-                }
-                ageHours = (now.getTime() - started.getTime()) / 3600000;
-                ageSource = 'Counted back from the start time you entered';
-            } else {
-                if(hoursRaw === '' || hoursRaw === null){
-                    showError('Enter how many hours the circuit has been running — 0 if you are starting it now.');
-                    document.getElementById('hours').classList.add('error');
-                    return;
-                }
-                ageHours = parseFloat(hoursRaw);
-                if(isNaN(ageHours) || ageHours < 0){
-                    showError('Enter the circuit age as a number of hours, 0 or higher.');
-                    document.getElementById('hours').classList.add('error');
-                    return;
-                }
-                started = new Date(now.getTime() - ageHours * 3600000);
-                ageSource = 'Counted back from the hours you entered';
+            if(mins == null){
+                showError('Enter the time as the machine shows it, for example 45:46 for 45 hours 46 minutes.');
+                document.getElementById('value').classList.add('error');
+                return;
             }
 
-            var due = new Date(started.getTime() + lifespan * 3600000);
-            var remainingMs = due.getTime() - now.getTime();
+            var remainingMin, elapsedMin;
+            if(mode === 'left'){
+                remainingMin = mins;
+                elapsedMin   = lifespan * 60 - remainingMin;
+            } else {
+                elapsedMin   = mins;
+                remainingMin = lifespan * 60 - elapsedMin;
+            }
+
+            var now = new Date();
+            var due = new Date(now.getTime() + remainingMin * 60000);
+            var pctUsed = Math.max(0, Math.min(100, elapsedMin / (lifespan * 60) * 100));
 
             // ---- verdict ----
             var badge = document.getElementById('windowBadge');
             badge.className = 'window-badge';
-            var verdict;
-            if(remainingMs < 0){
+            if(remainingMin < 0){
                 badge.classList.add('w-red');
-                verdict = '⚠️ Overdue — ' + humanGap(remainingMs);
-            } else if(remainingMs <= 4 * 3600000){
+                badge.textContent = '⚠️ Past ' + lifespan + ' h — ' + humanMins(remainingMin);
+            } else if(remainingMin <= 240){
                 badge.classList.add('w-amber');
-                verdict = '⏳ Due within 4 hours — ' + humanGap(remainingMs);
+                badge.textContent = '⏳ Due within 4 hours — ' + humanMins(remainingMin) + ' left';
             } else {
                 badge.classList.add('w-green');
-                verdict = '✓ ' + humanGap(remainingMs).replace('in ', 'In ') + ' (' +
-                          (ageHours / lifespan * 100).toFixed(0) + '% of lifespan used)';
+                badge.textContent = '✓ ' + humanMins(remainingMin) + ' left (' + Math.round(pctUsed) + '% of lifespan used)';
             }
-            badge.textContent = verdict;
 
             // ---- headline ----
             document.getElementById('dueTime').textContent = fmtTime(due);
@@ -339,14 +388,19 @@
             document.getElementById('dueDate').textContent = fmtDate(due);
 
             // ---- details ----
+            document.getElementById('dEntered').textContent = raw.trim();
+            document.getElementById('dRemaining').textContent = humanMins(remainingMin) + (remainingMin < 0 ? '' : ' left');
+            document.getElementById('dElapsed').textContent =
+                elapsedMin < 0 ? '—' : humanMins(elapsedMin);
             document.getElementById('dLifespan').textContent = lifespan + ' hours';
-            document.getElementById('dAge').textContent = ageHours.toFixed(1) + ' h' +
-                (ageHours >= 24 ? ' (' + (ageHours / 24).toFixed(1) + ' days)' : '');
-            document.getElementById('dRemaining').textContent = humanGap(remainingMs);
-            document.getElementById('dWindow').textContent = fmtDT(due);
-            document.getElementById('dBasis').textContent = ageSource;
+            document.getElementById('dDue').textContent = fmtDT(due);
+            document.getElementById('progressFill').style.width = pctUsed.toFixed(1) + '%';
+            document.getElementById('progressNote').textContent =
+                'Circuit is ' + Math.round(pctUsed) + '% through a ' + lifespan + '-hour lifespan';
 
             window.__due = due;
+            window.__txt = 'CRRT circuit change due: ' + fmtDT(due) +
+                           ' (' + (remainingMin < 0 ? humanMins(remainingMin) : humanMins(remainingMin) + ' left') + ')';
             document.getElementById('resultCard').classList.add('show');
             document.getElementById('detailsSection').style.display = 'block';
             document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -354,33 +408,29 @@
 
         function copyResult(){
             if(!window.__due) return;
-            var txt = 'CRRT circuit change due: ' + fmtDT(window.__due);
+            var txt = window.__txt;
             navigator.clipboard.writeText(txt).then(function(){
                 var b = document.querySelector('.copy-btn');
                 var old = b.textContent;
                 b.textContent = '✓ Copied';
                 setTimeout(function(){ b.textContent = old; }, 1600);
-            }).catch(function(){
-                alert(txt);
-            });
+            }).catch(function(){ alert(txt); });
         }
 
         function resetForm(){
-            document.getElementById('circuitForm').reset();
+            document.getElementById('value').value = '';
             document.getElementById('resultCard').classList.remove('show');
             document.getElementById('detailsSection').style.display = 'none';
             clearError();
+            updateParsed();
             window.__due = null;
             tick();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // live clock in the "Now" box
+        setMode('left');
         tick();
-        setInterval(function(){
-            var d = new Date();
-            document.getElementById('nowValue').textContent = fmtDT(d);
-        }, 30000);
+        setInterval(tick, 30000);
     </script>
 </body>
 </html>
