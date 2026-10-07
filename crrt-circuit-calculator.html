@@ -129,10 +129,10 @@
         <form id="circuitForm">
             <div class="form-group">
                 <label id="inputLabel">Time left on the circuit</label>
-                <input type="text" id="value" class="input-field" placeholder="e.g., 45:46" autocomplete="off" inputmode="numeric">
+                <input type="text" id="value" class="input-field" placeholder="e.g., 4546" autocomplete="off" inputmode="numeric">
                 <div class="helper-text" id="inputHelper">
-                    Type it just as the machine shows it — <b>45:46</b> means 45 hours 46 minutes.
-                    You can also enter <b>45.5</b> (decimal hours) or <b>45h 46m</b>.
+                    Just type the numbers and the colon is added for you. Type <b>4546</b> and it
+                    becomes <b>45:46</b> (45 hours 46 minutes). You can also type <b>45.5</b> or <b>45h 46m</b>.
                 </div>
                 <div class="parsed" id="parsed"></div>
                 <div class="presets" id="presets"></div>
@@ -278,10 +278,10 @@
             document.getElementById('modeElapsed').classList.toggle('active', m === 'elapsed');
             document.getElementById('inputLabel').textContent =
                 m === 'left' ? 'Time left on the circuit' : 'Time the circuit has already been running';
-            document.getElementById('value').placeholder = m === 'left' ? 'e.g., 45:46' : 'e.g., 2:14';
+            document.getElementById('value').placeholder = m === 'left' ? 'e.g., 4546' : 'e.g., 0214';
             document.getElementById('inputHelper').innerHTML = m === 'left'
-                ? 'Type it just as the machine shows it — <b>45:46</b> means 45 hours 46 minutes. You can also enter <b>45.5</b> (decimal hours) or <b>45h 46m</b>.'
-                : 'How long the circuit has already run — <b>2:14</b> means 2 hours 14 minutes. You can also enter <b>2.5</b> or <b>2h 30m</b>.';
+                ? 'Just type the numbers and the colon is added for you. Type <b>4546</b> and it becomes <b>45:46</b> (45 hours 46 minutes). For a circuit under 10 hours type the leading zero, like <b>0214</b> for <b>02:14</b>. You can also type <b>45.5</b> or <b>45h 46m</b>.'
+                : 'Just type the numbers — the colon is added for you. Type <b>214</b> and it becomes <b>2:14</b> (2 hours 14 minutes). You can also type <b>2.5</b> or <b>2h 30m</b>.';
             document.getElementById('dEnteredLabel').textContent =
                 m === 'left' ? 'Shown on the machine' : 'You entered (age)';
             renderPresets();
@@ -292,10 +292,10 @@
         function renderPresets(){
             var el = document.getElementById('presets');
             var opts = mode === 'left'
-                ? ['47:59','36:00','24:00','12:00','6:00']
-                : ['0:00','12:00','24:00','36:00','47:59'];
+                ? ['48:00','36:00','24:00','12:00','6:00']
+                : ['00:00','12:00','24:00','36:00','47:00'];
             var labels = mode === 'left'
-                ? ['Start of life','12 h used','24 h used','36 h used','42 h used']
+                ? ['Full 48 h left','12 h used','24 h used','36 h used','42 h used']
                 : ['Just started','12 h','24 h','36 h','Nearly due'];
             el.innerHTML = opts.map(function(v,i){
                 return '<button type="button" class="preset" data-v="'+v+'">'+labels[i]+'</button>';
@@ -307,6 +307,46 @@
                     clearError();
                 });
             });
+        }
+
+        // ---- auto-format the field as the time is typed --------------------
+        // Typing 4546 becomes "45:46". The last two digits typed are the minutes,
+        // which matches how the machine prints it (45:46 = 45 h 46 min).
+        // A colon the user types themselves is respected, and decimal ("45.5") or
+        // "45h 46m" input is left alone so those formats still work.
+        function formatDurationInput(el){
+            var raw = el.value;
+            if(/[.\-a-zA-Z]/.test(raw)){ updateParsed(); return; }   // other formats: hands off
+
+            var caret = el.selectionStart;
+            var digitsBeforeCaret = (raw.slice(0, caret).match(/\d/g) || []).length;
+            var out;
+
+            if(raw.indexOf(':') !== -1){
+                // A colon the user typed (or the one we inserted) anchors the split.
+                var parts = raw.split(':');
+                var h = (parts[0] || '').replace(/\D/g, '').slice(0, 2);
+                var m = parts.slice(1).join('').replace(/\D/g, '').slice(0, 2);
+                out = h + ':' + m;
+            } else {
+                // Fixed HH:MM, the way the machine prints it: 4546 -> 45:46.
+                // The colon is placed after the second digit, not the last two,
+                // so typing a third digit continues the same number instead of
+                // reshuffling what was already entered.
+                var digits = raw.replace(/\D/g, '').slice(0, 4);
+                out = digits.length > 2 ? digits.slice(0, 2) + ':' + digits.slice(2) : digits;
+            }
+
+            if(el.value !== out) el.value = out;
+
+            // Keep the caret where the user was typing.
+            var pos = 0, seen = 0;
+            while(pos < out.length && seen < digitsBeforeCaret){
+                if(/\d/.test(out[pos])) seen++;
+                pos++;
+            }
+            try{ el.setSelectionRange(pos, pos); }catch(e){}
+            updateParsed();
         }
 
         function updateParsed(){
@@ -339,7 +379,8 @@
             document.getElementById('value').classList.remove('error');
         }
 
-        document.getElementById('value').addEventListener('input', updateParsed);
+        var __valueEl = document.getElementById('value');
+        __valueEl.addEventListener('input', function(){ formatDurationInput(__valueEl); });
 
         document.getElementById('circuitForm').addEventListener('submit', function(ev){
             ev.preventDefault();
