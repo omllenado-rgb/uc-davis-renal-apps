@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRRT Citrate Titration Calculator - Clinical Calculator Suite</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #022851, #13639e); min-height: 100vh; padding: 20px; }
+        .container { max-width: 640px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+
+        .header { text-align: center; margin-bottom: 22px; padding-bottom: 20px; border-bottom: 3px solid #00b2e3; }
+        .header-icon { width: 84px; height: 84px; font-size: 40px; margin: 0 auto 14px; background: #00b2e3; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,178,227,0.35); }
+        .header h1 { color: #022851; font-size: 25px; margin-bottom: 8px; font-weight: 700; }
+        .header p { color: #55565b; font-size: 14px; }
+        .uc-logo { background: #022851; color: white; padding: 8px 20px; border-radius: 8px; display: inline-block; font-weight: 700; font-size: 12px; margin-bottom: 15px; letter-spacing: 1px; }
+        .policy-tag { display: inline-block; background: #FFF3CD; color: #7A5A00; border: 1px solid #FFE08A; border-radius: 6px; padding: 4px 10px; font-size: 11.5px; font-weight: 700; letter-spacing: .4px; margin-top: 8px; }
+
+        /* Scope warning */
+        .scope { background: #FFEBEE; border-left: 4px solid #FF3B30; border-radius: 8px; padding: 13px 15px; margin-bottom: 20px; }
+        .scope h4 { color: #B71C1C; font-size: 13.5px; margin-bottom: 5px; }
+        .scope p { color: #7F1D1D; font-size: 12.5px; line-height: 1.5; }
+
+        /* Mode switch */
+        .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #F2F2F7; padding: 6px; border-radius: 12px; margin-bottom: 20px; }
+        .mode { border: none; background: transparent; color: #55565b; padding: 12px 8px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .18s; line-height: 1.3; }
+        .mode.active { background: #fff; color: #022851; box-shadow: 0 2px 8px rgba(2,40,81,.14); }
+        .mode small { display: block; font-size: 10.5px; font-weight: 600; opacity: .75; margin-top: 2px; }
+
+        .target-banner { background: #E8F5E9; border: 1px solid #B7E1BB; border-radius: 10px; padding: 11px 14px; margin-bottom: 20px; }
+        .target-banner .t-label { font-size: 11px; font-weight: 700; color: #2E7D32; text-transform: uppercase; letter-spacing: .6px; }
+        .target-banner .t-value { font-size: 17px; font-weight: 700; color: #1B5E20; margin-top: 2px; }
+        .target-banner .t-site { font-size: 12px; color: #2E7D32; margin-top: 3px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #333; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+        .form-group label .opt { color: #999; font-weight: 500; font-size: 12.5px; }
+        .input-field { width: 100%; padding: 15px; border: 2px solid #e5e5e5; border-radius: 12px; font-size: 16px; font-weight: 500; transition: all 0.3s; background: #fff; }
+        .input-field:focus { outline: none; border-color: #13639e; box-shadow: 0 0 0 3px rgba(19,99,158,0.15); }
+        .input-field.error { border-color: #FF3B30; }
+        .helper-text { font-size: 12px; color: #999; margin-top: 6px; line-height: 1.5; }
+
+        /* Live band readout */
+        .band-readout { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .band-chip { font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px; background: #F2F2F7; color: #8a8a94; border: 1px solid #e2e2ea; }
+        .band-chip.on { background: #022851; color: #fff; border-color: #022851; }
+
+        .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .preset { background: #F2F2F7; border: 1px solid #e2e2ea; color: #022851; border-radius: 20px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .preset:hover { background: #13639e; color: #fff; border-color: #13639e; }
+
+        .calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #022851, #13639e); color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .calculate-btn:hover { opacity: .94; }
+
+        /* Result */
+        .result-card { display: none; background: linear-gradient(135deg, #022851, #13639e); border-radius: 16px; padding: 24px; margin-top: 24px; color: white; }
+        .result-card.show { display: block; }
+        .result-card.warn { background: linear-gradient(135deg, #7F1D1D, #B71C1C); }
+        .result-icon { font-size: 40px; text-align: center; margin-bottom: 4px; }
+        .result-action { font-size: 13px; opacity: .85; text-align: center; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+        .result-main { font-size: 34px; font-weight: 700; text-align: center; line-height: 1.1; letter-spacing: -.8px; }
+        .result-sub { font-size: 15px; text-align: center; opacity: .92; margin-top: 8px; font-weight: 600; }
+        .new-rate { background: rgba(255,255,255,.16); border-radius: 10px; padding: 12px; margin-top: 16px; text-align: center; }
+        .new-rate .nr-label { font-size: 11.5px; opacity: .85; text-transform: uppercase; letter-spacing: .8px; }
+        .new-rate .nr-value { font-size: 25px; font-weight: 700; margin-top: 3px; }
+        .notify { background: #FFC107; color: #3B2A00; border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-weight: 700; font-size: 14px; line-height: 1.4; }
+        .notify.critical { background: #fff; color: #B71C1C; }
+
+        .details-section { background: #F2F2F7; border-radius: 12px; padding: 18px; margin-top: 18px; }
+        .details-title { font-size: 15px; color: #022851; margin-bottom: 10px; font-weight: 700; }
+        .detail-item { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid #e5e5e5; }
+        .detail-item:last-child { border-bottom: none; }
+        .detail-label { color: #666; font-size: 13.5px; }
+        .detail-value { color: #333; font-weight: 700; font-size: 13.5px; text-align: right; }
+
+        .copy-btn { width: 100%; padding: 13px; background: #fff; color: #022851; border: 2px solid #022851; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 14px; }
+        .copy-btn:hover { background: #022851; color: #fff; }
+
+        .error-msg { display: none; background: #FFEBEE; border-left: 4px solid #FF3B30; color: #B71C1C; padding: 12px 15px; border-radius: 8px; font-size: 14px; margin-top: 15px; font-weight: 600; }
+        .error-msg.show { display: block; }
+
+        /* Reference tables */
+        .ref-block { margin-top: 22px; }
+        .ref-toggle { width: 100%; text-align: left; background: #F2F2F7; border: none; border-radius: 12px; padding: 15px 18px; font-size: 14.5px; font-weight: 700; color: #022851; cursor: pointer; }
+        .ref-body { display: none; padding: 16px 4px 4px; }
+        .ref-body.open { display: block; }
+        table.ref { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 14px; }
+        table.ref th { background: #022851; color: #fff; padding: 8px 6px; text-align: left; font-size: 11.5px; font-weight: 700; }
+        table.ref td { padding: 8px 6px; border-bottom: 1px solid #e5e5e5; color: #333; vertical-align: top; }
+        table.ref tr.inrange td { background: #E8F5E9; font-weight: 700; color: #1B5E20; }
+        table.ref tr.notifyrow td { background: #FFF3CD; font-weight: 700; color: #7A5A00; }
+        .ref-title { font-size: 13px; font-weight: 700; color: #022851; margin: 4px 0 8px; }
+        .ref-note { font-size: 12px; color: #666; line-height: 1.5; margin-top: 8px; }
+
+        .guidelines { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 15px; border-radius: 8px; margin-top: 20px; }
+        .guidelines h4 { color: #E65100; font-size: 14px; margin-bottom: 8px; }
+        .guidelines li { padding: 4px 0; font-size: 12.5px; color: #666; list-style: none; }
+        .guidelines li:before { content: "📋 "; margin-right: 4px; }
+
+        .reset-btn { width: 100%; padding: 15px; background: #F2F2F7; color: #022851; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+        .footer { text-align: center; margin-top: 25px; color: #999; font-size: 12px; line-height: 1.6; }
+
+        @media (max-width: 480px) {
+            .container { padding: 22px; }
+            .result-main { font-size: 28px; }
+            table.ref { font-size: 11.5px; }
+            table.ref th, table.ref td { padding: 6px 4px; }
+        }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; }
+            .calculate-btn, .reset-btn, .copy-btn, .ref-toggle, .modes, .presets { display: none !important; }
+            .ref-body { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="uc-logo">CLINICAL APPS</div>
+            <div class="header-icon">🧪</div>
+            <h1>CRRT Citrate Titration</h1>
+            <p>Regional citrate — ACD-A and calcium adjustment</p>
+            <div class="policy-tag">UC DAVIS POLICY IX-11 · PEDIATRIC</div>
+        </div>
+
+        <div class="scope">
+            <h4>⚠ Pediatric protocol only</h4>
+            <p>These tables are from the <b>pediatric</b> CRRT regional citrate policy and are
+            weight-banded (&lt;5 kg / 5–20 kg / &gt;20 kg). They do not transfer to adult CRRT.
+            Always confirm against the current unit policy before acting.</p>
+        </div>
+
+        <div class="modes">
+            <button type="button" class="mode active" id="modeAcd" onclick="setMode('acd')">
+                ACD-A <small>System iCa · target 0.35–0.50</small>
+            </button>
+            <button type="button" class="mode" id="modeCa" onclick="setMode('ca')">
+                Calcium <small>Patient iCa · target 1.1–1.3</small>
+            </button>
+        </div>
+
+        <div class="target-banner">
+            <div class="t-label" id="targetLabel">Target — System (venous port)</div>
+            <div class="t-value" id="targetValue">0.35 – 0.50 mmol/L</div>
+            <div class="t-site" id="targetSite">Sample: post-filter port of the CRRT circuit</div>
+        </div>
+
+        <div class="form-group">
+            <label for="weight">Patient weight (kg)</label>
+            <input type="number" id="weight" class="input-field" inputmode="decimal" step="0.1" min="0" placeholder="e.g. 12">
+            <div class="band-readout" id="bandReadout">
+                <span class="band-chip" data-band="lt5">&lt; 5 kg</span>
+                <span class="band-chip" data-band="mid">5 – 20 kg</span>
+                <span class="band-chip" data-band="gt20">&gt; 20 kg</span>
+            </div>
+            <div class="presets" id="weightPresets">
+                <span class="preset" onclick="setVal('weight',3.5)">3.5 kg</span>
+                <span class="preset" onclick="setVal('weight',8)">8 kg</span>
+                <span class="preset" onclick="setVal('weight',12)">12 kg</span>
+                <span class="preset" onclick="setVal('weight',25)">25 kg</span>
+                <span class="preset" onclick="setVal('weight',40)">40 kg</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="ica" id="icaLabel">System ionized calcium (mmol/L)</label>
+            <input type="number" id="ica" class="input-field" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 0.42">
+            <div class="helper-text" id="icaHelp">Drawn from the post-filter port. Round values land in the band they belong to.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="rate" id="rateLabel">Current ACD-A infusion rate <span class="opt">(optional)</span></label>
+            <input type="number" id="rate" class="input-field" inputmode="decimal" step="0.1" min="0" placeholder="e.g. 30">
+            <div class="helper-text" id="rateHelp">Enter this and the new rate is calculated for you.</div>
+        </div>
+
+        <button type="button" class="calculate-btn" onclick="calculate()">Calculate Adjustment</button>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="result-card" id="resultCard">
+            <div class="result-icon" id="resultIcon">⚖️</div>
+            <div class="result-action" id="resultAction">Adjustment</div>
+            <div class="result-main" id="resultMain">—</div>
+            <div class="result-sub" id="resultSub"></div>
+            <div class="new-rate" id="newRateBox" style="display:none">
+                <div class="nr-label" id="newRateLabel">New infusion rate</div>
+                <div class="nr-value" id="newRateValue">—</div>
+            </div>
+            <div class="notify" id="notifyBox" style="display:none"></div>
+        </div>
+
+        <div class="details-section" id="detailsSection" style="display:none">
+            <div class="details-title">Calculation detail</div>
+            <div id="detailsBody"></div>
+            <button type="button" class="copy-btn" onclick="copySummary()">📋 Copy summary</button>
+        </div>
+
+        <!-- Reference tables -->
+        <div class="ref-block">
+            <button type="button" class="ref-toggle" onclick="toggleRef('refAcd')">▸ ACD-A table — System (venous port) iCa</button>
+            <div class="ref-body" id="refAcd">
+                <div class="ref-title">Adjust ACD-A to maintain system ionized calcium 0.35–0.50 mmol/L</div>
+                <table class="ref" id="tblAcd">
+                    <thead>
+                        <tr><th>System iCa (mmol/L)</th><th>&lt; 5 kg</th><th>5–20 kg</th><th>&gt; 20 kg</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="ref-note"><b>Notify Nephrologist ASAP if ACD-A infusion is greater than 200 mL/hour.</b></div>
+            </div>
+        </div>
+
+        <div class="ref-block">
+            <button type="button" class="ref-toggle" onclick="toggleRef('refCa')">▸ Calcium table — Patient (arterial) iCa</button>
+            <div class="ref-body" id="refCa">
+                <div class="ref-title">Adjust Calcium Chloride (8 g/L in 0.9% saline) to maintain patient ionized calcium 1.1–1.3 mmol/L</div>
+                <table class="ref" id="tblCa">
+                    <thead>
+                        <tr><th>Patient iCa (mmol/L)</th><th>&lt; 5 kg</th><th>5–20 kg</th><th>&gt; 20 kg</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="ref-note"><b>Notify Nephrologist ASAP if calcium infusion is greater than 200 mL/hour.</b></div>
+            </div>
+        </div>
+
+        <div class="guidelines">
+            <h4>Lab draw schedule</h4>
+            <ul>
+                <li><b>System sample</b> — post-filter port of the CRRT circuit</li>
+                <li><b>Patient sample</b> — peripheral IV or central line</li>
+                <li><b>30 min</b> — after treatment initiation, blood transfusion, or termination</li>
+                <li><b>Hourly</b> — after any ACD-A or calcium change, until stable for 2 consecutive draws</li>
+                <li><b>Every 4 hours</b> — once stable and "no change"</li>
+                <li><b>PRN</b> — as needed</li>
+            </ul>
+        </div>
+
+        <button type="button" class="reset-btn" onclick="resetAll()">Reset</button>
+
+        <div class="footer">
+            UC Davis Health · Policy IX-11 · Pediatric CRRT with regional citrate anticoagulation<br>
+            Reference aid only — verify against the current unit policy before adjusting any infusion.
+        </div>
+    </div>
+
+<script>
+/* ============================================================================
+   CRRT Citrate Titration — UC Davis Policy IX-11 (pediatric)
+
+   Two weight-banded tables, transcribed from the policy:
+     ACD-A     -> adjust to System (venous port) iCa 0.35-0.50 mmol/L
+     CaCl      -> adjust to Patient (arterial)   iCa 1.10-1.30 mmol/L
+
+   The weight band is a hard input: every adjustment value differs by band, so an
+   unbanded weight cannot be answered. Band boundaries follow the policy headers
+   ("less than 5Kg", "5-20 Kg", "more than 20 Kg"), so exactly 5 and exactly 20
+   fall in the middle band.
+   ========================================================================= */
+
+var MODE = 'acd';
+
+// Band edges, inclusive lower and upper for the middle band.
+var BAND_MIN = 5, BAND_MAX = 20;
+
+var TABLE = {
+  acd: {
+    targetLabel: 'Target — System (venous port)',
+    targetValue: '0.35 – 0.50 mmol/L',
+    targetSite:  'Sample: post-filter port of the CRRT circuit',
+    icaLabel:    'System ionized calcium (mmol/L)',
+    icaHelp:     'Drawn from the post-filter port. Round values land in the band they belong to.',
+    rateLabel:   'Current ACD-A infusion rate',
+    rateHelp:    'Enter this and the new rate is calculated for you.',
+    drug:        'ACD-A',
+    rows: [
+      { lo: null,  hi: 0.35,  band: { lt5: -2.5, mid: -5, gt20: -10 },
+        label: 'Less than 0.35' },
+      { lo: 0.35,  hi: 0.50,  band: { lt5: 0,    mid: 0,  gt20: 0 },
+        label: '0.35 – 0.50', inRange: true },
+      { lo: 0.50,  hi: null,  band: { lt5: 2.5,  mid: 5,  gt20: 10 },
+        label: 'Greater than 0.50' }
+    ]
+  },
+  ca: {
+    targetLabel: 'Target — Patient (arterial)',
+    targetValue: '1.10 – 1.30 mmol/L',
+    targetSite:  'Sample: peripheral IV or central line',
+    icaLabel:    'Patient ionized calcium (mmol/L)',
+    icaHelp:     'Drawn from a peripheral IV or central line. Round values land in the band they belong to.',
+    rateLabel:   'Current calcium infusion rate',
+    rateHelp:    'Enter this and the new rate is calculated for you.',
+    drug:        'Calcium chloride (8 g/L in 0.9% saline)',
+    rows: [
+      { lo: null, hi: 0.90, band: { lt5: 'notify10', mid: 'notify10', gt20: 'notify10' },
+        label: 'Less than 0.9', notify: 'PICU' },
+      { lo: 0.90, hi: 1.09, band: { lt5: 2.5, mid: 5, gt20: 10 },
+        label: '0.90 – 1.09' },
+      { lo: 1.10, hi: 1.30, band: { lt5: 0, mid: 0, gt20: 0 },
+        label: '1.10 – 1.30', inRange: true },
+      { lo: 1.31, hi: 1.60, band: { lt5: -2.5, mid: -5, gt20: -10 },
+        label: '1.31 – 1.60' },
+      { lo: 1.60, hi: null, band: { lt5: 'notify', mid: 'notify', gt20: 'notify' },
+        label: 'Greater than 1.60', notify: 'PICU' }
+    ]
+  }
+};
+
+var MAX_RATE = 200;   // mL/hour — nephrologist notification threshold
+
+function num(id) {
+  var v = document.getElementById(id).value.trim();
+  if (v === '') return null;
+  var n = parseFloat(v);
+  return isNaN(n) ? null : n;
+}
+
+function bandOf(kg) {
+  if (kg === null) return null;
+  if (kg < BAND_MIN) return 'lt5';
+  if (kg <= BAND_MAX) return 'mid';
+  return 'gt20';
+}
+
+function bandText(b) {
+  return b === 'lt5' ? '< 5 kg' : b === 'mid' ? '5 – 20 kg' : '> 20 kg';
+}
+
+/* Precise band resolution from the printed ranges:
+     ACD-A:  < 0.35 | 0.35-0.50 | > 0.50
+     Ca:     < 0.9  | 0.90-1.09 | 1.10-1.30 | 1.31-1.60 | > 1.60            */
+function resolveRow(ica) {
+  if (MODE === 'acd') {
+    if (ica < 0.35) return TABLE.acd.rows[0];
+    if (ica <= 0.50) return TABLE.acd.rows[1];
+    return TABLE.acd.rows[2];
+  }
+  if (ica < 0.90) return TABLE.ca.rows[0];
+  if (ica <= 1.09) return TABLE.ca.rows[1];
+  if (ica <= 1.30) return TABLE.ca.rows[2];
+  if (ica <= 1.60) return TABLE.ca.rows[3];
+  return TABLE.ca.rows[4];
+}
+
+function setMode(m) {
+  MODE = m;
+  document.getElementById('modeAcd').classList.toggle('active', m === 'acd');
+  document.getElementById('modeCa').classList.toggle('active', m === 'ca');
+  var t = TABLE[m];
+  document.getElementById('targetLabel').textContent = t.targetLabel;
+  document.getElementById('targetValue').textContent = t.targetValue;
+  document.getElementById('targetSite').textContent  = t.targetSite;
+  document.getElementById('icaLabel').textContent    = t.icaLabel;
+  document.getElementById('icaHelp').textContent     = t.icaHelp;
+  document.getElementById('rateLabel').innerHTML     = t.rateLabel + ' <span class="opt">(optional)</span>';
+  document.getElementById('rateHelp').textContent    = t.rateHelp;
+  document.getElementById('ica').placeholder = (m === 'acd') ? 'e.g. 0.42' : 'e.g. 1.18';
+  document.getElementById('rate').placeholder = (m === 'acd') ? 'e.g. 30' : 'e.g. 20';
+  // highlight the row for this mode in the reference tables
+  highlightRef();
+  clearResult();
+}
+
+function toggleRef(id) {
+  var el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function setVal(id, v) {
+  document.getElementById(id).value = v;
+  onWeightInput();
+}
+
+function onWeightInput() {
+  var kg = num('weight');
+  var b = bandOf(kg);
+  var chips = document.querySelectorAll('#bandReadout .band-chip');
+  for (var i = 0; i < chips.length; i++) {
+    chips[i].classList.toggle('on', chips[i].getAttribute('data-band') === b);
+  }
+}
+
+function showError(msg) {
+  var e = document.getElementById('errorMsg');
+  e.textContent = msg;
+  e.classList.add('show');
+  // clear any previous answer: stale numbers beside an error is how a wrong
+  // rate gets acted on.
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('detailsSection').style.display = 'none';
+}
+
+function clearResult() {
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('resultCard').classList.remove('warn');
+  document.getElementById('detailsSection').style.display = 'none';
+}
+
+function calculate() {
+  clearResult();
+  var kg = num('weight');
+  var ica = num('ica');
+  var rate = num('rate');
+
+  if (kg === null)  return showError('Enter the patient weight in kilograms.');
+  if (kg <= 0)      return showError('Weight must be greater than zero.');
+  if (ica === null) return showError('Enter the ' + (MODE === 'acd' ? 'system' : 'patient') + ' ionized calcium value.');
+  if (ica <= 0)     return showError('Ionized calcium must be greater than zero.');
+  if (rate !== null && rate < 0) return showError('Infusion rate cannot be negative.');
+
+  var band = bandOf(kg);
+  onWeightInput();          // light the band chip so the band actually used is visible
+  var row = resolveRow(ica);
+  var delta = row.band[band];
+  var isNotifyRow = (typeof delta === 'string');
+
+  var t = TABLE[MODE];
+  var icon, action, main, sub, newRate = null;
+  var notifyText = null;
+
+  if (isNotifyRow) {
+    icon = '🚨';
+    action = 'Notify';
+    if (delta === 'notify10') {
+      main = 'Notify PICU MD';
+      sub = 'Increase ' + t.drug + ' infusion by 10%';
+    } else {
+      main = 'Notify PICU MD';
+      sub = 'Hold adjustment — physician decision required';
+    }
+  } else if (delta === 0) {
+    icon = '✅';
+    action = 'Within target';
+    main = 'No Change';
+    sub = 'iCa ' + ica + ' mmol/L is in the target range ' + t.targetValue.split(' ')[0] +
+          ' ' + t.targetValue.split(' ')[1] + ' — continue current rate.';
+  } else {
+    var up = delta > 0;
+    icon = up ? '⬆️' : '⬇️';
+    action = up ? 'Increase' : 'Decrease';
+    main = (up ? 'Increase' : 'Decrease') + ' by ' + Math.abs(delta) + ' mL/hour';
+    sub = 'Recheck iCa in 1 hour after the change; repeat hourly until stable for 2 consecutive draws.';
+  }
+
+  // New rate arithmetic, only when a current rate was supplied.
+  if (rate !== null && !isNotifyRow && delta !== 0) {
+    newRate = rate + delta;
+  }
+
+  // ---- render
+  var card = document.getElementById('resultCard');
+  card.classList.add('show');
+  if (isNotifyRow) card.classList.add('warn');
+  document.getElementById('resultIcon').textContent   = icon;
+  document.getElementById('resultAction').textContent = action;
+  document.getElementById('resultMain').textContent   = main;
+  document.getElementById('resultSub').textContent    = sub;
+
+  var nrBox = document.getElementById('newRateBox');
+  if (newRate !== null) {
+    nrBox.style.display = 'block';
+    document.getElementById('newRateLabel').textContent =
+      'New ' + (MODE === 'acd' ? 'ACD-A' : 'calcium') + ' infusion rate';
+    document.getElementById('newRateValue').textContent =
+      Math.round(newRate * 10) / 10 + ' mL/hour';
+  } else if (rate !== null && delta === 0) {
+    nrBox.style.display = 'block';
+    document.getElementById('newRateLabel').textContent = 'Continue';
+    document.getElementById('newRateValue').textContent = (Math.round(rate * 10) / 10) + ' mL/hour';
+  } else {
+    nrBox.style.display = 'none';
+  }
+
+  // ---- notification rules, evaluated on the resulting rate where we have one
+  var notes = [];
+  var effectiveRate = (newRate !== null) ? newRate : rate;
+
+  if (MODE === 'ca' && isNotifyRow) {
+    notes.push({ t: 'critical', msg: 'Notify PICU MD for patient iCa ' + ica +
+      ' mmol/L (outside ' + t.targetValue + ').' });
+  }
+  if (effectiveRate !== null && effectiveRate > MAX_RATE) {
+    notes.push({ t: 'critical', msg: 'Notify Nephrologist ASAP — ' +
+      (MODE === 'acd' ? 'ACD-A' : 'calcium') + ' infusion is greater than ' +
+      MAX_RATE + ' mL/hour (calculated ' + (Math.round(effectiveRate * 10) / 10) + ' mL/hour).' });
+  }
+  if (newRate !== null && newRate <= 0) {
+    notes.push({ t: 'critical', msg: 'Calculated rate is zero or negative — stop and clarify the order with the team before acting.' });
+  }
+  if (kg < BAND_MIN && MODE === 'ca' && ica < 0.90) {
+    notes.push({ t: 'critical', msg: 'Neonatal weight with low patient iCa — PICU notification required, not a nurse titration.' });
+  }
+
+  var nb = document.getElementById('notifyBox');
+  if (notes.length) {
+    nb.style.display = 'block';
+    nb.className = 'notify' + (notes[0].t === 'critical' ? ' critical' : '');
+    nb.innerHTML = notes.map(function (n) { return n.msg; }).join('<br><br>');
+  } else {
+    nb.style.display = 'none';
+  }
+
+  // ---- detail panel
+  var det = document.getElementById('detailsSection');
+  det.style.display = 'block';
+  var rows = [
+    ['Protocol', 'UC Davis Policy IX-11 (pediatric, regional citrate)'],
+    ['Adjusting', t.drug],
+    ['Weight', kg + ' kg → band ' + bandText(band)],
+    ['Target', t.targetValue],
+    ['Sample site', t.targetSite.replace('Sample: ', '')],
+    ['Measured iCa', ica + ' mmol/L → row "' + row.label + '"'],
+    ['Current rate', rate === null ? 'not entered' : rate + ' mL/hour'],
+    ['Adjustment', isNotifyRow ? 'Physician notification required' : (delta === 0 ? 'No change' : (delta > 0 ? '+' : '') + delta + ' mL/hour')],
+    ['Resulting rate', effectiveRate === null ? '—' : (Math.round(effectiveRate * 10) / 10) + ' mL/hour']
+  ];
+  document.getElementById('detailsBody').innerHTML = rows.map(function (r) {
+    return '<div class="detail-item"><span class="detail-label">' + r[0] +
+           '</span><span class="detail-value">' + r[1] + '</span></div>';
+  }).join('');
+
+  highlightRef(row);
+}
+
+function highlightRef(activeRow) {
+  buildRefTables();
+  var tableId = (MODE === 'acd') ? 'tblAcd' : 'tblCa';
+  var rows = TABLE[MODE].rows;
+  var tbody = document.querySelector('#' + tableId + ' tbody');
+  var trs = tbody.querySelectorAll('tr');
+  for (var i = 0; i < trs.length; i++) {
+    trs[i].classList.remove('on');
+  }
+  var ica = num('ica');
+  if (ica !== null) {
+    var r = resolveRow(ica);
+    var idx = rows.indexOf(r);
+    if (trs[idx]) trs[idx].classList.add('on');
+  }
+}
+
+function fmt(v) {
+  if (typeof v === 'string') {
+    return v === 'notify10' ? 'Notify PICU MD · ↑ 10%' : 'Notify PICU MD';
+  }
+  if (v === 0) return 'No Change';
+  return (v > 0 ? 'Increase by ' + v : 'Decrease by ' + Math.abs(v)) + ' mL/hour';
+}
+
+function buildRefTables() {
+  var t = TABLE.acd;
+  var tb = document.querySelector('#tblAcd tbody');
+  tb.innerHTML = t.rows.map(function (r) {
+    var cls = r.inRange ? ' class="inrange"' : '';
+    return '<tr' + cls + '><td><b>' + r.label + '</b></td>' +
+           '<td>' + fmt(r.band.lt5) + '</td><td>' + fmt(r.band.mid) + '</td><td>' + fmt(r.band.gt20) + '</td></tr>';
+  }).join('');
+
+  var c = TABLE.ca;
+  var tb2 = document.querySelector('#tblCa tbody');
+  tb2.innerHTML = c.rows.map(function (r) {
+    var cls = r.inRange ? ' class="inrange"' : (r.notify ? ' class="notifyrow"' : '');
+    return '<tr' + cls + '><td><b>' + r.label + '</b></td>' +
+           '<td>' + fmt(r.band.lt5) + '</td><td>' + fmt(r.band.mid) + '</td><td>' + fmt(r.band.gt20) + '</td></tr>';
+  }).join('');
+}
+
+function copySummary() {
+  var lines = [];
+  lines.push('CRRT Citrate Titration — UC Davis Policy IX-11 (pediatric)');
+  var items = document.querySelectorAll('#detailsBody .detail-item');
+  for (var i = 0; i < items.length; i++) {
+    var l = items[i].querySelector('.detail-label').textContent;
+    var v = items[i].querySelector('.detail-value').textContent;
+    lines.push(l + ': ' + v);
+  }
+  var nb = document.getElementById('notifyBox');
+  if (nb.style.display !== 'none') lines.push('ALERT: ' + nb.textContent);
+  var txt = lines.join('\n');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function () {
+      var b = document.querySelector('.copy-btn');
+      var old = b.textContent;
+      b.textContent = '✓ Copied';
+      setTimeout(function () { b.textContent = old; }, 1500);
+    });
+  } else {
+    window.prompt('Copy summary:', txt);
+  }
+}
+
+function resetAll() {
+  document.getElementById('weight').value = '';
+  document.getElementById('ica').value = '';
+  document.getElementById('rate').value = '';
+  onWeightInput();
+  clearResult();
+}
+
+/* ---- init ---- */
+setMode('acd');
+buildRefTables();
+onWeightInput();
+document.getElementById('weight').addEventListener('input', onWeightInput);
+document.getElementById('ica').addEventListener('input', function () { highlightRef(); });
+window.addEventListener('error', function (e) {
+  (window.__errs = window.__errs || []).push(String(e.message));
+});
+</script>
+</body>
+</html>
