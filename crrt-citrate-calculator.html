@@ -147,11 +147,11 @@
                 <span class="band-chip" data-band="gt20">&gt; 20 kg</span>
             </div>
             <div class="presets">
-                <span class="preset" onclick="setVal('weight',3.5)">3.5 kg</span>
-                <span class="preset" onclick="setVal('weight',8)">8 kg</span>
-                <span class="preset" onclick="setVal('weight',12)">12 kg</span>
-                <span class="preset" onclick="setVal('weight',25)">25 kg</span>
-                <span class="preset" onclick="setVal('weight',40)">40 kg</span>
+                <button type="button" class="preset" onclick="setVal('weight',3.5)">3.5 kg</button>
+                <button type="button" class="preset" onclick="setVal('weight',8)">8 kg</button>
+                <button type="button" class="preset" onclick="setVal('weight',12)">12 kg</button>
+                <button type="button" class="preset" onclick="setVal('weight',25)">25 kg</button>
+                <button type="button" class="preset" onclick="setVal('weight',40)">40 kg</button>
             </div>
             <div class="helper-text">Sets the weight band for both tables below.</div>
         </div>
@@ -294,6 +294,7 @@
 
 var BAND_MIN = 5, BAND_MAX = 20;
 var MAX_RATE = 200;   // mL/hour — nephrologist notification threshold
+var EMPTY_DEFAULTS = {};   // the placeholder boxes' original text, stashed at init, restored by clearOutputs()
 
 var SYS = {
   name: 'ACD-A',
@@ -380,8 +381,14 @@ function clearOutputs() {
     el.classList.remove('show');
     el.classList.remove('warn');
   });
-  document.getElementById('emptySys').classList.remove('show');
-  document.getElementById('emptyPat').classList.remove('show');
+  ['emptySys', 'emptyPat'].forEach(function (id) {
+    var el = document.getElementById(id);
+    el.classList.remove('show');
+    el.textContent = EMPTY_DEFAULTS[id];   // an invalid entry overwrites the placeholder — put it back
+  });
+  ['notifySys', 'notifyPat'].forEach(function (id) {
+    document.getElementById(id).style.display = 'none';   // copySummary() reads these; never leave a stale alert
+  });
   document.getElementById('detailsSection').style.display = 'none';
 }
 
@@ -532,7 +539,7 @@ function calculate() {
     // every value supplied was rejected — make that explicit rather than blank
     var bad = [rs, rp].filter(function (x) { return x.invalid; })
                       .map(function (x) { return x.invalid; });
-    if (bad.length) showError(bad[0]);
+    if (bad.length) return showError(bad[0]);   // nothing was calculated — don't render a detail panel under the error
   }
 
   // detail panel
@@ -638,6 +645,9 @@ function resetAll() {
 
 /* ---- init ---- */
 buildRefTables();
+['emptySys', 'emptyPat'].forEach(function (id) {
+  EMPTY_DEFAULTS[id] = document.getElementById(id).textContent;
+});
 onWeightInput();
 document.getElementById('weight').addEventListener('input', onWeightInput);
 ['sysIca', 'patIca'].forEach(function (id) {
