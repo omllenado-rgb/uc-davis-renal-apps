@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN Review App — Scan to Open (print this page)</title>
+<style>
+  @page { size: letter; margin: 0.75in; }
+  :root {
+    --ink: #13111d;
+    --muted: #6b6580;
+    --violet: #6d28d9;
+    --line: #e5e1f0;
+    --bg: #f6f4fb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    display: flex; justify-content: center; padding: 24px;
+  }
+  .sheet {
+    background: #fff;
+    width: 8.5in; max-width: 100%;
+    padding: 0.75in;
+    border: 1px solid var(--line); border-radius: 12px;
+  }
+  .brand { font-size: 13px; letter-spacing: .18em; color: var(--violet); font-weight: 700; }
+  h1 { font-size: 34px; line-height: 1.15; margin: 10px 0 6px; }
+  .sub { color: var(--muted); font-size: 15px; line-height: 1.5; }
+  .qr-wrap { display: flex; gap: 36px; align-items: center; margin: 34px 0; }
+  .qr { width: 3.4in; height: 3.4in; flex: none; border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: #fff; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .url { font-size: 15px; color: var(--muted); margin-top: 10px; word-break: break-all; font-family: Menlo, monospace; }
+  .steps { list-style: none; }
+  .steps li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-top: 1px dashed var(--line); }
+  .steps li:first-child { border-top: none; }
+  .n { flex: none; width: 28px; height: 28px; border-radius: 999px; background: var(--violet); color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .steps b { display: block; font-size: 15px; margin-bottom: 2px; }
+  .steps span { font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+  .foot { margin-top: 28px; padding-top: 14px; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { border: none; width: auto; }
+    .no-print { display: none !important; }
+  }
+  .print-btn {
+    position: fixed; right: 20px; bottom: 20px;
+    background: var(--violet); color: #fff; font-size: 15px; font-weight: 600;
+    padding: 12px 22px; border-radius: 999px; border: none; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(109,40,217,.35);
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="brand">UC DAVIS RENAL · CLINICAL TOOLKIT</div>
+  <h1>CNN Review App</h1>
+  <p class="sub">Free study tool for the Certified Nephrology Nurse exam.<br>Point your phone's camera at the code — no app store, no sign-up download.</p>
+
+  <div class="qr-wrap">
+    <div class="qr"><img src="qr-cnn-review.png" alt="QR code to the CNN Review App"></div>
+    <ul class="steps">
+      <li><div class="n">1</div><div><b>Scan</b><span>Open the camera app and aim at the code.</span></div></li>
+      <li><div class="n">2</div><div><b>Tap the link</b><span>The CNN Review App opens in your browser.</span></div></li>
+      <li><div class="n">3</div><div><b>Pick your tool</b><span>Study questions, calculators, and progress tracking.</span></div></li>
+    </ul>
+  </div>
+
+  <p class="url">https://omllenado-rgb.github.io/uc-davis-renal-apps/index.html</p>
+
+  <div class="foot">
+    <div>Questions: Oliver Llenado, RN · omllenado@gmail.com</div>
+  </div>
+</div>
+<button class="print-btn no-print" onclick="window.print()">🖨 Print this page</button>
+</body>
+</html>
