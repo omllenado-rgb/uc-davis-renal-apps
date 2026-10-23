@@ -276,7 +276,7 @@ async function sbDelete(path){var r=await fetch(SBI.url+path,{method:"DELETE",he
 
 /* row mappers: app object -> DB row (logs keep their varied fields in detail) */
 function mRow(m){return{id:m.id,tag:m.tag,type:m.type,serial:m.serial||null,location:m.location||null,
-  status:m.status,last_pm:m.lastPM||null,interval:m.interval||null,notes:m.notes||null,updated_at:new Date().toISOString()}}
+  status:m.status,last_pm:m.lastPM||null,pm_interval:m.interval||null,notes:m.notes||null,updated_at:new Date().toISOString()}}
 function lRow(l){var d={};if(l.method)d.method=l.method;if(l.rinsed!==undefined)d.rinsed=l.rinsed;
   if(l.result)d.result=l.result;if(l.cfu)d.cfu=l.cfu;if(l.eu)d.eu=l.eu;if(l.site)d.site=l.site;
   if(l.cond)d.cond=l.cond;if(l.status)d.status=l.status;
