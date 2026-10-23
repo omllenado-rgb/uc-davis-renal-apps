@@ -52,7 +52,7 @@ button.g.d{color:var(--er)}
 <body>
 <header>
 <h1>Dialysis Equipment Tracker</h1>
-<div class="sub">Machines, preventive maintenance, disinfection, cultures and status in one place</div>
+<div class="sub" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span>Machines, preventive maintenance, disinfection, cultures and status in one place</span><button class="g" id="themeBtn" style="margin-left:auto" onclick="toggleTheme()">Theme</button><span id="syncBadge" class="pill p-in" style="font-size:11px">Connecting…</span></div>
 <nav id="nav"></nav>
 </header>
 <main>
@@ -172,6 +172,15 @@ if(l.type==="Status change")return esc(l.status)+(l.notes?" - "+esc(l.notes):"")
 return esc(l.notes||"")}
 function lastOf(id,type){var a=S.logs.filter(function(l){return l.machine===id&&l.type===type}).sort(function(x,y){return y.date.localeCompare(x.date)||y.ts-x.ts});return a[0]}
 
+function toggleTheme(){
+  var cur=document.documentElement.dataset.theme;
+  var next = cur==="dark" ? "light" : "dark";
+  document.documentElement.dataset.theme=next;
+  try{localStorage.setItem("dt_theme",next)}catch(e){}
+}
+(function(){try{var saved=localStorage.getItem("dt_theme");if(saved)document.documentElement.dataset.theme=saved}catch(e){}})();
+function updateSyncBadge(){var b=$("syncBadge");if(b){b.textContent=SBI.on?"Synced ✓":"Offline — local";
+  b.className="pill "+(SBI.on?"p-ok":"p-in")}}
 var tabs=[["board","Board"],["machines","Machine entry"],["log","Log entry"],["data","Data"]];
 function show(t){tabs.forEach(function(x){$("v-"+x[0]).classList.toggle("hide",x[0]!==t)});
 Array.prototype.forEach.call($("nav").children,function(b){b.classList.toggle("on",b.dataset.t===t)});
@@ -207,12 +216,12 @@ $("aamiFlags").innerHTML=(function(){var f=aamiFindings();if(!f.length)return '<
 $("mForm").onsubmit=function(e){e.preventDefault();
 var id=$("mId").value,o={tag:$("mTag").value.trim(),type:$("mType").value,serial:$("mSerial").value.trim(),location:$("mLoc").value.trim(),status:$("mStatus").value,lastPM:$("mPM").value,interval:+$("mInt").value||365,notes:$("mNotes").value.trim()};
 if(id){Object.assign(mById(id),o)}else{o.id=uid();S.machines.push(o)}
-save();clearM();render()};
+save();clearM();render();syncMachine(S.machines.find(function(m){return id?m.id===id:m.id===o.id})||o)};
 function clearM(){$("mForm").reset();$("mId").value="";$("mTitle").textContent="Add machine"}
 $("mCancel").onclick=clearM;
 $("mList").onclick=function(e){var b=e.target,id=b.dataset.e||b.dataset.x;if(!id)return;
 if(b.dataset.e){var m=mById(id);$("mId").value=m.id;$("mTag").value=m.tag;$("mType").value=m.type;$("mSerial").value=m.serial||"";$("mLoc").value=m.location||"";$("mStatus").value=m.status;$("mPM").value=m.lastPM||"";$("mInt").value=m.interval||365;$("mNotes").value=m.notes||"";$("mTitle").textContent="Edit machine";window.scrollTo(0,0)}
-else if(confirm("Delete this machine? Its log entries stay in the history.")){S.machines=S.machines.filter(function(m){return m.id!==id});save();render()}};
+else if(confirm("Delete this machine? Its log entries stay in the history.")){var gone=S.machines.find(function(m){return m.id===id});S.machines=S.machines.filter(function(m){return m.id!==id});save();render();if(gone)syncMachine(gone,"delete")}};
 
 function lFields(){var t=$("lType").value;
 [["f-dis","Disinfection"],["f-cul","Culture"],["f-st","Status change"],["f-cond","Water reading"]].forEach(function(x){Array.prototype.forEach.call(document.getElementsByClassName(x[0]),function(el){el.classList.toggle("hide",t!==x[1])})})}
@@ -222,10 +231,10 @@ var t=$("lType").value,m=mById($("lMachine").value);if(!m){alert("Add a machine 
 var l={id:uid(),ts:Date.now(),machine:m.id,type:t,date:$("lDate").value,by:$("lBy").value.trim(),notes:$("lNotes").value.trim()};
 if(t==="Disinfection"){l.method=$("lMethod").value;l.rinsed=$("lRinsed").checked}
 if(t==="Culture"){l.result=$("lResult").value;l.cfu=$("lCFU").value.trim();l.eu=$("lEU").value.trim();l.site=$("lSite").value}if(t==="Water reading"){l.cond=$("lCond").value.trim()}
-if(t==="Status change"){l.status=$("lStatus").value;m.status=l.status}
-if(t==="PM completed"){m.lastPM=l.date}
-S.logs.push(l);save();$("lNotes").value="";$("lCFU").value="";render()};
-$("hist").onclick=function(e){var id=e.target.dataset.l;if(id&&confirm("Delete this log entry?")){S.logs=S.logs.filter(function(l){return l.id!==id});save();render()}};
+if(t==="Status change"){l.status=$("lStatus").value;m.status=l.status;setTimeout(function(){syncMachine(m)},0)}
+if(t==="PM completed"){m.lastPM=l.date;setTimeout(function(){syncMachine(m)},0)}
+S.logs.push(l);save();$("lNotes").value="";$("lCFU").value="";$("lEU").value="";$("lCond").value="";render();syncLog(l)};
+$("hist").onclick=function(e){var id=e.target.dataset.l;if(id&&confirm("Delete this log entry?")){var gone=S.logs.find(function(l){return l.id===id});S.logs=S.logs.filter(function(l){return l.id!==id});save();render();if(gone)syncLog(gone,"delete")}};
 
 function dl(name,txt,mime){try{var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:mime}));a.download=name;a.click()}catch(e){}}
 $("exJSON").onclick=function(){var t=JSON.stringify(S);$("dump").value=t;dl("dialysis-tracker-backup.json",t,"application/json")};
@@ -245,7 +254,90 @@ $("exCSVRange").onclick=function(){
   var t=r.map(function(x){return x.map(function(c){return'"'+String(c==null?"":c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
   $("dump").value=t;dl("dialysis-log_"+(f||"start")+"_to_"+(to||"end")+".csv",t,"text/csv");
 };
+
+/* ================= SUPABASE SYNC (v2 design + shared DB) ====================
+   Machines + logs replicate to Supabase so every tech's device sees the same
+   tracker. localStorage stays as the offline cache (app keeps working offline
+   and syncs when the network returns). Machine ids and log ids are app
+   generated (uid()), which makes the mapping 1:1 and conflict-light. */
+const SBI = {
+  url:  "https://ymvaslldugwzgjeaxabz.supabase.co",
+  key:  "sb_publishable_EpbSQ2PEnEzOxAPkzkCe1g__Y0ozzi9",
+  m:    "/rest/v1/track_machines",
+  l:    "/rest/v1/track_logs",
+  on:   false,       // flips true when the first sync succeeds
+};
+
+function sbh(){return{"apikey":SBI.key,"Authorization":"Bearer "+SBI.key,"Content-Type":"application/json","Prefer":"return=representation,minimal"}}
+async function sbGet(path){var r=await fetch(SBI.url+path,{headers:sbh()});if(!r.ok)throw new Error(r.status);return r.json()}
+async function sbUpsert(path,obj){var r=await fetch(SBI.url+path+"?on_conflict=id",{method:"POST",headers:sbh(),body:JSON.stringify(obj)});
+  if(!r.ok)throw new Error(r.status+" "+await r.text());return r}
+async function sbDelete(path){var r=await fetch(SBI.url+path,{method:"DELETE",headers:sbh()});if(!r.ok)throw new Error(r.status);return r}
+
+/* row mappers: app object -> DB row (logs keep their varied fields in detail) */
+function mRow(m){return{id:m.id,tag:m.tag,type:m.type,serial:m.serial||null,location:m.location||null,
+  status:m.status,last_pm:m.lastPM||null,interval:m.interval||null,notes:m.notes||null,updated_at:new Date().toISOString()}}
+function lRow(l){var d={};if(l.method)d.method=l.method;if(l.rinsed!==undefined)d.rinsed=l.rinsed;
+  if(l.result)d.result=l.result;if(l.cfu)d.cfu=l.cfu;if(l.eu)d.eu=l.eu;if(l.site)d.site=l.site;
+  if(l.cond)d.cond=l.cond;if(l.status)d.status=l.status;
+  return{id:l.id,machine:l.machine,type:l.type,date:l.date,ts:l.ts||0,by:l.by||null,notes:l.notes||null,detail:d}}
+function mObj(r){return{id:r.id,tag:r.tag,type:r.type,serial:r.serial||"",location:r.location||"",
+  status:r.status,lastPM:r.last_pm||"",interval:r.interval||365,notes:r.notes||""}}
+function lObj(r){var d=r.detail||{};var l={id:r.id,machine:r.machine,type:r.type,date:r.date,ts:r.ts,by:r.by||"",notes:r.notes||""};
+  if(d.method)l.method=d.method;if(d.rinsed!==undefined)l.rinsed=d.rinsed;if(d.result)l.result=d.result;
+  if(d.cfu)l.cfu=d.cfu;if(d.eu)l.eu=d.eu;if(d.site)l.site=d.site;if(d.cond)l.cond=d.cond;if(d.status)l.status=d.status;
+  return l}
+
+/* syncAll(): pull fresh, union with local (last-write-wins per record by ts/updated_at) */
+async function syncFromCloud(){
+  try{
+    var [ms,ls] = await Promise.all([sbGet(SBI.m+"?select=*"), sbGet(SBI.l+"?select=*")]);
+    var cloudM = ms.map(mObj), cloudL = ls.map(lObj);
+    /* machines: merge by id — the machine with the newer last activity wins
+       per-field (updated_at vs local); simple rule: cloud wins, except a local
+       machine holding lastPM NEWER than cloud's last_pm keeps local lastPM */
+    var mapM = {}; cloudM.forEach(function(m){mapM[m.id]=m});
+    S.machines.forEach(function(m){
+      var c = mapM[m.id];
+      if(!c){ mapM[m.id]=m; return; }      // local-only (created offline): pushes up later
+      if(m.lastPM && c.lastPM && Date.parse(m.lastPM+"T00:00:00")>Date.parse(c.lastPM+"T00:00:00")){
+        m.lastPM = m.lastPM; c.lastPM = m.lastPM;
+        sbUpsert(SBI.m,[mRow(c)]);
+      }
+    });
+    S.machines = Object.values(mapM);
+    /* logs: union by id, newer ts wins — this keeps the offline-created entries
+       and takes cloud corrections when the cloud record is newer */
+    var mapL = {};
+    S.logs.forEach(function(l){mapL[l.id]=l});
+    cloudL.forEach(function(l){ var loc=mapL[l.id];
+      if(!loc || (l.ts||0) >= (loc.ts||0)) mapL[l.id]=l; });
+    S.logs = Object.values(mapL).sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts});
+    SBI.on = true; save(); render(); updateSyncBadge();
+  }catch(e){ SBI.on=false; updateSyncBadge(); }
+}
+async function syncMachine(m, method){
+  if(!SBI.on) { queueSync(); return; }
+  try{
+    if(method==="delete") await sbDelete(SBI.m+"?id=eq."+encodeURIComponent(m.id));
+    else await sbUpsert(SBI.m, [mRow(m)]);
+    $("#syncBadge").textContent="Synced ✓";
+  }catch(e){ queueSync(); }
+}
+async function syncLog(l, method){
+  if(!SBI.on) { queueSync(); return; }
+  try{
+    if(method==="delete") await sbDelete(SBI.l+"?id=eq."+encodeURIComponent(l.id));
+    else await sbUpsert(SBI.l, [lRow(l)]);
+  }catch(e){ queueSync(); }
+}
+var _pend=false;
+function queueSync(){ _pend=true; $("#syncBadge").textContent="Offline — will sync"; }
+window.addEventListener("online",async function(){ if(_pend){_pend=false; await syncFromCloud(); }});
+setInterval(function(){ var st=SBI; if(navigator.onLine) syncFromCloud(); }, 60000);
+
 render();
+if(navigator.onLine){ syncFromCloud(); } else { updateSyncBadge(); }
 var h=(location.hash||"").slice(1);show(tabs.some(function(x){return x[0]===h})?h:"board");
 </script>
 </body>
