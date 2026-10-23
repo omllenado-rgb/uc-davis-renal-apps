@@ -121,7 +121,11 @@
       </div>
       <div class="row2">
         <div><label for="mModel">Model</label><input type="text" id="mModel" placeholder="2008K, Nikkiso…" maxlength="40"></div>
+        <div><label for="mSerial">Serial number</label><input type="text" id="mSerial" placeholder="Serial / asset tag" maxlength="60"></div>
+      </div>
+      <div class="row2">
         <div><label for="mLoc">Location</label><input type="text" id="mLoc" placeholder="Bay 2 / Water room" maxlength="40"></div>
+        <div></div>
       </div>
       <button class="btn ghost" onclick="addMachine()">Add machine</button>
       <p class="muted" id="mchMsg" style="margin:10px 0 0"></p>
@@ -397,9 +401,22 @@ async function addMachine(){
   const label= document.getElementById("mLabel").value.trim();
   const model= document.getElementById("mModel").value.trim()||null;
   const loc  = document.getElementById("mLoc").value.trim()||null;
+  const serial = document.getElementById("mSerial").value.trim()||null;
   if(!label){ msg.textContent = "Give it an ID, e.g. #7 or RO skid."; return; }
   try{
-    await apiPost(API.machines, {type,label,model,location:loc});
+    const payload = {type,label,model,location:loc};
+    // serial_no exists only after serial.sql runs in the SQL editor — try with
+    // it; if the API rejects the unknown column, retry without it.
+    if(serial) payload.serial_no = serial;
+    let row;
+    try{ [row] = await apiPost(API.machines, payload); }
+    catch(err){
+      if(serial && /serial|PGRST204/i.test(err.message||"")){
+        delete payload.serial_no;
+        [row] = await apiPost(API.machines, payload);
+        setTimeout(()=>msg.textContent = 'Machine saved WITHOUT serial — run serial.sql in the SQL editor to add the column, then edit the machine later.', 0);
+      } else { throw err; }
+    }
     MACHINES = await apiGet(API.machines+"?select=*&active=eq.true&order=label");
     ["mLabel","mModel","mLoc"].forEach(id=>document.getElementById(id).value="");
     msg.innerHTML = '<span style="color:var(--green)">Machine added ✓</span>';
@@ -413,7 +430,7 @@ function renderMachines(){
     : MACHINES.map(m=>{ const st=machineState(m);
       return `<div class="mrow" onclick="openDetail(${m.id})">
         <div class="id">${esc(m.label)}</div>
-        <div style="flex:1"><div class="muted">${esc(m.type)} ${m.model?"· "+esc(m.model):""}</div>
+        <div style="flex:1"><div class="muted">${esc(m.type)} ${m.model?"· "+esc(m.model):""}${m.serial_no?" · SN "+esc(m.serial_no):""}</div>
         <div class="who">${st.level==="ok"?"All current":st.label+" — "+st.level}</div></div>
         <span class="badge ${st.level}">${st.level}</span></div>`;}).join("");
 }
@@ -444,7 +461,7 @@ function renderDetail(){
   document.getElementById("view-detail").innerHTML = `
     <div class="card"><button class="btn ghost" onclick="show('dash')" style="padding:8px;margin-bottom:10px">← Board</button>
       <h2 style="margin-bottom:4px">${esc(m.label)}</h2>
-      <p class="muted">${esc(m.type)} ${m.model?"· "+esc(m.model):""} ${m.location?"· "+esc(m.location):""}
+      <p class="muted">${esc(m.type)} ${m.model?"· "+esc(m.model):""} ${m.serial_no?"· SN "+esc(m.serial_no):""} ${m.location?"· "+esc(m.location):""}
       · ${MACHINES.length} machines total</p>
       ${st.level!=="ok"?`<div class="flag">${esc(st.label)} — ${st.level==="overdue"?"overdue by "+st.days+" days":"due"}</div>`:""}
       <h2 style="margin-top:14px">Interval clocks</h2>${tl}
