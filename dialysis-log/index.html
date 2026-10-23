@@ -1,520 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dialysis Log Tracker — HD & Water Plant</title>
-<meta name="description" content="Machine disinfection, preventive maintenance, and water culture logs for hemodialysis and RO water plant equipment. Lookup by machine, AAMI action-level flags, audit-ready exports.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dialysis Equipment Tracker</title>
 <style>
-  :root{
-    --navy:#0a2c4e;--navy-2:#0f3a66;--ink:#1c2933;--muted:#5a6570;
-    --bg:#f4f6f8;--card:#fff;--border:#dde4ea;
-    --teal:#0e7c86;--teal-soft:#e3f2f4;
-    --gold:#ffb020;--gold-soft:#fff8e6;
-    --red:#c0392b;--red-soft:#fdecea;
-    --green:#2e7d43;--green-soft:#e8f5e9;
-    --gray-soft:#eef1f4;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px}
-  header{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:20px 16px;position:sticky;top:0;z-index:10}
-  header h1{margin:0;font-size:19px;font-weight:700;letter-spacing:.2px}
-  header p{margin:4px 0 0;font-size:13px;opacity:.85}
-  main{max-width:860px;margin:0 auto;padding:16px 12px 80px}
-  .tabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
-  .tabs button{flex:1 1 auto;min-width:110px;padding:10px 8px;border:1px solid var(--border);border-radius:10px;background:var(--card);font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
-  .tabs button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-  .card h2{margin:0 0 12px;font-size:16px}
-  .muted{color:var(--muted);font-size:13px}
-  /* machine rows */
-  .mrow{display:flex;align-items:center;gap:12px;padding:12px 10px;border-bottom:1px solid var(--border);cursor:pointer}
-  .mrow:last-child{border-bottom:none}
-  .mrow .id{font-weight:800;font-size:15px;min-width:64px}
-  .mrow:hover{background:var(--gray-soft)}
-  .badge{padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;letter-spacing:.4px;white-space:nowrap}
-  .badge.ok{background:var(--green-soft);color:var(--green)}
-  .badge.due{background:var(--gold-soft);color:#8a6400}
-  .badge.overdue{background:var(--red-soft);color:var(--red)}
-  .badge.type{background:var(--teal-soft);color:var(--teal)}
-  /* forms */
-  label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:12px 0 4px;letter-spacing:.3px}
-  select,input[type="text"],input[type="date"],input[type="number"],input[type="time"],textarea{
-    width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;font-size:16px;background:#fff;color:var(--ink)}
-  textarea{min-height:70px;resize:vertical}
-  .btn{width:100%;padding:13px;border:none;border-radius:10px;background:var(--teal);color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:16px}
-  .btn:active{opacity:.85}
-  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--border)}
-  .btn.danger{background:var(--red)}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  /* timeline */
-  .ev{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
-  .ev:last-child{border:none}
-  .ev .icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--gray-soft)}
-  .ev .icon.pass{background:var(--green-soft)}
-  .ev .icon.fail{background:var(--red-soft)}
-  .ev .body{flex:1}
-  .ev .who{font-size:11px;color:var(--muted)}
-  /* AAMI flag */
-  .flag{background:var(--red-soft);border-left:4px solid var(--red);padding:10px 12px;border-radius:8px;margin:8px 0;font-size:14px}
-  .flag.warn{background:var(--gold-soft);border-left-color:var(--gold)}
-  .okmsg{background:var(--green-soft);border-left:4px solid var(--green);padding:10px 12px;border-radius:8px;margin:8px 0;font-size:14px}
-  .hidden{display:none}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-  .kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
-  .kpi .n{font-size:24px;font-weight:800}
-  .kpi .l{font-size:11px;color:var(--muted);font-weight:600}
-  footer{padding:26px 16px;text-align:center;font-size:12px;color:var(--muted)}
-  @media(min-width:720px){.row2{grid-template-columns:1fr 1fr 1fr}}
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2430;--mu:#667085;--bd:#dfe3e8;--ac:#0f6e8c;--ok:#1f8a4c;--wn:#b7791f;--er:#c0392b;--okb:#e3f5ea;--wnb:#fdf3dc;--erb:#fbe6e3;--inb:#e6eef2;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171d;--card:#1b222b;--tx:#e8ecf1;--mu:#98a2b3;--bd:#2c3642;--ac:#4fb3d1;--ok:#4cc27f;--wn:#e0a847;--er:#ef6f60;--okb:#173625;--wnb:#3a2f14;--erb:#3e1d19;--inb:#1f2c35}}
+:root[data-theme="dark"]{--bg:#12171d;--card:#1b222b;--tx:#e8ecf1;--mu:#98a2b3;--bd:#2c3642;--ac:#4fb3d1;--ok:#4cc27f;--wn:#e0a847;--er:#ef6f60;--okb:#173625;--wnb:#3a2f14;--erb:#3e1d19;--inb:#1f2c35}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:16px 20px 0;max-width:1200px;margin:auto}
+h1{font-size:20px;margin:0 0 2px}
+.sub{color:var(--mu);font-size:13px}
+nav{display:flex;gap:6px;margin:14px 0 0;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+nav button{background:none;border:0;padding:10px 16px;color:var(--mu);font:inherit;font-weight:600;cursor:pointer;border-bottom:3px solid transparent}
+nav button.on{color:var(--ac);border-color:var(--ac)}
+main{max-width:1200px;margin:auto;padding:16px 20px 40px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.stat b{display:block;font-size:24px}
+.stat span{font-size:12px;color:var(--mu)}
+.stat.er b{color:var(--er)}.stat.wn b{color:var(--wn)}.stat.ok b{color:var(--ok)}
+.panel{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:16px}
+.panel h2{font-size:15px;margin:0 0 10px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-ok{background:var(--okb);color:var(--ok)}.p-wn{background:var(--wnb);color:var(--wn)}.p-er{background:var(--erb);color:var(--er)}.p-in{background:var(--inb);color:var(--mu)}
+.sm{font-size:12px;color:var(--mu)}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--mu)}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:8px}
+textarea{min-height:60px;resize:vertical}
+.full{grid-column:1/-1}
+.chk{flex-direction:row;align-items:center;gap:8px;font-size:14px;color:var(--tx);font-weight:500}
+.chk input{width:18px;height:18px}
+button.b{background:var(--ac);color:#fff;border:0;border-radius:7px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+button.g{background:none;color:var(--ac);border:1px solid var(--bd);border-radius:7px;padding:6px 10px;font:inherit;cursor:pointer}
+button.g.d{color:var(--er)}
+.hide{display:none!important}
+.empty{color:var(--mu);padding:14px 4px}
+.note{background:var(--inb);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--mu);margin-bottom:14px}
 </style>
 </head>
 <body>
 <header>
-  <h1>Dialysis & Water Plant Logs</h1>
-  <p>HD machines · WRO · disinfection, PM, cultures</p>
+<h1>Dialysis Equipment Tracker</h1>
+<div class="sub">Machines, preventive maintenance, disinfection, cultures and status in one place</div>
+<nav id="nav"></nav>
 </header>
 <main>
-  <div class="tabs">
-    <button id="tab-dash" class="active" onclick="show('dash')">Board</button>
-    <button id="tab-log" onclick="show('log')">Log entry</button>
-    <button id="tab-mch" onclick="show('mch')">Machines</button>
-  </div>
 
-  <!-- ============================== BOARD ============================== -->
-  <section id="view-dash">
-    <div class="card" id="aamiCard"></div>
-    <div class="kpis" id="kpis"></div>
-    <div class="card"><h2>Overdue & due</h2><div id="dueList" class="muted">Loading…</div></div>
-    <div class="card"><h2>Recent events &amp; audit export</h2><div class="row2" style="margin-bottom:10px"><div><label for="xFrom">Export from</label><input type="date" id="xFrom"></div><div><label for="xTo">to</label><input type="date" id="xTo"></div></div><button class="btn ghost" onclick="exportCSV()">Download audit CSV (this range)</button><label for="recentFilter" style="margin-top:14px">Filter by machine</label><select id="recentFilter" onchange="renderRecent()" style="max-width:320px"></select><div id="recentList" class="muted" style="margin-top:12px">Loading…</div></div>
-  </section>
+<section id="v-board">
+<div class="cards" id="stats"></div>
+<div class="panel" id="aamiPanel"><h2>Water quality (AAMI flags)</h2><div id="aamiFlags"></div></div>
+<div class="panel">
+<h2>Equipment board</h2>
+<div class="bar">
+<select id="fType"></select>
+<select id="fStatus"><option value="">All statuses</option><option>In service</option><option>In repair</option><option>Out of service</option></select>
+<select id="fPM"><option value="">All PM states</option><option value="over">PM overdue</option><option value="soon">PM due within 30 days</option></select>
+</div>
+<div class="scroll"><table><thead><tr><th>Machine</th><th>Type</th><th>Location</th><th>Status</th><th>Last PM</th><th>PM due</th><th>Last disinfection</th><th>Last culture</th></tr></thead><tbody id="board"></tbody></table></div>
+</div>
+<div class="panel"><h2>Recent activity</h2><div class="scroll"><table><thead><tr><th>Date</th><th>Machine</th><th>Entry</th><th>Details</th><th>By</th></tr></thead><tbody id="recent"></tbody></table></div></div>
+</section>
 
-  <!-- ============================== LOG ENTRY ========================== -->
-  <section id="view-log" class="hidden">
-    <div class="card">
-      <h2>New log entry</h2>
-      <label for="fMachine">Machine</label>
-      <select id="fMachine"></select>
-      <label for="fTask">Task</label>
-      <select id="fTask"></select>
-      <div class="row2">
-        <div><label for="fDate">Date</label><input type="date" id="fDate"></div>
-        <div><label for="fTime">Time</label><input type="time" id="fTime"></div>
-      </div>
-      <div class="row2" id="dynFields"></div>
-      <label for="fBy">Performed by</label>
-      <input type="text" id="fBy" placeholder="Initials (JG, OL…)" maxlength="12">
-      <label for="fNotes">Notes</label>
-      <textarea id="fNotes" placeholder="Optional"></textarea>
-      <button class="btn" onclick="submitEvent()">Save entry</button>
-      <p class="muted" id="logMsg" style="margin:10px 0 0"></p>
-    </div>
-  </section>
+<section id="v-machines" class="hide">
+<div class="panel">
+<h2 id="mTitle">Add machine</h2>
+<form id="mForm">
+<input type="hidden" id="mId">
+<label>Machine ID / asset tag<input id="mTag" required></label>
+<label>Type<select id="mType" required></select></label>
+<label>Serial number<input id="mSerial"></label>
+<label>Location / room<input id="mLoc"></label>
+<label>Status<select id="mStatus"><option>In service</option><option>In repair</option><option>Out of service</option></select></label>
+<label>Last PM date<input type="date" id="mPM"></label>
+<label>PM interval (days)<input type="number" id="mInt" min="1" value="365"></label>
+<label class="full">Notes<textarea id="mNotes"></textarea></label>
+<div class="full bar"><button class="b" type="submit">Save machine</button><button class="g" type="button" id="mCancel">Clear</button></div>
+</form>
+</div>
+<div class="panel"><h2>All machines</h2><div class="scroll"><table><thead><tr><th>ID</th><th>Type</th><th>Serial</th><th>Location</th><th>Status</th><th>PM due</th><th></th></tr></thead><tbody id="mList"></tbody></table></div></div>
+</section>
 
-  <!-- ============================== MACHINES =========================== -->
-  <section id="view-mch" class="hidden">
-    <div class="card">
-      <h2>Add machine</h2>
-      <div class="row2">
-        <div><label for="mType">Type</label>
-          <select id="mType"><option value="HD">HD (in-center)</option><option value="WRO">WRO (water plant)</option><option value="CRRT">CRRT (Prismaflex/Prismax)</option><option value="NXSTAGE">NxStage System One</option><option value="CCPD">CCPD (PD cycler)</option></select></div>
-        <div><label for="mLabel">ID / label</label><input type="text" id="mLabel" placeholder="#7 or RO skid" maxlength="24"></div>
-      </div>
-      <div class="row2">
-        <div><label for="mModel">Model</label><input type="text" id="mModel" placeholder="2008K, Nikkiso…" maxlength="40"></div>
-        <div><label for="mSerial">Serial number</label><input type="text" id="mSerial" placeholder="Serial / asset tag" maxlength="60"></div>
-      </div>
-      <div class="row2">
-        <div><label for="mLoc">Location</label><input type="text" id="mLoc" placeholder="Bay 2 / Water room" maxlength="40"></div>
-        <div></div>
-      </div>
-      <button class="btn ghost" onclick="addMachine()">Add machine</button>
-      <p class="muted" id="mchMsg" style="margin:10px 0 0"></p>
-    </div>
-    <div class="card"><h2>Machines</h2><div id="machineList" class="muted">Loading…</div></div>
-  </section>
+<section id="v-log" class="hide">
+<div class="note">Do not enter patient names or identifiers in notes. Data is saved in this browser only, so use Export on the Data tab to back up or move it.</div>
+<div class="panel">
+<h2>New log entry</h2>
+<form id="lForm">
+<label>Machine<select id="lMachine" required></select></label>
+<label>Entry type<select id="lType"><option>Disinfection</option><option>Culture</option><option>Water reading</option><option>PM completed</option><option>Status change</option><option>Repair / service</option><option>Other</option></select></label>
+<label>Date<input type="date" id="lDate" required></label>
+<label>Done by (initials)<input id="lBy" maxlength="20"></label>
+<label class="f-dis">Disinfection method<select id="lMethod"><option>Bleach</option><option>Heat</option><option>Acid + Heat</option><option>Rinse only</option></select></label>
+<label class="chk f-dis"><input type="checkbox" id="lRinsed" checked>Rinsed after disinfection</label>
+<label class="f-cul">Culture result<select id="lResult"><option>Pending</option><option>Negative</option><option>Positive</option></select></label>
+<label class="f-cul">Colony count (CFU/mL)<input id="lCFU"></label><label class="f-cul">Endotoxin (EU/mL)<input id="lEU"></label><label class="f-cul">Sample site<select id="lSite"><option value="">(not specified)</option><option>Post-RO</option><option>Delivery loop</option><option>Machine inlet</option><option>PD effluent</option></select></label><label class="f-cul f-cond">Conductivity (µS/cm)<input id="lCond"></label>
+<label class="f-st">New status<select id="lStatus"><option>In service</option><option>In repair</option><option>Out of service</option></select></label>
+<label class="full">Notes<textarea id="lNotes"></textarea></label>
+<div class="full"><button class="b" type="submit">Add entry</button></div>
+</form>
+</div>
+<div class="panel">
+<h2>Log history</h2>
+<div class="bar"><select id="hMachine"></select><select id="hType"><option value="">All entry types</option><option>Disinfection</option><option>Culture</option><option>Water reading</option><option>PM completed</option><option>Status change</option><option>Repair / service</option><option>Other</option></select></div>
+<div class="scroll"><table><thead><tr><th>Date</th><th>Machine</th><th>Entry</th><th>Details</th><th>By</th><th></th></tr></thead><tbody id="hist"></tbody></table></div>
+</div>
+</section>
 
-  <!-- ============================== MACHINE DETAIL ===================== -->
-  <section id="view-detail" class="hidden"></section>
+<section id="v-data" class="hide">
+<div class="panel">
+<h2>Data</h2>
+<div class="bar"><button class="b" id="exJSON">Export backup (JSON)</button><button class="g" id="exCSV">Export log (CSV)</button><input type="date" id="xFrom" style="max-width:150px"> from <input type="date" id="xTo" style="max-width:150px"> to <button class="g" id="exCSVRange">Export range (CSV)</button><label class="g" style="cursor:pointer;flex-direction:row">Import backup<input type="file" id="imp" accept=".json" class="hide"></label></div>
+<div class="sm">Export downloads are available when the page is opened outside the preview. Import replaces current data.</div>
+<textarea id="dump" class="full" style="width:100%;margin-top:10px" placeholder="Backup text appears here after Export; paste a backup here and press Import text to restore." rows="5"></textarea>
+<div class="bar" style="margin-top:8px"><button class="g" id="impTxt">Import text</button></div>
+</div>
+</section>
 </main>
-<footer>Runs locally in your browser · data via your own Supabase project · free hosting</footer>
 
 <script>
-/* ================= CONFIG (anon key — public by design; RLS-off) ============ */
-const SB_URL  = "https://ymvaslldugwzgjeaxabz.supabase.co";
-const SB_KEY  = "sb_publishable_EpbSQ2PEnEzOxAPkzkCe1g__Y0ozzi9";
-const API = {
-  machines: SB_URL + "/rest/v1/dl_machines",
-  templates:SB_URL + "/rest/v1/dl_task_templates",
-  events:   SB_URL + "/rest/v1/dl_events",
-  actions:  SB_URL + "/rest/v1/dl_actions",
-};
-function h(extra){ return Object.assign(
-  {"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json",
-   "Prefer":"return=representation"}, extra||{}); }
-async function apiGet(url){ const r = await fetch(url,{headers:h()});
-  if(!r.ok) throw new Error(r.status+" "+await r.text()); return r.json(); }
-async function apiPost(url,obj){ const r = await fetch(url,{method:"POST",headers:h(),body:JSON.stringify(obj)});
-  if(!r.ok) throw new Error(r.status+" "+await r.text()); return r.json(); }
-async function apiPatch(url,obj){ const r = await fetch(url,{method:"PATCH",headers:h(),body:JSON.stringify(obj)});
-  if(!r.ok) throw new Error(r.status+" "+await r.text()); return r.json(); }
-
-/* ================= AAMI ACTION LEVELS ======================== */
-const AAMI = { CFU_ACTION:50, CFU_LIMIT:100, EU_ACTION:0.125, EU_LIMIT:0.25, COND_LIMIT:10 };
-
-/* ================= STATE ======================== */
-let MACHINES=[], TEMPLATES=[], EVENTS=[], ACTIONS=[];
-let currentMachine=null;
-
-/* ================= NAVIGATION ======================== */
-function show(v){ for(const x of ["dash","log","mch","detail"]){
-    document.getElementById("view-"+x).classList.toggle("hidden",x!==v);
-    const b=document.getElementById("tab-"+x); if(b) b.classList.toggle("active",x===v);}
-  if(v==="dash") renderDash();
-  if(v==="log") renderLogForm();
-  if(v==="mch") renderMachines();
-  if(v==="detail") renderDetail();
-}
-
-function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
-  .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
-
-/* ================= DATA LOAD ======================== */
-async function loadAll(){
-  const rows = (id)=>apiGet(API[id]+"?select=*&order=id.desc&limit=2000");
-  [MACHINES,TEMPLATES,EVENTS,ACTIONS] = await Promise.all([
-    apiGet(API.machines+"?select=*&active=eq.true&order=label"),
-    apiGet(API.templates+"?select=*&order=task_type"),
-    rows("events"), rows("actions")]);
-}
-
-/* ============== DUE-STATE ENGINE — per machine + template ==========
-   A task's state = interval clock from the most recent matching event. */
-function daysSince(ds){ return Math.floor((Date.now() - new Date(ds+"T12:00:00"))/86400000); }
-function lastEvent(machineId, taskType){
-  const ev = EVENTS.filter(e=>e.machine_id===machineId && e.task_type===taskType)
-    .sort((a,b)=> b.event_date.localeCompare(a.event_date))[0];
-  return ev||null;
-}
-function machineState(m){
-  const tpls = TEMPLATES.filter(t=>t.machine_type===m.type && t.interval_days);
-  let worst = {level:"ok", label:"All current", task:null, days:0};
-  for(const tp of tpls){
-    const ev = lastEvent(m.id, tp.task_type);
-    const last = ev ? ev.event_date : null;
-    const age = last ? daysSince(last) : null;
-    // never-logged tasks count as overdue from the day the machine was added
-    const created = (m.created_at||"").slice(0,10);
-    const anchor = last || (created || null);
-    if(!anchor){ continue; }               // no anchor (fresh machine, no date): skip
-    const over = (last ? age : daysSince(created)) - (tp.interval_days||1) + 1;
-    let lvl = "ok";
-    if(over > 0) lvl = (over >= 3) ? "overdue" : "due";
-    const displayDays = last ? Math.max(0, over) : Math.max(0, daysSince(created) - tp.interval_days + 1);
-    if(lvl==="overdue" || (lvl==="due" && worst.level==="ok"))
-      worst = {level:lvl, label:tp.label, task:tp.task_type, days:displayDays};
-  }
-  return worst;
-}
-
-/* ============== AAMI ENGINE (cultures + conductivity) =============== */
+var TYPES=["Dialysis machine","WRO machine","CRRT - NxStage","CRRT - Prismax","CCPD cycler"];
+var S={machines:[],logs:[]};
+try{var raw=localStorage.getItem("dialysisTracker");if(raw)S=JSON.parse(raw);}catch(e){}
+function save(){try{localStorage.setItem("dialysisTracker",JSON.stringify(S));}catch(e){}}
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function addDays(s,n){var d=new Date(s+"T00:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function daysTo(s){return Math.round((new Date(s+"T00:00:00")-new Date(today()+"T00:00:00"))/864e5)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+var AAMI={CFU_ACTION:50,CFU_LIMIT:100,EU_ACTION:0.125,EU_LIMIT:0.25,COND_LIMIT:10};
 function aamiFindings(){
-  const out = [];
-  for(const e of EVENTS){
-    const v = e.values||{};
-    const m = MACHINES.find(x=>x.id===e.machine_id);
-    const who = m? m.label : "?";
-    if(v.cfu_ml!=null){
-      if(v.cfu_ml > AAMI.CFU_LIMIT)
-        out.push({sev:"breach", msg:`${who} water culture ${e.event_date}: ${v.cfu_ml} CFU/mL — ABOVE LIMIT ${AAMI.CFU_LIMIT}. Disinfect within 24h + re-culture.`, event:e});
-      else if(v.cfu_ml > AAMI.CFU_ACTION)
-        out.push({sev:"warn", msg:`${who} water culture ${e.event_date}: ${v.cfu_ml} CFU/mL — ACTION LEVEL (${AAMI.CFU_ACTION}). Plan disinfect + re-culture.`, event:e});
+  var out=[];
+  S.logs.slice().sort(function(a,b){return a.date.localeCompare(b.date)}).forEach(function(l){
+    var tag=mName(l.machine);
+    if(l.type==="Culture"){
+      var cfu=parseFloat(l.cfu);var eu=parseFloat(l.eu);
+      if(!isNaN(cfu)&&cfu>AAMI.CFU_LIMIT)out.push({er:1,t:tag+" culture "+l.date+" (site: "+(l.site||"?")+") — "+cfu+" CFU/mL ABOVE LIMIT "+AAMI.CFU_LIMIT+". Disinfect within 24h + re-culture."});
+      else if(!isNaN(cfu)&&cfu>AAMI.CFU_ACTION)out.push({er:0,t:tag+" culture "+l.date+" — "+cfu+" CFU/mL ACTION LEVEL ("+AAMI.CFU_ACTION+"). Plan disinfect + re-culture."});
+      if(!isNaN(eu)&&eu>AAMI.EU_LIMIT)out.push({er:1,t:tag+" endotoxin "+l.date+" — "+eu+" EU/mL ABOVE LIMIT "+AAMI.EU_LIMIT+"."});
+      else if(!isNaN(eu)&&eu>AAMI.EU_ACTION)out.push({er:0,t:tag+" endotoxin "+l.date+" — "+eu+" EU/mL ACTION LEVEL ("+AAMI.EU_ACTION+")."});
     }
-    if(v.eu_ml!=null){
-      if(v.eu_ml > AAMI.EU_LIMIT)
-        out.push({sev:"breach", msg:`${who} endotoxin ${e.event_date}: ${v.eu_ml} EU/mL — ABOVE LIMIT ${AAMI.EU_LIMIT}.`, event:e});
-      else if(v.eu_ml > AAMI.EU_ACTION)
-        out.push({sev:"warn", msg:`${who} endotoxin ${e.event_date}: ${v.eu_ml} EU/mL — ACTION LEVEL (${AAMI.EU_ACTION}).`, event:e});
+    if(l.type==="Water reading"){
+      var c=parseFloat(l.cond);
+      if(!isNaN(c)&&c>AAMI.COND_LIMIT)out.push({er:1,t:tag+" conductivity "+l.date+" — "+c+" µS/cm ABOVE "+AAMI.COND_LIMIT+". Check membrane/softener/RO."});
     }
-    if(v.conductivity_uS!=null && v.conductivity_uS > AAMI.COND_LIMIT){
-      out.push({sev:"breach", msg:`${who} conductivity ${e.event_date}: ${v.conductivity_uS} µS/cm — ABOVE ${AAMI.COND_LIMIT}. Check membrane/softener.`, event:e});
-    }
-  }
-  return out;
-}
-
-/* ================= DASHBOARD (board) ======================== */
-function renderDash(){
-  const flags = aamiFindings();
-  const ac = document.getElementById("aamiCard");
-  if(flags.length === 0){
-    ac.innerHTML = '<h2>Water quality</h2><div class="okmsg">No culture or conductivity breaches on record. All values inside action levels.</div>';
-  } else {
-    ac.innerHTML = "<h2>Water quality — needs attention</h2>" +
-      flags.map(f=>`<div class="flag ${f.sev==="breach"?"":"warn"}">${esc(f.msg)}
-        ${f.sev==="breach" && f.event ? `<button class="btn ghost" style="margin-top:8px;padding:8px" onclick="resolveAami(${f.event.id})">Mark resolved</button>` : ""}</div>`).join("");
-  }
-  // KPIs
-  const overdue = MACHINES.filter(m=>machineState(m).level==="overdue");
-  const due     = MACHINES.filter(m=>machineState(m).level==="due");
-  document.getElementById("kpis").innerHTML = `
-    <div class="kpi"><div class="n">${MACHINES.length}</div><div class="l">Machines</div></div>
-    <div class="kpi"><div class="n" style="color:${due.length?"#8a6400":"var(--green)"}">${due.length}</div><div class="l">Due now</div></div>
-    <div class="kpi"><div class="n" style="color:${overdue.length?"var(--red)":"var(--green)"}">${overdue.length}</div><div class="l">Overdue</div></div>`;
-  // due list
-  const dl = [...overdue, ...due].sort((a,b)=>machineState(b).days-machineState(a).days);
-  document.getElementById("dueList").innerHTML = dl.length===0
-    ? '<div class="okmsg">Everything current. Nice.</div>'
-    : dl.map(m=>{const st=machineState(m);return `<div class="mrow" onclick="openDetail(${m.id})">
-      <div class="id">${esc(m.label)}</div>
-      <div style="flex:1"><div>${esc(st.label)}</div><div class="who">${esc(m.type)} · ${st.level==="due"?"due":"overdue by "+st.days+" d"}</div></div>
-      <span class="badge ${st.level}">${st.level}</span></div>`}).join("");
-  renderRecent();
-}
-/* Full machine log on the board: every machine, sorted newest first,
-   filterable by machine. Shows ALL entries (paginated render at 400). */
-function renderRecent(){
-  const sel = document.getElementById("recentFilter");
-  if(sel.options.length !== MACHINES.length + 1){
-    sel.innerHTML = '<option value="all">All machines</option>' +
-      MACHINES.map(m=>`<option value="${m.id}">${esc(m.label)}</option>`).join("");
-  }
-  const want = sel.value;
-  const evs = EVENTS.filter(e=> want==="all" || String(e.machine_id)===want)
-    .slice().sort((a,b)=> (b.event_date||"").localeCompare(a.event_date||"") || (b.id||0)-(a.id||0));
-  const PAGE = 400;
-  const shown = evs.slice(0, PAGE);
-  const listEl = document.getElementById("recentList");
-  listEl.innerHTML = evs.length===0 ? "No events logged yet."
-    : shown.map(e=>{
-        const m = MACHINES.find(x=>x.id===e.machine_id);
-        const tp = TEMPLATES.find(x=>x.task_type===e.task_type);
-        return eventRow(e, tp?tp.label:e.task_type, m?m.label:"?");
-      }).join("") +
-    (evs.length>PAGE ? `<div class="muted" style="margin-top:8px">Showing newest ${PAGE} of ${evs.length} — narrow the date filter or export CSV for the full archive.</div>` : "");
-}
-let _rfBound = false;
-function bindRecentFilter(){ if(!_rfBound){ document.getElementById("recentFilter").addEventListener("change", renderRecent); _rfBound=true; } }
-function eventRow(e, label, machineLabel){
-  const ico = e.result==="fail" ? "✕" : (e.task_type.startsWith("culture")?"🧫":e.task_type.startsWith("pm")?"🔧":"✓");
-  const v = e.values||{};
-  const extras = Object.entries(v).filter(([k,val])=>val!==null&&val!=="")
-    .map(([k,val])=>`${esc(k.replace(/_/g," ")).replace("uS","µS")}: <b>${esc(val)}</b>`).join(" · ");
-  return `<div class="ev"><div class="icon ${e.result==="fail"?"fail":"pass"}">${ico}</div>
-    <div class="body"><div>${esc(label)} — <b>${esc(machineLabel)}</b> ${e.result==="fail"?'<span class="badge overdue">FAIL</span>':""}
-    ${extras?`<div class="who">${extras}</div>`:""}</div>
-    <div class="who">${esc(e.event_date)} ${e.performed_by?"· "+esc(e.performed_by):""}</div>
-    ${e.notes?`<div class="who">${esc(e.notes)}</div>`:""}</div></div>`;
-}
-
-/* ================= LOG ENTRY FORM ======================== */
-const TASK_FIELDS = {
-  
-  
-  pm_nxstage:           [["hours","Machine hours","number","min='0'"]],
-  
-  
-  pm_full_crrt:         [["hours","Machine hours","number","min='0'"]],
-  
-  culture_effluent:     [["cfu_ml","Bacteria (CFU/mL)","number","min='0'"],
-                         ["eu_ml","Endotoxin (EU/mL)","number","step='0.001' min='0'"],
-                         ["site","Site","text","placeholder='effluent, dialysate port…'"]],
-  pm_ccpd:              [["hours","Machine hours","number","min='0'"]],
-  reading_conductivity: [["conductivity_uS","Conductivity (µS/cm)","number","step='0.1' min='0' max='200'"]],
-  reading_hardness:     [["hardness_gpg","Hardness (gpg)","number","step='0.1' min='0'"]],
-  culture_water:        [["cfu_ml","Bacteria (CFU/mL)","number","min='0'"],
-                         ["eu_ml","Endotoxin (EU/mL)","number","step='0.001' min='0'"],
-                         ["site","Site","text","placeholder='post-RO, delivery loop…'"]],
-  culture_machine:      [["cfu_ml","Bacteria (CFU/mL)","number","min='0'"]],
-  disinfect_bleach:     [["residual_ppm","Residual (ppm)","number","step='0.1' min='0'"]],
-  pm_membrane:          [["hours","Membrane hours","number","min='0'"]],
-  pm_uv_lamp:           [["lamp_hours","UV lamp hours","number","min='0'"]],
-};
-function renderLogForm(){
-  const sel = document.getElementById("fMachine");
-  sel.innerHTML = MACHINES.map(m=>`<option value="${m.id}">${esc(m.label)} — ${esc(m.type)}</option>`).join("")
-    || '<option disabled>No machines yet — add one on the Machines tab</option>';
-  const tsel = document.getElementById("fTask");
-  tsel.innerHTML = TEMPLATES.map(t=>`<option value="${t.task_type}">${esc(t.label)}</option>`).join("");
-  document.getElementById("fDate").value = new Date().toISOString().slice(0,10);
-    document.getElementById("xFrom").value = new Date(Date.now()-90*86400000).toISOString().slice(0,10);
-    document.getElementById("xTo").value = new Date().toISOString().slice(0,10);
-  dynFields();
-}
-function dynFields(){
-  const tt = document.getElementById("fTask").value;
-  const wrap = document.getElementById("dynFields");
-  wrap.innerHTML = "";   // reset - prevents field stacking on task change
-  (TASK_FIELDS[tt]||[]).forEach(([k,label,type,attrs])=>{
-    wrap.insertAdjacentHTML("beforeend",
-      `<div><label for="f_${k}">${label}</label><input type="${type}" id="f_${k}" data-k="${k}" ${attrs||""}></div>`);
   });
+  return out.slice(-8).reverse();   // newest first, keep dashboard light
 }
-document.getElementById("fTask").addEventListener("change", dynFields);
+function due(m){return m.lastPM?addDays(m.lastPM,+m.interval||365):""}
+function pmState(m){var d=due(m);if(!d)return{k:"none",t:"No PM date",c:"p-in"};var n=daysTo(d);
+if(n<0)return{k:"over",t:d+" ("+(-n)+"d overdue)",c:"p-er"};
+if(n<=30)return{k:"soon",t:d+" (in "+n+"d)",c:"p-wn"};
+return{k:"ok",t:d,c:"p-ok"}}
+function stPill(s){return'<span class="pill '+(s==="In service"?"p-ok":s==="In repair"?"p-wn":"p-er")+'">'+esc(s)+"</span>"}
+function mById(id){return S.machines.find(function(m){return m.id===id})}
+function mName(id){var m=mById(id);return m?m.tag:"(deleted)"}
+function details(l){if(l.type==="Disinfection")return esc(l.method)+(l.rinsed?", rinsed":", not rinsed")+(l.notes?" - "+esc(l.notes):"");
+if(l.type==="Culture")return esc(l.result)+(l.site?" · "+esc(l.site):"")+(l.cfu?" ("+esc(l.cfu)+" CFU/mL)":"")+(l.eu?" ("+esc(l.eu)+" EU/mL)":"")+(l.notes?" - "+esc(l.notes):"");
+if(l.type==="Water reading")return esc(l.cond||"")+(l.cond?" µS/cm":"")+(l.notes?" - "+esc(l.notes):"");
+if(l.type==="Status change")return esc(l.status)+(l.notes?" - "+esc(l.notes):"");
+return esc(l.notes||"")}
+function lastOf(id,type){var a=S.logs.filter(function(l){return l.machine===id&&l.type===type}).sort(function(x,y){return y.date.localeCompare(x.date)||y.ts-x.ts});return a[0]}
 
-async function submitEvent(){
-  const msg = document.getElementById("logMsg");
-  const mid = +document.getElementById("fMachine").value;
-  const tt  = document.getElementById("fTask").value;
-  const date= document.getElementById("fDate").value;
-  const time= document.getElementById("fTime").value;
-  const by  = document.getElementById("fBy").value.trim();
-  const notes = document.getElementById("fNotes").value.trim();
-  if(!mid){ msg.textContent = "Add a machine first (Machines tab)."; return; }
-  if(!tt){ msg.textContent = "Pick the task type (citric, bleach, culture…) before saving."; return; }
-  if(!by){ msg.textContent = "Performed-by initials are required for the log."; return; }
-  const values = {};
-  document.querySelectorAll("#dynFields input").forEach(i=>{ if(i.value!=="") values[i.dataset.k] = parseVal(i.value); });
-  const ev = {machine_id:mid, task_type:tt, event_date:date, performed_by:by, notes:notes||null};
-  if(time) ev.event_time = time;
-  ev.values = values;
-  if(values.cfu_ml!=null && values.cfu_ml > AAMI.CFU_LIMIT){
-    ev.result = "fail";
-  } else if(values.conductivity_uS!=null && values.conductivity_uS > AAMI.COND_LIMIT){
-    ev.result = "fail";
-  }
-  try{
-    const [saved] = await apiPost(API.events, ev);
-    // auto-create an action item for breaches
-    if(saved.result === "fail"){
-      await apiPost(API.actions, {event_id:saved.id, machine_id:mid,
-        action_type:"aami_breach_retest",
-        description:"Value exceeded AAMI limit — disinfect within 24h and re-culture/re-test.",
-        due_by: new Date(Date.now()+86400000).toISOString().slice(0,10)});
-    }
-    msg.innerHTML = '<span style="color:var(--green)">Saved ✓</span>';
-    ["fBy","fNotes"].forEach(id=>document.getElementById(id).value="");
-    document.querySelectorAll("#dynFields input").forEach(i=>i.value="");
-    EVENTS = await apiGet(API.events+"?select=*&order=id.desc&limit=2000");
-    ACTIONS = await apiGet(API.actions+"?select=*&order=id.desc&limit=2000");
-    setTimeout(()=>{ msg.textContent=""; show("dash"); }, 700);
-  }catch(err){ msg.textContent = "Save failed: "+err.message; }
-}
-function parseVal(s){
-  if(/^[-+]?\d+$/.test(s.trim())) return parseInt(s,10);
-  const n = parseFloat(s); return isNaN(n)? s : n;
-}
+var tabs=[["board","Board"],["machines","Machine entry"],["log","Log entry"],["data","Data"]];
+function show(t){tabs.forEach(function(x){$("v-"+x[0]).classList.toggle("hide",x[0]!==t)});
+Array.prototype.forEach.call($("nav").children,function(b){b.classList.toggle("on",b.dataset.t===t)});
+if(location.hash!=="#"+t){try{location.hash=t}catch(e){}}}
+tabs.forEach(function(x){var b=document.createElement("button");b.textContent=x[1];b.dataset.t=x[0];b.onclick=function(){show(x[0])};$("nav").appendChild(b)});
 
-/* ================= MACHINES ======================== */
-async function addMachine(){
-  const msg = document.getElementById("mchMsg");
-  const type = document.getElementById("mType").value;
-  const label= document.getElementById("mLabel").value.trim();
-  const model= document.getElementById("mModel").value.trim()||null;
-  const loc  = document.getElementById("mLoc").value.trim()||null;
-  const serial = document.getElementById("mSerial").value.trim()||null;
-  if(!label){ msg.textContent = "Give it an ID, e.g. #7 or RO skid."; return; }
-  try{
-    const payload = {type,label,model,location:loc};
-    // serial_no exists only after serial.sql runs in the SQL editor — try with
-    // it; if the API rejects the unknown column, retry without it.
-    if(serial) payload.serial_no = serial;
-    let row;
-    try{ [row] = await apiPost(API.machines, payload); }
-    catch(err){
-      if(serial && /serial|PGRST204/i.test(err.message||"")){
-        delete payload.serial_no;
-        [row] = await apiPost(API.machines, payload);
-        setTimeout(()=>msg.textContent = 'Machine saved WITHOUT serial — run serial.sql in the SQL editor to add the column, then edit the machine later.', 0);
-      } else { throw err; }
-    }
-    MACHINES = await apiGet(API.machines+"?select=*&active=eq.true&order=label");
-    ["mLabel","mModel","mLoc"].forEach(id=>document.getElementById(id).value="");
-    msg.innerHTML = '<span style="color:var(--green)">Machine added ✓</span>';
-    renderMachines();
-    renderLogForm();
-  }catch(err){ msg.textContent = "Add failed: "+err.message; }
-}
-function renderMachines(){
-  const el = document.getElementById("machineList");
-  el.innerHTML = MACHINES.length===0 ? "No machines yet."
-    : MACHINES.map(m=>{ const st=machineState(m);
-      return `<div class="mrow" onclick="openDetail(${m.id})">
-        <div class="id">${esc(m.label)}</div>
-        <div style="flex:1"><div class="muted">${esc(m.type)} ${m.model?"· "+esc(m.model):""}${m.serial_no?" · SN "+esc(m.serial_no):""}</div>
-        <div class="who">${st.level==="ok"?"All current":st.label+" — "+st.level}</div></div>
-        <span class="badge ${st.level}">${st.level}</span></div>`;}).join("");
-}
+function opts(el,list,first,keep){var v=el.value;el.innerHTML=(first?'<option value="">'+first+"</option>":"")+list.map(function(o){return'<option value="'+esc(o[0])+'">'+esc(o[1])+"</option>"}).join("");if(keep)el.value=v}
+function fill(){var t=TYPES.map(function(x){return[x,x]});
+opts($("mType"),t,"",true);opts($("fType"),t,"All machine types",true);
+var ml=S.machines.slice().sort(function(a,b){return a.tag.localeCompare(b.tag)}).map(function(m){return[m.id,m.tag+" - "+m.type]});
+opts($("lMachine"),ml,"",true);opts($("hMachine"),ml,"All machines",true)}
 
-/* ================= MACHINE DETAIL + TIMELINE ======================== */
-function openDetail(id){
-  currentMachine = MACHINES.find(m=>m.id===id);
-  if(!currentMachine) return;
-  show("detail");
+function render(){
+fill();
+var M=S.machines,over=0,soon=0,rep=0,svc=0,pend=0,pos=0;
+M.forEach(function(m){var p=pmState(m);if(p.k==="over")over++;if(p.k==="soon")soon++;if(m.status==="In repair")rep++;if(m.status==="In service")svc++;
+var c=lastOf(m.id,"Culture");if(c&&c.result==="Pending")pend++;if(c&&c.result==="Positive")pos++});
+$("stats").innerHTML=[["Total machines",M.length,""],["In service",svc,"ok"],["In repair",rep,rep?"wn":""],["PM overdue",over,over?"er":""],["PM due in 30 days",soon,soon?"wn":""],["Cultures pending",pend,pend?"wn":""],["Latest culture positive",pos,pos?"er":""]].map(function(s){return'<div class="stat '+s[2]+'"><b>'+s[1]+"</b><span>"+s[0]+"</span></div>"}).join("");
+var ft=$("fType").value,fs=$("fStatus").value,fp=$("fPM").value;
+var rows=M.filter(function(m){return(!ft||m.type===ft)&&(!fs||m.status===fs)&&(!fp||pmState(m).k===fp)}).sort(function(a,b){return a.tag.localeCompare(b.tag)});
+$("board").innerHTML=rows.length?rows.map(function(m){var p=pmState(m),d=lastOf(m.id,"Disinfection"),c=lastOf(m.id,"Culture");
+return"<tr><td><b>"+esc(m.tag)+'</b><div class="sm">'+esc(m.serial)+"</div></td><td>"+esc(m.type)+"</td><td>"+esc(m.location)+"</td><td>"+stPill(m.status)+"</td><td>"+esc(m.lastPM||"-")+'</td><td><span class="pill '+p.c+'">'+esc(p.t)+"</span></td><td>"+(d?esc(d.date)+'<div class="sm">'+esc(d.method)+(d.rinsed?", rinsed":"")+"</div>":'<span class="sm">None</span>')+"</td><td>"+(c?esc(c.date)+'<div><span class="pill '+(c.result==="Negative"?"p-ok":c.result==="Positive"?"p-er":"p-wn")+'">'+esc(c.result)+"</span>"+((c.cfu||c.eu||c.site)?'<div class="sm">'+(c.site?esc(c.site):"")+(c.cfu?" · "+esc(c.cfu)+" CFU/mL":"")+(c.eu?" · "+esc(c.eu)+" EU/mL":"")+"</div>":""):'<span class="sm">None</span>')+"</td></tr>"}).join(""):'<tr><td colspan="8" class="empty">No machines yet. Add one on the Machine entry tab.</td></tr>';
+var L=S.logs.slice().sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts});
+$("recent").innerHTML=L.slice(0,8).map(function(l){return"<tr><td>"+esc(l.date)+"</td><td>"+esc(mName(l.machine))+"</td><td>"+esc(l.type)+"</td><td>"+details(l)+"</td><td>"+esc(l.by)+"</td></tr>"}).join("")||'<tr><td colspan="5" class="empty">No log entries yet.</td></tr>';
+$("mList").innerHTML=M.slice().sort(function(a,b){return a.tag.localeCompare(b.tag)}).map(function(m){var p=pmState(m);
+return"<tr><td><b>"+esc(m.tag)+"</b></td><td>"+esc(m.type)+"</td><td>"+esc(m.serial)+"</td><td>"+esc(m.location)+"</td><td>"+stPill(m.status)+'</td><td><span class="pill '+p.c+'">'+esc(p.t)+'</span></td><td><button class="g" data-e="'+m.id+'">Edit</button> <button class="g d" data-x="'+m.id+'">Delete</button></td></tr>'}).join("")||'<tr><td colspan="7" class="empty">No machines yet.</td></tr>';
+var hm=$("hMachine").value,ht=$("hType").value;
+$("hist").innerHTML=L.filter(function(l){return(!hm||l.machine===hm)&&(!ht||l.type===ht)}).map(function(l){return"<tr><td>"+esc(l.date)+"</td><td>"+esc(mName(l.machine))+"</td><td>"+esc(l.type)+"</td><td>"+details(l)+"</td><td>"+esc(l.by)+'</td><td><button class="g d" data-l="'+l.id+'">Delete</button></td></tr>'}).join("")||'<tr><td colspan="6" class="empty">No entries match.</td></tr>';
+$("aamiFlags").innerHTML=(function(){var f=aamiFindings();if(!f.length)return '<div class="note" style="margin:0">No breaches or action levels. All values inside AAMI limits.</div>';return f.map(function(x){return '<div class="' + (x.er?"erb":"wnb") + '" style="border-radius:8px;padding:9px 12px;margin:0 0 6px;font-size:13px;color:' + (x.er?"var(--er)":"var(--wn)") + '">' + esc(x.t) + "</div>"}).join("")})();
 }
-function renderDetail(){
-  const m = currentMachine; if(!m) return;
-  const tpls = TEMPLATES.filter(x=>x.machine_type===m.type);
-  const evs = EVENTS.filter(e=>e.machine_id===m.id)
-    .sort((a,b)=>(b.event_date||"").localeCompare(a.event_date||""));
-  const st = machineState(m);
-  const tl = tpls.map(x=>{
-    const ev = lastEvent(m.id, x.task_type);
-    const last = ev?ev.event_date:null;
-    const age = last?daysSince(last):null;
-    const due_in = last ? (x.interval_days-1-age) : null;
-    const lvl = !last?"overdue":(due_in<0?(due_in<=-3?"overdue":"due"):"ok");
-    return `<div class="ev"><div class="icon ${lvl==="ok"?"pass":"fail"}">${lvl==="ok"?"✓":"!"}</div>
-      <div class="body"><div>${esc(x.label)}</div>
-      <div class="who">${last?"last "+last+(age!=null?" ("+age+" d ago)":""):"never logged"}${x.interval_days?" · every "+x.interval_days+" d":""}</div></div>
-      ${lvl!=="ok"?`<span class="badge ${lvl}">${lvl}</span>`:""}</div>`;
-  }).join("");
-  document.getElementById("view-detail").innerHTML = `
-    <div class="card"><button class="btn ghost" onclick="show('dash')" style="padding:8px;margin-bottom:10px">← Board</button>
-      <h2 style="margin-bottom:4px">${esc(m.label)}</h2>
-      <p class="muted">${esc(m.type)} ${m.model?"· "+esc(m.model):""} ${m.serial_no?"· SN "+esc(m.serial_no):""} ${m.location?"· "+esc(m.location):""}
-      · ${MACHINES.length} machines total</p>
-      ${st.level!=="ok"?`<div class="flag">${esc(st.label)} — ${st.level==="overdue"?"overdue by "+st.days+" days":"due"}</div>`:""}
-      <h2 style="margin-top:14px">Interval clocks</h2>${tl}
-      <h2 style="margin-top:16px">Timeline (${evs.length})</h2>
-      ${evs.length?evs.map(e=>eventRow(e,(TEMPLATES.find(x=>x.task_type===e.task_type)||{}).label||e.task_type,"")).join(""):'<p class="muted">No events yet.</p>'}
-    </div>`;
-}
+["fType","fStatus","fPM","hMachine","hType"].forEach(function(i){$(i).onchange=render});
 
-async function resolveAami(eventId){
-  // mark the newest matching open action done
-  const mine = ACTIONS.filter(a=>a.event_id===eventId && a.status==="open");
-  if(!mine.length) return;
-  for(const a of mine){
-    await apiPatch(API.actions+"?id=eq."+a.id, {status:"done", resolved_at:new Date().toISOString()});
-  }
-  ACTIONS = await apiGet(API.actions+"?select=*&order=id.desc&limit=2000");
-  renderDash();
-}
+$("mForm").onsubmit=function(e){e.preventDefault();
+var id=$("mId").value,o={tag:$("mTag").value.trim(),type:$("mType").value,serial:$("mSerial").value.trim(),location:$("mLoc").value.trim(),status:$("mStatus").value,lastPM:$("mPM").value,interval:+$("mInt").value||365,notes:$("mNotes").value.trim()};
+if(id){Object.assign(mById(id),o)}else{o.id=uid();S.machines.push(o)}
+save();clearM();render()};
+function clearM(){$("mForm").reset();$("mId").value="";$("mTitle").textContent="Add machine"}
+$("mCancel").onclick=clearM;
+$("mList").onclick=function(e){var b=e.target,id=b.dataset.e||b.dataset.x;if(!id)return;
+if(b.dataset.e){var m=mById(id);$("mId").value=m.id;$("mTag").value=m.tag;$("mType").value=m.type;$("mSerial").value=m.serial||"";$("mLoc").value=m.location||"";$("mStatus").value=m.status;$("mPM").value=m.lastPM||"";$("mInt").value=m.interval||365;$("mNotes").value=m.notes||"";$("mTitle").textContent="Edit machine";window.scrollTo(0,0)}
+else if(confirm("Delete this machine? Its log entries stay in the history.")){S.machines=S.machines.filter(function(m){return m.id!==id});save();render()}};
+
+function lFields(){var t=$("lType").value;
+[["f-dis","Disinfection"],["f-cul","Culture"],["f-st","Status change"],["f-cond","Water reading"]].forEach(function(x){Array.prototype.forEach.call(document.getElementsByClassName(x[0]),function(el){el.classList.toggle("hide",t!==x[1])})})}
+$("lType").onchange=lFields;lFields();$("lDate").value=today();
+$("lForm").onsubmit=function(e){e.preventDefault();
+var t=$("lType").value,m=mById($("lMachine").value);if(!m){alert("Add a machine first.");return}
+var l={id:uid(),ts:Date.now(),machine:m.id,type:t,date:$("lDate").value,by:$("lBy").value.trim(),notes:$("lNotes").value.trim()};
+if(t==="Disinfection"){l.method=$("lMethod").value;l.rinsed=$("lRinsed").checked}
+if(t==="Culture"){l.result=$("lResult").value;l.cfu=$("lCFU").value.trim();l.eu=$("lEU").value.trim();l.site=$("lSite").value}if(t==="Water reading"){l.cond=$("lCond").value.trim()}
+if(t==="Status change"){l.status=$("lStatus").value;m.status=l.status}
+if(t==="PM completed"){m.lastPM=l.date}
+S.logs.push(l);save();$("lNotes").value="";$("lCFU").value="";render()};
+$("hist").onclick=function(e){var id=e.target.dataset.l;if(id&&confirm("Delete this log entry?")){S.logs=S.logs.filter(function(l){return l.id!==id});save();render()}};
+
+function dl(name,txt,mime){try{var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:mime}));a.download=name;a.click()}catch(e){}}
+$("exJSON").onclick=function(){var t=JSON.stringify(S);$("dump").value=t;dl("dialysis-tracker-backup.json",t,"application/json")};
+$("exCSV").onclick=function(){var r=[["Date","Machine","Entry","Details","By"]].concat(S.logs.map(function(l){return[l.date,mName(l.machine),l.type,details(l).replace(/<[^>]*>/g,"").replace(/&amp;/g,"&"),l.by]}));
+var t=r.map(function(x){return x.map(function(c){return'"'+String(c==null?"":c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");$("dump").value=t;dl("dialysis-log.csv",t,"text/csv")};
+function imp(t){try{var d=JSON.parse(t);if(!d.machines||!d.logs)throw 0;if(confirm("Replace current data with this backup?")){S=d;save();render()}}catch(e){alert("That backup could not be read.")}}
+$("imp").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){imp(r.result)};r.readAsText(f)};
+$("impTxt").onclick=function(){imp($("dump").value)};
 
 
-function exportCSV(){
-  const from = document.getElementById("xFrom").value || "0000-01-01";
-  const to   = document.getElementById("xTo").value   || "9999-12-31";
-  const evs = EVENTS.filter(e=>e.event_date>=from && e.event_date<=to)
-    .sort((a,b)=>a.event_date.localeCompare(b.event_date));
-  if(!evs.length){ alert("No events in that range."); return; }
-  const q = (s)=>'"'+String(s==null?"":s).replace(/"/g,'""')+'"';
-  let out = "date,machine_id,machine_label,type,task,result,performed_by,values,notes\n";
-  for(const e of evs){
-    const m = MACHINES.find(x=>x.id===e.machine_id)||{};
-    const tp = TEMPLATES.find(x=>x.task_type===e.task_type);
-    out += [e.event_date, e.machine_id, q(m.label||""), m.type||"", q((tp||{}).label||e.task_type),
-            e.result||"", q(e.performed_by||""), q(JSON.stringify(e.values||{})), q(e.notes||"")].join(",")+"\n";
-  }
-  const blob = new Blob([out], {type:"text/csv"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "dialysis-log_" + from + "_to_" + to + ".csv";
-  a.click();
-}
-/* ================= BOOT ======================== */
-(async function(){
-  try{
-    await loadAll();
-    bindRecentFilter();
-    renderDash();
-    renderLogForm();          // machine+task dropdowns ready before the Log tab opens
-  }catch(err){
-    document.getElementById("dueList").innerHTML =
-      '<div class="flag">Tables not ready. Run the SQL in data/dialysis_tracker.sql in your Supabase SQL editor first.<br><br>'+
-      'Error: '+esc(err.message)+'</div>';
-  }
-})();
+$("exCSVRange").onclick=function(){
+  var f=$("xFrom").value, to=$("xTo").value;
+  var rows=S.logs.filter(function(l){return(!f||l.date>=f)&&(!to||l.date<=to)})
+    .sort(function(a,b){return a.date.localeCompare(b.date)});
+  if(!rows.length){alert("No log entries in that range.");return}
+  var r=[["Date","Machine","Entry","Details","By"]].concat(rows.map(function(l){return[l.date,mName(l.machine),l.type,details(l).replace(/<[^>]*>/g,"").replace(/&amp;/g,"&"),l.by]}));
+  var t=r.map(function(x){return x.map(function(c){return'"'+String(c==null?"":c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+  $("dump").value=t;dl("dialysis-log_"+(f||"start")+"_to_"+(to||"end")+".csv",t,"text/csv");
+};
+render();
+var h=(location.hash||"").slice(1);show(tabs.some(function(x){return x[0]===h})?h:"board");
 </script>
 </body>
 </html>
