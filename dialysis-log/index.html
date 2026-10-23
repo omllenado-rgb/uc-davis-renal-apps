@@ -143,7 +143,7 @@ function aamiFindings(){
   var out=[];
   S.logs.slice().sort(function(a,b){return a.date.localeCompare(b.date)}).forEach(function(l){
     var tag=mName(l.machine);
-    if(l.type==="Culture"){
+    if(l.type==="Culture"&&l.site!=="PD effluent"){  /* effluent cultures aren't held to AAMI water limits */
       var cfu=parseFloat(l.cfu);var eu=parseFloat(l.eu);
       if(!isNaN(cfu)&&cfu>AAMI.CFU_LIMIT)out.push({er:1,t:tag+" culture "+l.date+" (site: "+(l.site||"?")+") — "+cfu+" CFU/mL ABOVE LIMIT "+AAMI.CFU_LIMIT+". Disinfect within 24h + re-culture."});
       else if(!isNaN(cfu)&&cfu>AAMI.CFU_ACTION)out.push({er:0,t:tag+" culture "+l.date+" — "+cfu+" CFU/mL ACTION LEVEL ("+AAMI.CFU_ACTION+"). Plan disinfect + re-culture."});
@@ -205,7 +205,7 @@ $("stats").innerHTML=[["Total machines",M.length,""],["In service",svc,"ok"],["I
 var ft=$("fType").value,fs=$("fStatus").value,fp=$("fPM").value;
 var rows=M.filter(function(m){return(!ft||m.type===ft)&&(!fs||m.status===fs)&&(!fp||pmState(m).k===fp)}).sort(function(a,b){return a.tag.localeCompare(b.tag)});
 $("board").innerHTML=rows.length?rows.map(function(m){var p=pmState(m),d=lastOf(m.id,"Disinfection"),c=lastOf(m.id,"Culture");
-return"<tr><td><b>"+esc(m.tag)+'</b><div class="sm">'+esc(m.serial)+"</div></td><td>"+esc(m.type)+"</td><td>"+esc(m.location)+"</td><td>"+stPill(m.status)+"</td><td>"+esc(m.lastPM||"-")+'</td><td><span class="pill '+p.c+'">'+esc(p.t)+"</span></td><td>"+(d?esc(d.date)+'<div class="sm">'+esc(d.method)+(d.rinsed?", rinsed":"")+"</div>":'<span class="sm">None</span>')+"</td><td>"+(c?esc(c.date)+'<div><span class="pill '+(c.result==="Negative"?"p-ok":c.result==="Positive"?"p-er":"p-wn")+'">'+esc(c.result)+"</span>"+((c.cfu||c.eu||c.site)?'<div class="sm">'+(c.site?esc(c.site):"")+(c.cfu?" · "+esc(c.cfu)+" CFU/mL":"")+(c.eu?" · "+esc(c.eu)+" EU/mL":"")+"</div>":""):'<span class="sm">None</span>')+"</td></tr>"}).join(""):'<tr><td colspan="8" class="empty">No machines yet. Add one on the Machine entry tab.</td></tr>';
+return"<tr><td><b>"+esc(m.tag)+'</b><div class="sm">'+esc(m.serial)+"</div>"+(m.status==="Out of service"?'<div class="sm" style="color:var(--er);font-weight:600">→ biomed: disinfect + re-culture</div>':"")+"</td><td>"+esc(m.type)+"</td><td>"+esc(m.location)+"</td><td>"+stPill(m.status)+"</td><td>"+esc(m.lastPM||"-")+'</td><td><span class="pill '+p.c+'">'+esc(p.t)+"</span></td><td>"+(d?esc(d.date)+'<div class="sm">'+esc(d.method)+(d.rinsed?", rinsed":"")+"</div>":'<span class="sm">None</span>')+"</td><td>"+(c?esc(c.date)+'<div><span class="pill '+(c.result==="Negative"?"p-ok":c.result==="Positive"?"p-er":"p-wn")+'">'+esc(c.result)+"</span>"+((c.cfu||c.eu||c.site)?'<div class="sm">'+(c.site?esc(c.site):"")+(c.cfu?" · "+esc(c.cfu)+" CFU/mL":"")+(c.eu?" · "+esc(c.eu)+" EU/mL":"")+"</div>":""):'<span class="sm">None</span>')+"</td></tr>"}).join(""):'<tr><td colspan="8" class="empty">No machines yet. Add one on the Machine entry tab.</td></tr>';
 var L=S.logs.slice().sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts});
 $("recent").innerHTML=L.slice(0,8).map(function(l){return"<tr><td>"+esc(l.date)+"</td><td>"+esc(mName(l.machine))+"</td><td>"+esc(l.type)+"</td><td>"+details(l)+"</td><td>"+esc(l.by)+"</td></tr>"}).join("")||'<tr><td colspan="5" class="empty">No log entries yet.</td></tr>';
 $("mList").innerHTML=M.slice().sort(function(a,b){return a.tag.localeCompare(b.tag)}).map(function(m){var p=pmState(m);
@@ -217,7 +217,7 @@ $("aamiFlags").innerHTML=(function(){var f=aamiFindings();if(!f.length)return '<
 ["fType","fStatus","fPM","hMachine","hType"].forEach(function(i){$(i).onchange=render});
 
 $("mForm").onsubmit=function(e){e.preventDefault();
-var id=$("mId").value,o={tag:$("mTag").value.trim(),type:$("mType").value,serial:$("mSerial").value.trim(),location:$("mLoc").value.trim(),status:$("mStatus").value,lastPM:$("mPM").value,interval:+$("mInt").value||365,notes:$("mNotes").value.trim()};
+var id=$("mId").value,o={tag:$("mTag").value.trim(),type:$("mType").value,serial:$("mSerial").value.trim(),location:$("mLoc").value.trim(),status:$("mStatus").value,lastPM:$("mPM").value,interval:+$("mInt").value||365,notes:$("mNotes").value.trim(),ts:Date.now()};
 if(id){Object.assign(mById(id),o)}else{o.id=uid();S.machines.push(o)}
 save();clearM();render();syncMachine(S.machines.find(function(m){return id?m.id===id:m.id===o.id})||o)};
 function clearM(){$("mForm").reset();$("mId").value="";$("mTitle").textContent="Add machine"}
@@ -233,9 +233,18 @@ $("lForm").onsubmit=function(e){e.preventDefault();
 var t=$("lType").value,m=mById($("lMachine").value);if(!m){alert("Add a machine first.");return}
 var l={id:uid(),ts:Date.now(),machine:m.id,type:t,date:$("lDate").value,by:$("lBy").value.trim(),notes:$("lNotes").value.trim()};
 if(t==="Disinfection"){l.method=$("lMethod").value;l.rinsed=$("lRinsed").checked}
-if(t==="Culture"){l.result=$("lResult").value;l.cfu=$("lCFU").value.trim();l.eu=$("lEU").value.trim();l.site=$("lSite").value}if(t==="Water reading"){l.cond=$("lCond").value.trim()}
-if(t==="Status change"){l.status=$("lStatus").value;m.status=l.status;setTimeout(function(){syncMachine(m)},0)}
-if(t==="PM completed"){m.lastPM=l.date;setTimeout(function(){syncMachine(m)},0)}
+if(t==="Culture"){l.result=$("lResult").value;l.cfu=$("lCFU").value.trim();l.eu=$("lEU").value.trim();l.site=$("lSite").value;
+if(l.result==="Positive"){m.status="Out of service";m.ts=Date.now();l.flagged="out-of-service";
+var note=document.createElement("div");note.className="note";
+note.style.background="var(--erb)";note.style.color="var(--er)";note.style.fontWeight="600";
+note.textContent="POSITIVE CULTURE: "+m.tag+" tagged OUT OF SERVICE. Bring this machine to the biomed room for disinfection and re-culture before it returns to service.";
+var tgt=document.querySelectorAll("#v-log .panel")[0];
+if(tgt)tgt.insertAdjacentElement("afterbegin",note);
+setTimeout(function(){if(note.parentNode)note.parentNode.removeChild(note)},15000);
+setTimeout(function(){syncMachine(m)},0);
+}}if(t==="Water reading"){l.cond=$("lCond").value.trim()}
+if(t==="Status change"){l.status=$("lStatus").value;m.status=l.status;m.ts=Date.now();setTimeout(function(){syncMachine(m)},0)}
+if(t==="PM completed"){m.lastPM=l.date;m.ts=Date.now();setTimeout(function(){syncMachine(m)},0)}
 S.logs.push(l);save();$("lNotes").value="";$("lCFU").value="";$("lEU").value="";$("lCond").value="";render();syncLog(l)};
 $("hist").onclick=function(e){var id=e.target.dataset.l;if(id&&confirm("Delete this log entry?")){var gone=S.logs.find(function(l){return l.id===id});S.logs=S.logs.filter(function(l){return l.id!==id});save();render();if(gone)syncLog(gone,"delete")}};
 
@@ -276,16 +285,19 @@ async function sbGet(path){var r=await fetch(SBI.url+path,{headers:sbh()});if(!r
 async function sbUpsert(path,obj){var r=await fetch(SBI.url+path+"?on_conflict=id",{method:"POST",headers:sbh(),body:JSON.stringify(obj)});
   if(!r.ok)throw new Error(r.status+" "+await r.text());return r}
 async function sbDelete(path){var r=await fetch(SBI.url+path,{method:"DELETE",headers:sbh()});if(!r.ok)throw new Error(r.status);return r}
+async function sbPatch(path,obj){var r=await fetch(SBI.url+path,{method:"PATCH",headers:sbh(),body:JSON.stringify(obj)});if(!r.ok)throw new Error(r.status+" "+await r.text());return r}
 
 /* row mappers: app object -> DB row (logs keep their varied fields in detail) */
 function mRow(m){return{id:m.id,tag:m.tag,type:m.type,serial:m.serial||null,location:m.location||null,
-  status:m.status,last_pm:m.lastPM||null,pm_interval:m.interval||null,notes:m.notes||null,updated_at:new Date().toISOString()}}
+  status:m.status,last_pm:m.lastPM||null,pm_interval:m.interval||null,notes:m.notes||null,
+  updated_at:new Date(m.ts||Date.now()).toISOString()}}
 function lRow(l){var d={};if(l.method)d.method=l.method;if(l.rinsed!==undefined)d.rinsed=l.rinsed;
   if(l.result)d.result=l.result;if(l.cfu)d.cfu=l.cfu;if(l.eu)d.eu=l.eu;if(l.site)d.site=l.site;
   if(l.cond)d.cond=l.cond;if(l.status)d.status=l.status;
   return{id:l.id,machine:l.machine,type:l.type,date:l.date,ts:l.ts||0,entered_by:l.by||null,notes:l.notes||null,detail:d}}
 function mObj(r){return{id:r.id,tag:r.tag,type:r.type,serial:r.serial||"",location:r.location||"",
-  status:r.status,lastPM:r.last_pm||"",interval:r.pm_interval||365,notes:r.notes||""}}
+  status:r.status,lastPM:r.last_pm||"",interval:r.pm_interval||365,notes:r.notes||"",
+  ts:Date.parse(r.updated_at||"")||0,deleted_at:r.deleted_at||null}}
 function lObj(r){var d=r.detail||{};var l={id:r.id,machine:r.machine,type:r.type,date:r.date,ts:r.ts,by:r.entered_by||"",notes:r.notes||""};
   if(d.method)l.method=d.method;if(d.rinsed!==undefined)l.rinsed=d.rinsed;if(d.result)l.result=d.result;
   if(d.cfu)l.cfu=d.cfu;if(d.eu)l.eu=d.eu;if(d.site)l.site=d.site;if(d.cond)l.cond=d.cond;if(d.status)l.status=d.status;
@@ -296,38 +308,38 @@ async function syncFromCloud(){
   try{
     var [ms,ls] = await Promise.all([sbGet(SBI.m+"?select=*"), sbGet(SBI.l+"?select=*")]);
     var cloudM = ms.map(mObj), cloudL = ls.map(lObj);
-    /* machines: merge by id — the machine with the newer last activity wins
-       per-field (updated_at vs local); simple rule: cloud wins, except a local
-       machine holding lastPM NEWER than cloud's last_pm keeps local lastPM */
-    var mapM = {}; cloudM.forEach(function(m){mapM[m.id]=m});
+    /* machines: last-write-wins by timestamp (local m.ts vs cloud updated_at,
+       mirrored into m.ts by mObj). An edit made offline keeps its newer stamp,
+       wins over the cloud copy here, and is pushed up in the same cycle.
+       Tombstoned rows (deleted on another device) are dropped locally — and
+       because their ids exist in the cloud id set they are never re-pushed,
+       so machine deletes stick across devices. */
+    var liveM = cloudM.filter(function(m){return !m.deleted_at});
+    var mapM = {}; liveM.forEach(function(m){mapM[m.id]=m});
+    var cloudIdsM = {}; cloudM.forEach(function(m){cloudIdsM[m.id]=1});  // incl. tombstones
+    var upM = [];
     S.machines.forEach(function(m){
+      if(cloudIdsM[m.id] && !mapM[m.id]) return;         // tombstoned in cloud: let it die
       var c = mapM[m.id];
-      if(!c){ mapM[m.id]=m; return; }      // local-only (created offline): pushes up later
-      if(m.lastPM && c.lastPM && Date.parse(m.lastPM+"T00:00:00")>Date.parse(c.lastPM+"T00:00:00")){
-        c.lastPM = m.lastPM; c.updated_at = new Date().toISOString();
-        sbUpsert(SBI.m,[mRow(c)]);
-      }
-      if(m.lastPM && !c.lastPM){ c.lastPM=m.lastPM; c.pm_interval=m.interval||c.pm_interval; sbUpsert(SBI.m,[mRow(c)]); }
-      if(m.notes && !c.notes){ c.notes=m.notes; }
+      if(!c){ mapM[m.id]=m; upM.push(mRow(m)); return; }  // local-only (offline/pre-DB): push up
+      if((m.ts||0) > (c.ts||0)){ mapM[m.id]=m; upM.push(mRow(m)); }  // offline edit: local wins + push
     });
-    /* PUSH-UP machines: local-only machines (created offline) upsert */
-    var cloudIdsM = {}; cloudM.forEach(function(m){cloudIdsM[m.id]=1});
-    S.machines.filter(function(m){return !cloudIdsM[m.id] /* local-only */}).forEach(function(m){
-      sbUpsert(SBI.m,[mRow(m)]);
-    });
+    if(upM.length) await sbUpsert(SBI.m, upM);
     S.machines = Object.values(mapM);
-    /* logs: union by id, newer ts wins — this keeps the offline-created entries
-       and takes cloud corrections when the cloud record is newer */
+    /* logs: union by id, newer ts wins. Local-only logs push up in one batch,
+       but only when their machine still exists in the merged set — a log
+       orphaned by a machine delete would fail the FK and take the whole
+       batch (and every later sync) down with it, so it stays local-only. */
     var mapL = {};
     S.logs.forEach(function(l){mapL[l.id]=l});
+    var alive = {}; S.machines.forEach(function(m){alive[m.id]=1});
+    var upL = [];
     cloudL.forEach(function(l){ var loc=mapL[l.id];
-      if(!loc || (l.ts||0) >= (loc.ts||0)) mapL[l.id]=l; });
-    /* PUSH-UP: local-only logs (created offline or pre-sync) upsert to cloud.
-       Without this, entries made before the DB existed — or offline — never
-       reach the shared table. Batched: one POST carries them all. */
+      if(!loc || (l.ts||0) >= (loc.ts||0)) mapL[l.id]=l;
+      else upL.push(lRow(loc)); });
     var cloudIds = {}; cloudL.forEach(function(l){cloudIds[l.id]=1});
-    var toPush = S.logs.filter(function(l){ return !cloudIds[l.id]; }).map(lRow);
-    if(toPush.length) sbUpsert(SBI.l, toPush);
+    S.logs.forEach(function(l){ if(!cloudIds[l.id] && alive[l.machine]) upL.push(lRow(l)); });
+    if(upL.length) await sbUpsert(SBI.l, upL);
     S.logs = Object.values(mapL).sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts});
     SBI.on = true; save(); render(); updateSyncBadge();
   }catch(e){ SBI.on=false; updateSyncBadge(); }
@@ -335,9 +347,9 @@ async function syncFromCloud(){
 async function syncMachine(m, method){
   if(!SBI.on) { queueSync(); return; }
   try{
-    if(method==="delete") await sbDelete(SBI.m+"?id=eq."+encodeURIComponent(m.id));
+    if(method==="delete") await sbPatch(SBI.m+"?id=eq."+encodeURIComponent(m.id),{deleted_at:new Date().toISOString()});
     else await sbUpsert(SBI.m, [mRow(m)]);
-    $("#syncBadge").textContent="Synced ✓";
+    updateSyncBadge();
   }catch(e){ queueSync(); }
 }
 async function syncLog(l, method){
