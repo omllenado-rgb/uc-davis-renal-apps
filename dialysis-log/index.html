@@ -304,9 +304,16 @@ async function syncFromCloud(){
       var c = mapM[m.id];
       if(!c){ mapM[m.id]=m; return; }      // local-only (created offline): pushes up later
       if(m.lastPM && c.lastPM && Date.parse(m.lastPM+"T00:00:00")>Date.parse(c.lastPM+"T00:00:00")){
-        m.lastPM = m.lastPM; c.lastPM = m.lastPM;
+        c.lastPM = m.lastPM; c.updated_at = new Date().toISOString();
         sbUpsert(SBI.m,[mRow(c)]);
       }
+      if(m.lastPM && !c.lastPM){ c.lastPM=m.lastPM; c.pm_interval=m.interval||c.pm_interval; sbUpsert(SBI.m,[mRow(c)]); }
+      if(m.notes && !c.notes){ c.notes=m.notes; }
+    });
+    /* PUSH-UP machines: local-only machines (created offline) upsert */
+    var cloudIdsM = {}; cloudM.forEach(function(m){cloudIdsM[m.id]=1});
+    S.machines.filter(function(m){return !cloudIdsM[m.id] /* local-only */}).forEach(function(m){
+      sbUpsert(SBI.m,[mRow(m)]);
     });
     S.machines = Object.values(mapM);
     /* logs: union by id, newer ts wins — this keeps the offline-created entries
@@ -315,6 +322,12 @@ async function syncFromCloud(){
     S.logs.forEach(function(l){mapL[l.id]=l});
     cloudL.forEach(function(l){ var loc=mapL[l.id];
       if(!loc || (l.ts||0) >= (loc.ts||0)) mapL[l.id]=l; });
+    /* PUSH-UP: local-only logs (created offline or pre-sync) upsert to cloud.
+       Without this, entries made before the DB existed — or offline — never
+       reach the shared table. Batched: one POST carries them all. */
+    var cloudIds = {}; cloudL.forEach(function(l){cloudIds[l.id]=1});
+    var toPush = S.logs.filter(function(l){ return !cloudIds[l.id]; }).map(lRow);
+    if(toPush.length) sbUpsert(SBI.l, toPush);
     S.logs = Object.values(mapL).sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts});
     SBI.on = true; save(); render(); updateSyncBadge();
   }catch(e){ SBI.on=false; updateSyncBadge(); }
