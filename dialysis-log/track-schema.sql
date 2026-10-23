@@ -13,7 +13,8 @@ create table if not exists public.track_machines (
   last_pm     date,
   pm_interval integer,
   notes       text,
-  updated_at  timestamptz not null default now()
+  updated_at  timestamptz not null default now(),
+  deleted_at  timestamptz                    -- tombstone: machine deletes must stick across devices
 );
 
 create table if not exists public.track_logs (
