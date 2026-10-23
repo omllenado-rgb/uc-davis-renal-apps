@@ -85,7 +85,7 @@
     <div class="card" id="aamiCard"></div>
     <div class="kpis" id="kpis"></div>
     <div class="card"><h2>Overdue & due</h2><div id="dueList" class="muted">Loading…</div></div>
-    <div class="card"><h2>Recent events &amp; audit export</h2><div class="row2" style="margin-bottom:10px"><div><label for="xFrom">Export from</label><input type="date" id="xFrom"></div><div><label for="xTo">to</label><input type="date" id="xTo"></div></div><button class="btn ghost" onclick="exportCSV()">Download audit CSV (this range)</button><div id="recentList" class="muted">Loading…</div></div>
+    <div class="card"><h2>Recent events &amp; audit export</h2><div class="row2" style="margin-bottom:10px"><div><label for="xFrom">Export from</label><input type="date" id="xFrom"></div><div><label for="xTo">to</label><input type="date" id="xTo"></div></div><button class="btn ghost" onclick="exportCSV()">Download audit CSV (this range)</button><label for="recentFilter" style="margin-top:14px">Filter by machine</label><select id="recentFilter" onchange="renderRecent()" style="max-width:320px"></select><div id="recentList" class="muted" style="margin-top:12px">Loading…</div></div>
   </section>
 
   <!-- ============================== LOG ENTRY ========================== -->
@@ -264,14 +264,32 @@ function renderDash(){
       <div class="id">${esc(m.label)}</div>
       <div style="flex:1"><div>${esc(st.label)}</div><div class="who">${esc(m.type)} · ${st.level==="due"?"due":"overdue by "+st.days+" d"}</div></div>
       <span class="badge ${st.level}">${st.level}</span></div>`}).join("");
-  // recent events (last 12)
-  const evs = EVENTS.slice().sort((a,b)=> (b.event_date||"").localeCompare(a.event_date||"")).slice(0,12);
-  document.getElementById("recentList").innerHTML = evs.length===0 ? "No events yet."
-    : evs.map(e=>{
-      const m = MACHINES.find(x=>x.id===e.machine_id); const tp = TEMPLATES.find(x=>x.task_type===e.task_type);
-      return eventRow(e, tp?tp.label:e.task_type, m?m.label:"?");
-    }).join("");
+  renderRecent();
 }
+/* Full machine log on the board: every machine, sorted newest first,
+   filterable by machine. Shows ALL entries (paginated render at 400). */
+function renderRecent(){
+  const sel = document.getElementById("recentFilter");
+  if(sel.options.length !== MACHINES.length + 1){
+    sel.innerHTML = '<option value="all">All machines</option>' +
+      MACHINES.map(m=>`<option value="${m.id}">${esc(m.label)}</option>`).join("");
+  }
+  const want = sel.value;
+  const evs = EVENTS.filter(e=> want==="all" || String(e.machine_id)===want)
+    .slice().sort((a,b)=> (b.event_date||"").localeCompare(a.event_date||"") || (b.id||0)-(a.id||0));
+  const PAGE = 400;
+  const shown = evs.slice(0, PAGE);
+  const listEl = document.getElementById("recentList");
+  listEl.innerHTML = evs.length===0 ? "No events logged yet."
+    : shown.map(e=>{
+        const m = MACHINES.find(x=>x.id===e.machine_id);
+        const tp = TEMPLATES.find(x=>x.task_type===e.task_type);
+        return eventRow(e, tp?tp.label:e.task_type, m?m.label:"?");
+      }).join("") +
+    (evs.length>PAGE ? `<div class="muted" style="margin-top:8px">Showing newest ${PAGE} of ${evs.length} — narrow the date filter or export CSV for the full archive.</div>` : "");
+}
+let _rfBound = false;
+function bindRecentFilter(){ if(!_rfBound){ document.getElementById("recentFilter").addEventListener("change", renderRecent); _rfBound=true; } }
 function eventRow(e, label, machineLabel){
   const ico = e.result==="fail" ? "✕" : (e.task_type.startsWith("culture")?"🧫":e.task_type.startsWith("pm")?"🔧":"✓");
   const v = e.values||{};
@@ -327,6 +345,7 @@ async function submitEvent(){
   const by  = document.getElementById("fBy").value.trim();
   const notes = document.getElementById("fNotes").value.trim();
   if(!mid){ msg.textContent = "Add a machine first (Machines tab)."; return; }
+  if(!tt){ msg.textContent = "Pick the task type (citric, bleach, culture…) before saving."; return; }
   if(!by){ msg.textContent = "Performed-by initials are required for the log."; return; }
   const values = {};
   document.querySelectorAll("#dynFields input").forEach(i=>{ if(i.value!=="") values[i.dataset.k] = parseVal(i.value); });
@@ -374,6 +393,7 @@ async function addMachine(){
     ["mLabel","mModel","mLoc"].forEach(id=>document.getElementById(id).value="");
     msg.innerHTML = '<span style="color:var(--green)">Machine added ✓</span>';
     renderMachines();
+    renderLogForm();
   }catch(err){ msg.textContent = "Add failed: "+err.message; }
 }
 function renderMachines(){
@@ -458,7 +478,9 @@ function exportCSV(){
 (async function(){
   try{
     await loadAll();
+    bindRecentFilter();
     renderDash();
+    renderLogForm();          // machine+task dropdowns ready before the Log tab opens
   }catch(err){
     document.getElementById("dueList").innerHTML =
       '<div class="flag">Tables not ready. Run the SQL in data/dialysis_tracker.sql in your Supabase SQL editor first.<br><br>'+
