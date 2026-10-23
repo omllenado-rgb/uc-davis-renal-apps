@@ -116,7 +116,7 @@
       <h2>Add machine</h2>
       <div class="row2">
         <div><label for="mType">Type</label>
-          <select id="mType"><option value="HD">HD (in-center)</option><option value="WRO">WRO (water plant)</option></select></div>
+          <select id="mType"><option value="HD">HD (in-center)</option><option value="WRO">WRO (water plant)</option><option value="CRRT">CRRT (Prismaflex/Prismax)</option><option value="NXSTAGE">NxStage System One</option><option value="CCPD">CCPD (PD cycler)</option></select></div>
         <div><label for="mLabel">ID / label</label><input type="text" id="mLabel" placeholder="#7 or RO skid" maxlength="24"></div>
       </div>
       <div class="row2">
@@ -304,6 +304,17 @@ function eventRow(e, label, machineLabel){
 
 /* ================= LOG ENTRY FORM ======================== */
 const TASK_FIELDS = {
+  check_per_use:        [["checks","System check OK?","text","placeholder='self-test, NoWater alarm, heater…'"]],
+  disinfect_daily:      [["disinfect_type","Type","text","placeholder='daily disinfect'"]],
+  pm_nxstage:           [["hours","Machine hours","number","min='0'"]],
+  disinfect_post_patient:[["cycle_time_min","Cycle time (min)","number","min='0'"]],
+  disinfect_heat_crrt:  [["cycle_time_min","Cycle time (min)","number","min='0'"]],
+  pm_full_crrt:         [["hours","Machine hours","number","min='0'"]],
+  disinfect_heat_ccpd:  [["cycle_time_min","Cycle time (min)","number","min='0'"]],
+  culture_effluent:     [["cfu_ml","Bacteria (CFU/mL)","number","min='0'"],
+                         ["eu_ml","Endotoxin (EU/mL)","number","step='0.001' min='0'"],
+                         ["site","Site","text","placeholder='effluent, dialysate port…'"]],
+  pm_ccpd:              [["hours","Machine hours","number","min='0'"]],
   reading_conductivity: [["conductivity_uS","Conductivity (µS/cm)","number","step='0.1' min='0' max='200'"]],
   reading_hardness:     [["hardness_gpg","Hardness (gpg)","number","step='0.1' min='0'"]],
   culture_water:        [["cfu_ml","Bacteria (CFU/mL)","number","min='0'"],
@@ -316,7 +327,7 @@ const TASK_FIELDS = {
 };
 function renderLogForm(){
   const sel = document.getElementById("fMachine");
-  sel.innerHTML = MACHINES.map(m=>`<option value="${m.id}">${esc(m.label)} — ${m.type==="WRO"?"WRO":"HD"}</option>`).join("")
+  sel.innerHTML = MACHINES.map(m=>`<option value="${m.id}">${esc(m.label)} — ${esc(m.type)}</option>`).join("")
     || '<option disabled>No machines yet — add one on the Machines tab</option>';
   const tsel = document.getElementById("fTask");
   tsel.innerHTML = TEMPLATES.map(t=>`<option value="${t.task_type}">${esc(t.label)}</option>`).join("");
