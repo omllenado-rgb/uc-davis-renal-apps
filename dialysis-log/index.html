@@ -372,7 +372,7 @@ async function syncLog(l, method){
   }catch(e){ queueSync(); }
 }
 var _pend=false;
-function queueSync(){ _pend=true; $("#syncBadge").textContent="Offline — will sync"; }
+function queueSync(){ _pend=true; var b=$("#syncBadge"); if(b){ b.textContent="Offline — will sync"; } }
 window.addEventListener("online",async function(){ if(_pend){_pend=false; await syncFromCloud(); }});
 setInterval(function(){ var st=SBI; if(navigator.onLine) syncFromCloud(); }, 60000);
 
