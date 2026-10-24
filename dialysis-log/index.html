@@ -74,6 +74,7 @@ button.g.d{color:var(--er)}
 
 <section id="v-machines" class="hide">
 <div class="panel">
+<div class="note" style="font-size:12px">No patient names or identifiers. Machines, serials, and rooms only.</div>
 <h2 id="mTitle">Add machine</h2>
 <form id="mForm">
 <input type="hidden" id="mId">
@@ -92,7 +93,8 @@ button.g.d{color:var(--er)}
 </section>
 
 <section id="v-log" class="hide">
-<div class="note">Do not enter patient names or identifiers in notes. Data is saved in this browser only, so use Export on the Data tab to back up or move it.</div>
+<div class="note" style="background:var(--erb);color:var(--er);font-weight:600">Do not enter patient names or identifiers anywhere in this tracker — notes included. Machine data only.</div>
+<div class="note">Entries sync to the unit database automatically when online (badge in the header) and are stored locally when offline. Use Export on the Data tab to back up or move data.</div>
 <div class="panel">
 <h2>New log entry</h2>
 <form id="lForm">
