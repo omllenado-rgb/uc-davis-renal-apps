@@ -31,6 +31,7 @@ main{max-width:1200px;margin:auto;padding:16px 20px 40px}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
 th{font-size:12px;color:var(--mu);text-transform:uppercase;letter-spacing:.03em}
+th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--tx)}
 .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
 .p-ok{background:var(--okb);color:var(--ok)}.p-wn{background:var(--wnb);color:var(--wn)}.p-er{background:var(--erb);color:var(--er)}.p-in{background:var(--inb);color:var(--mu)}
 .sm{font-size:12px;color:var(--mu)}
@@ -67,7 +68,7 @@ button.g.d{color:var(--er)}
 <select id="fStatus"><option value="">All statuses</option><option>In service</option><option>In repair</option><option>Out of service</option></select>
 <select id="fPM"><option value="">All PM states</option><option value="over">PM overdue</option><option value="soon">PM due within 30 days</option></select>
 </div>
-<div class="scroll"><table><thead><tr><th>Machine</th><th>Type</th><th>Location</th><th>Status</th><th>Last PM</th><th>PM due</th><th>Last disinfection</th><th>Last culture</th></tr></thead><tbody id="board"></tbody></table></div>
+<div class="scroll"><table><thead><tr><th class="s" data-k="tag">Machine</th><th class="s" data-k="type">Type</th><th class="s" data-k="location">Location</th><th class="s" data-k="status">Status</th><th class="s" data-k="lastPM">Last PM</th><th class="s" data-k="due">PM due</th><th class="s" data-k="dis">Last disinfection</th><th class="s" data-k="cul">Last culture</th></tr></thead><tbody id="board"></tbody></table></div>
 </div>
 <div class="panel"><h2>Recent activity</h2><div class="scroll"><table><thead><tr><th>Date</th><th>Machine</th><th>Entry</th><th>Details</th><th>By</th></tr></thead><tbody id="recent"></tbody></table></div></div>
 </section>
@@ -102,7 +103,7 @@ button.g.d{color:var(--er)}
 <label>Entry type<select id="lType"><option>Disinfection</option><option>Culture</option><option>Water reading</option><option>PM completed</option><option>Status change</option><option>Repair / service</option><option>Other</option></select></label>
 <label>Date<input type="date" id="lDate" required></label>
 <label>Done by (initials)<input id="lBy" maxlength="20"></label>
-<label class="f-dis">Disinfection method<select id="lMethod"><option>Bleach</option><option>Heat</option><option>Acid + Heat</option><option>Rinse only</option></select></label>
+<label class="f-dis">Disinfection method<select id="lMethod"><option>Bleach</option><option>Heat</option><option>Acid + Heat</option><option>Rinse only</option><option>Wipe down</option><option>N/A</option></select></label>
 <label class="chk f-dis"><input type="checkbox" id="lRinsed" checked>Rinsed after disinfection</label>
 <label class="f-cul">Culture result<select id="lResult"><option>Pending</option><option>Negative</option><option>Positive</option></select></label>
 <label class="f-cul">Colony count (CFU/mL)<input id="lCFU"></label><label class="f-cul">Endotoxin (EU/mL)<input id="lEU"></label><label class="f-cul">Sample site<select id="lSite"><option value="">(not specified)</option><option>Post-RO</option><option>Delivery loop</option><option>Machine inlet</option><option>PD effluent</option></select></label><label class="f-cul f-cond">Conductivity (µS/cm)<input id="lCond"></label>
@@ -167,7 +168,7 @@ return{k:"ok",t:d,c:"p-ok"}}
 function stPill(s){return'<span class="pill '+(s==="In service"?"p-ok":s==="In repair"?"p-wn":"p-er")+'">'+esc(s)+"</span>"}
 function mById(id){return S.machines.find(function(m){return m.id===id})}
 function mName(id){var m=mById(id);return m?m.tag:"(deleted)"}
-function details(l){if(l.type==="Disinfection")return esc(l.method)+(l.rinsed?", rinsed":", not rinsed")+(l.notes?" - "+esc(l.notes):"");
+function details(l){if(l.type==="Disinfection")return esc(l.method)+((l.method==="N/A"||l.method==="Wipe down")?"":(l.rinsed?", rinsed":", not rinsed"))+(l.notes?" - "+esc(l.notes):"");
 if(l.type==="Culture")return esc(l.result)+(l.site?" · "+esc(l.site):"")+(l.cfu?" ("+esc(l.cfu)+" CFU/mL)":"")+(l.eu?" ("+esc(l.eu)+" EU/mL)":"")+(l.notes?" - "+esc(l.notes):"");
 if(l.type==="Water reading")return esc(l.cond||"")+(l.cond?" µS/cm":"")+(l.notes?" - "+esc(l.notes):"");
 if(l.type==="Status change")return esc(l.status)+(l.notes?" - "+esc(l.notes):"");
@@ -198,14 +199,20 @@ opts($("mType"),t,"",true);opts($("fType"),t,"All machine types",true);
 var ml=S.machines.slice().sort(function(a,b){return a.tag.localeCompare(b.tag)}).map(function(m){return[m.id,m.tag+" - "+m.type]});
 opts($("lMachine"),ml,"",true);opts($("hMachine"),ml,"All machines",true)}
 
+var boardSort={k:"tag",d:1};   // board column sort: key + direction (1 asc, -1 desc)
+function boardKey(m,k){if(k==="due")return due(m);
+  if(k==="dis"){var x=lastOf(m.id,"Disinfection");return x?x.date:""}
+  if(k==="cul"){var x=lastOf(m.id,"Culture");return x?x.date:""}
+  return m[k]||""}
 function render(){
 fill();
+Array.prototype.forEach.call(document.querySelectorAll("#v-board th.s"),function(th){th.textContent=th.textContent.replace(/[ ▲▼]+$/,"")+(th.dataset.k===boardSort.k?(boardSort.d>0?" ▲":" ▼"):"")});
 var M=S.machines,over=0,soon=0,rep=0,svc=0,pend=0,pos=0;
 M.forEach(function(m){var p=pmState(m);if(p.k==="over")over++;if(p.k==="soon")soon++;if(m.status==="In repair")rep++;if(m.status==="In service")svc++;
 var c=lastOf(m.id,"Culture");if(c&&c.result==="Pending")pend++;if(c&&c.result==="Positive")pos++});
 $("stats").innerHTML=[["Total machines",M.length,""],["In service",svc,"ok"],["In repair",rep,rep?"wn":""],["PM overdue",over,over?"er":""],["PM due in 30 days",soon,soon?"wn":""],["Cultures pending",pend,pend?"wn":""],["Latest culture positive",pos,pos?"er":""]].map(function(s){return'<div class="stat '+s[2]+'"><b>'+s[1]+"</b><span>"+s[0]+"</span></div>"}).join("");
 var ft=$("fType").value,fs=$("fStatus").value,fp=$("fPM").value;
-var rows=M.filter(function(m){return(!ft||m.type===ft)&&(!fs||m.status===fs)&&(!fp||pmState(m).k===fp)}).sort(function(a,b){return a.tag.localeCompare(b.tag)});
+var rows=M.filter(function(m){return(!ft||m.type===ft)&&(!fs||m.status===fs)&&(!fp||pmState(m).k===fp)}).sort(function(a,b){var ka=boardKey(a,boardSort.k),kb=boardKey(b,boardSort.k);if(!ka)return kb?1:0;if(!kb)return -1;return(ka>kb?1:ka<kb?-1:0)*boardSort.d});
 $("board").innerHTML=rows.length?rows.map(function(m){var p=pmState(m),d=lastOf(m.id,"Disinfection"),c=lastOf(m.id,"Culture");
 return"<tr><td><b>"+esc(m.tag)+'</b><div class="sm">'+esc(m.serial)+"</div>"+(m.status==="Out of service"?'<div class="sm" style="color:var(--er);font-weight:600">→ biomed: disinfect + re-culture</div>':"")+"</td><td>"+esc(m.type)+"</td><td>"+esc(m.location)+"</td><td>"+stPill(m.status)+"</td><td>"+esc(m.lastPM||"-")+'</td><td><span class="pill '+p.c+'">'+esc(p.t)+"</span></td><td>"+(d?esc(d.date)+'<div class="sm">'+esc(d.method)+(d.rinsed?", rinsed":"")+"</div>":'<span class="sm">None</span>')+"</td><td>"+(c?esc(c.date)+'<div><span class="pill '+(c.result==="Negative"?"p-ok":c.result==="Positive"?"p-er":"p-wn")+'">'+esc(c.result)+"</span>"+((c.cfu||c.eu||c.site)?'<div class="sm">'+(c.site?esc(c.site):"")+(c.cfu?" · "+esc(c.cfu)+" CFU/mL":"")+(c.eu?" · "+esc(c.eu)+" EU/mL":"")+"</div>":""):'<span class="sm">None</span>')+"</td></tr>"}).join(""):'<tr><td colspan="8" class="empty">No machines yet. Add one on the Machine entry tab.</td></tr>';
 var L=S.logs.slice().sort(function(a,b){return b.date.localeCompare(a.date)||b.ts-a.ts});
@@ -217,6 +224,7 @@ $("hist").innerHTML=L.filter(function(l){return(!hm||l.machine===hm)&&(!ht||l.ty
 $("aamiFlags").innerHTML=(function(){var f=aamiFindings();if(!f.length)return '<div class="note" style="margin:0">No breaches or action levels. All values inside AAMI limits.</div>';return f.map(function(x){return '<div class="' + (x.er?"erb":"wnb") + '" style="border-radius:8px;padding:9px 12px;margin:0 0 6px;font-size:13px;color:' + (x.er?"var(--er)":"var(--wn)") + '">' + esc(x.t) + "</div>"}).join("")})();
 }
 ["fType","fStatus","fPM","hMachine","hType"].forEach(function(i){$(i).onchange=render});
+Array.prototype.forEach.call(document.querySelectorAll("#v-board th.s"),function(th){th.onclick=function(){var k=th.dataset.k;if(boardSort.k===k){boardSort.d*=-1}else{boardSort.k=k;boardSort.d=1}render()}});
 
 $("mForm").onsubmit=function(e){e.preventDefault();
 var id=$("mId").value,o={tag:$("mTag").value.trim(),type:$("mType").value,serial:$("mSerial").value.trim(),location:$("mLoc").value.trim(),status:$("mStatus").value,lastPM:$("mPM").value,interval:+$("mInt").value||365,notes:$("mNotes").value.trim(),ts:Date.now()};
