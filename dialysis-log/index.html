@@ -245,6 +245,7 @@ var l={id:uid(),ts:Date.now(),machine:m.id,type:t,date:$("lDate").value,by:$("lB
 if(t==="Disinfection"){l.method=$("lMethod").value;l.rinsed=$("lRinsed").checked}
 if(t==="Culture"){l.result=$("lResult").value;l.cfu=$("lCFU").value.trim();l.eu=$("lEU").value.trim();l.site=$("lSite").value;
 if(l.result==="Positive"){m.status="Out of service";m.ts=Date.now();l.flagged="out-of-service";
+alert("POSITIVE CULTURE on "+m.tag+" — this machine is now OUT OF SERVICE. Remove it from circulation, disinfect in the biomed room, and re-culture before returning it to service.");
 var note=document.createElement("div");note.className="note";
 note.style.background="var(--erb)";note.style.color="var(--er)";note.style.fontWeight="600";
 note.textContent="POSITIVE CULTURE: "+m.tag+" tagged OUT OF SERVICE. Bring this machine to the biomed room for disinfection and re-culture before it returns to service.";
@@ -290,9 +291,10 @@ const SBI = {
   on:   false,       // flips true when the first sync succeeds
 };
 
-function sbh(){return{"apikey":SBI.key,"Authorization":"Bearer "+SBI.key,"Content-Type":"application/json","Prefer":"return=representation,minimal"}}
+function sbh(up){return{"apikey":SBI.key,"Authorization":"Bearer "+SBI.key,"Content-Type":"application/json",
+  "Prefer": up ? "resolution=merge-duplicates,return=minimal" : "return=representation,minimal"}}
 async function sbGet(path){var r=await fetch(SBI.url+path,{headers:sbh()});if(!r.ok)throw new Error(r.status);return r.json()}
-async function sbUpsert(path,obj){var r=await fetch(SBI.url+path+"?on_conflict=id",{method:"POST",headers:sbh(),body:JSON.stringify(obj)});
+async function sbUpsert(path,obj){var r=await fetch(SBI.url+path+"?on_conflict=id",{method:"POST",headers:sbh(true),body:JSON.stringify(obj)});
   if(!r.ok)throw new Error(r.status+" "+await r.text());return r}
 async function sbDelete(path){var r=await fetch(SBI.url+path,{method:"DELETE",headers:sbh()});if(!r.ok)throw new Error(r.status);return r}
 async function sbPatch(path,obj){var r=await fetch(SBI.url+path,{method:"PATCH",headers:sbh(),body:JSON.stringify(obj)});if(!r.ok)throw new Error(r.status+" "+await r.text());return r}
