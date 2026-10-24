@@ -36,3 +36,8 @@ grant select, insert, update, delete on public.track_logs     to anon;
 -- match the RLS-off posture of the other app tables
 alter table public.track_machines disable row level security;
 alter table public.track_logs    disable row level security;
+
+-- Databases provisioned before 2026-10-23 lack the tombstone column, and the
+-- CREATE TABLE IF NOT EXISTS above won't add it there. This line upgrades them
+-- in place and is a no-op on fresh installs.
+alter table public.track_machines add column if not exists deleted_at timestamptz;
