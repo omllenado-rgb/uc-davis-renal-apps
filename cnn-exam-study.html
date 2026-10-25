@@ -7,7 +7,7 @@
 <meta name="description" content="The complete study app for nephrology nurses preparing for the CNN exam. 1315 practice questions, 753 flashcards, 144 lessons with continuous Auto-Play read-aloud for hands-free studying, full exam simulations, and smart trackers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=Schibsted+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#13111d; --ink-2:#241f33;
@@ -215,62 +215,81 @@
     .orb,.phone-wrap,.cta-band::before,.cta-band::after{animation:none!important;}
   }
 
-/* ===== LIGHT LINK-STYLE THEME (links.com-inspired) — toggled via data-theme ===== */
+/* ===== LIINKS.CO LIGHT THEME — ink pills, Schibsted Grotesk, pastel wash ===== */
 html[data-theme="light-links"]{
-  --ink:#0f1222; --ink-2:#3c4357;
-  --bg:#f7f8fb; --card:#ffffff;
-  --border:#e8ebf2;
-  --violet:#4f7df9; --fuchsia:#4f7df9; --coral:#ff5e3a;
-  --coral-ink:#bf472c;
-  --aqua:#2dd4bf;
-  --grad:linear-gradient(135deg,#4f7df9 0%,#3a63e0 100%);
-  --grad-soft:linear-gradient(135deg,rgba(79,125,249,.10),rgba(58,99,224,.10));
-  --muted:#6b7280; --line:#e8ebf2;
-  --serif:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --shadow:0 10px 34px -14px rgba(15,18,34,.14);
-  --shadow-sm:0 6px 18px -10px rgba(15,18,34,.14);
+  --ink:#1d1d28; --ink-2:#4a4a5a;
+  --bg:#ffffff; --card:#ffffff;
+  --border:#e9e9ef;
+  --violet:#1d1d28; --fuchsia:#1d1d28; --coral:#ff5e3a; --coral-ink:#bf472c;
+  --aqua:#1b97f5;
+  --grad:linear-gradient(135deg,#1d1d28 0%,#32323f 100%);
+  --grad-soft:linear-gradient(135deg,rgba(29,29,40,.06),rgba(29,29,40,.03));
+  --muted:#6f6f7d; --line:#e9e9ef;
+  --serif:'Schibsted Grotesk','Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --sans:'Noto Sans','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --shadow:0 24px 60px -22px rgba(29,29,40,.18);
+  --shadow-sm:0 10px 26px -14px rgba(29,29,40,.12);
+  --pastel:radial-gradient(120% 90% at 8% -10%, rgba(116,138,255,.55) 0%, rgba(116,138,255,0) 55%),
+           radial-gradient(130% 100% at 100% 0%, rgba(255,182,222,.45) 0%, rgba(255,182,222,0) 60%);
 }
-html[data-theme="light-links"] body{letter-spacing:-.01em;}
-html[data-theme="light-links"] .hero{background:linear-gradient(170deg,#ffffff 0%,#f2f6ff 55%,#e9f0ff 100%);color:var(--ink);padding:120px 0 72px;}
-html[data-theme="light-links"] .hero h1{color:var(--ink);letter-spacing:-1.5px;font-weight:800;font-family:var(--sans);font-size:48px;}
-html[data-theme="light-links"] .hero p.lead{color:var(--muted);}
-html[data-theme="light-links"] .orb{filter:blur(90px);opacity:.20;}
-html[data-theme="light-links"] .orb-1{background:#4f7df9}
-html[data-theme="light-links"] .orb-2{background:#8fb0ff}
-html[data-theme="light-links"] .orb-3{background:#c9d9ff}
-html[data-theme="light-links"] .grid-overlay{opacity:0}
-html[data-theme="light-links"] .hero-badge{background:#fff;border:1px solid var(--border);color:var(--ink);box-shadow:var(--shadow-sm)}
-html[data-theme="light-links"] .hero-ctas .btn-ghost{background:#fff;border:1.5px solid var(--border);color:var(--ink)}
-html[data-theme="light-links"] .hero-ctas .btn-ghost:hover{border-color:var(--violet);color:var(--violet)}
+html[data-theme="light-links"] body{background:var(--bg);color:var(--ink);font-family:var(--sans);}
+html[data-theme="light-links"] .hero{background:var(--pastel),#fff;color:var(--ink);padding:136px 0 96px;}
+html[data-theme="light-links"] .hero h1{font-family:var(--serif);color:var(--ink);font-weight:800;font-size:64px;letter-spacing:-2.2px;line-height:1.02;}
+html[data-theme="light-links"] .hero h1 .gradient-text{background:linear-gradient(120deg,#1d1d28 30%,#1b97f5 100%);-webkit-background-clip:text;background-clip:text;}
+html[data-theme="light-links"] .hero p.lead{color:var(--ink-2);font-size:19px;}
+html[data-theme="light-links"] .orb{opacity:.5}
+html[data-theme="light-links"] .grid-overlay{opacity:.4;mask-image:radial-gradient(circle at 50% 20%,#000,transparent 70%);}
+html[data-theme="light-links"] .hero-badge{background:rgba(255,255,255,.75);border:1px solid rgba(29,29,40,.08);color:var(--ink);backdrop-filter:blur(8px);box-shadow:var(--shadow-sm)}
+html[data-theme="light-links"] .hero-badge .dot{background:var(--aqua)}
+html[data-theme="light-links"] .btn{border-radius:100px}
+html[data-theme="light-links"] .btn-primary{background:#1d1d28;box-shadow:0 14px 34px -14px rgba(29,29,40,.5)}
+html[data-theme="light-links"] .btn-primary::after{background:linear-gradient(120deg,transparent,rgba(255,255,255,.25),transparent)}
+html[data-theme="light-links"] .btn-ghost{background:rgba(255,255,255,.65);border:1.5px solid rgba(29,29,40,.14);color:var(--ink)}
+html[data-theme="light-links"] .btn-ghost:hover{border-color:#1d1d28;color:#1d1d28}
 html[data-theme="light-links"] .hero-note{color:var(--muted)}
-html[data-theme="light-links"] .phone{background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
-html[data-theme="light-links"] .phone::before{background:linear-gradient(160deg,rgba(79,125,249,.4),rgba(45,212,191,.3));}
-html[data-theme="light-links"] .stats{background:#fff}
-html[data-theme="light-links"] .section-title{color:var(--ink);font-family:var(--sans);letter-spacing:-1px;font-weight:800}
-html[data-theme="light-links"] .section-sub{color:var(--muted)}
-html[data-theme="light-links"] .spotlight .copy h3{color:var(--ink);font-family:var(--sans)}
-html[data-theme="light-links"] .visual{background:#fff;border:1px solid var(--border);color:var(--ink);box-shadow:var(--shadow-sm)}
-html[data-theme="light-links"] .visual .v-cap{color:var(--muted)}
-html[data-theme="light-links"] .gauge{background:#eef1f8}
-html[data-theme="light-links"] .v-tag{color:var(--violet)}
-html[data-theme="light-links"] .ribbon{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-html[data-theme="light-links"] .ribbon::before{background:linear-gradient(90deg,#fff,transparent)}
-html[data-theme="light-links"] .ribbon::after{background:linear-gradient(-90deg,#fff,transparent)}
-html[data-theme="light-links"] .ribbon-track span{color:var(--muted)}
+html[data-theme="light-links"] nav{background:rgba(255,255,255,.72);backdrop-filter:blur(16px);}
+html[data-theme="light-links"] .nav-inner .nav-cta{background:#1d1d28;color:#fff;border-radius:100px;box-shadow:0 8px 24px -12px rgba(29,29,40,.5)}
+html[data-theme="light-links"] nav.scrolled{box-shadow:0 12px 40px -20px rgba(29,29,40,.25)}
+html[data-theme="light-links"] .phone{background:#fff;border:none;box-shadow:var(--shadow)}
+html[data-theme="light-links"] .phone::before{background:linear-gradient(160deg,rgba(116,138,255,.45),rgba(255,182,222,.35));}
+html[data-theme="light-links"] .phone-top{background:#1d1d28}
+html[data-theme="light-links"] .stats{background:transparent;border-bottom:none}
+html[data-theme="light-links"] .stat .num{background:linear-gradient(120deg,#1d1d28,#1b97f5);-webkit-background-clip:text;background-clip:text}
+html[data-theme="light-links"] .stat .lbl{color:var(--muted)}
+html[data-theme="light-links"] section{background:transparent}
+html[data-theme="light-links"] #exam, html[data-theme="light-links"] #how{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+html[data-theme="light-links"] .section-label{color:#1d1d28;opacity:.65}
+html[data-theme="light-links"] .section-title{color:var(--ink);font-family:var(--serif);font-weight:800;letter-spacing:-1.6px}
+html[data-theme="light-links"] .section-sub{color:var(--ink-2)}
+html[data-theme="light-links"] .spotlight .copy h3{color:var(--ink);font-family:var(--serif)}
+html[data-theme="light-links"] .spotlight .copy p{color:var(--ink-2)}
+html[data-theme="light-links"] .spotlight .copy li{color:var(--ink)}
+html[data-theme="light-links"] .visual{background:#fff;border:1px solid var(--line);color:var(--ink);box-shadow:var(--shadow)}
+html[data-theme="light-links"] .visual::before{background:radial-gradient(circle,rgba(116,138,255,.35),transparent 60%)}
+html[data-theme="light-links"] .visual::after{background:radial-gradient(circle,rgba(255,182,222,.4),transparent 60%)}
+html[data-theme="light-links"] .visual .v-cap{color:var(--ink-2)}
+html[data-theme="light-links"] .gauge{background:rgba(29,29,40,.08)}
+html[data-theme="light-links"] .gauge>div{background:linear-gradient(120deg,#1d1d28,#1b97f5)}
+html[data-theme="light-links"] .v-tag{color:var(--aqua)}
+html[data-theme="light-links"] .ribbon{background:#1d1d28}
+html[data-theme="light-links"] .ribbon::before{background:linear-gradient(90deg,#1d1d28,transparent)}
+html[data-theme="light-links"] .ribbon::after{background:linear-gradient(-90deg,#1d1d28,transparent)}
+html[data-theme="light-links"] .ribbon-track .sep{color:var(--aqua)}
 html[data-theme="light-links"] .topic, html[data-theme="light-links"] .feature,
-html[data-theme="light-links"] .step{box-shadow:var(--shadow-sm);border-color:var(--border)}
-html[data-theme="light-links"] .topic .t, html[data-theme="light-links"] .feature h3{color:var(--ink)}
-html[data-theme="light-links"] .feature p, html[data-theme="light-links"] .step p,
-html[data-theme="light-links"] .spotlight .copy li{color:var(--muted)}
-html[data-theme="light-links"] .cta-band{background:#fff;border:1px solid var(--border);color:var(--ink);box-shadow:var(--shadow)}
-html[data-theme="light-links"] .cta-band h2{color:var(--ink)}
-html[data-theme="light-links"] .cta-band p{color:var(--muted)}
-html[data-theme="light-links"] footer{background:#0f1222;color:rgba(255,255,255,.7)}
-html[data-theme="light-links"] .btn, html[data-theme="light-links"] .nav-cta{border-radius:999px}
+html[data-theme="light-links"] .step{background:#fff;box-shadow:var(--shadow-sm);border:1px solid var(--line)}
+html[data-theme="light-links"] .topic .t, html[data-theme="light-links"] .feature h3,
 html[data-theme="light-links"] .step h3{color:var(--ink)}
-html[data-theme="light-links"] .stat .num, html[data-theme="light-links"] .step .s-num{background:var(--grad);-webkit-background-clip:text;background-clip:text}
-html[data-theme="light-links"] .nav.scrolled{background:rgba(255,255,255,.94)}
+html[data-theme="light-links"] .feature p, html[data-theme="light-links"] .step p{color:var(--muted)}
+html[data-theme="light-links"] .feature .f-ic{background:linear-gradient(135deg,rgba(116,138,255,.16),rgba(255,182,222,.16))}
+html[data-theme="light-links"] .feature:hover{border-color:transparent}
+html[data-theme="light-links"] .feature::before{background:linear-gradient(120deg,#1d1d28,#1b97f5)}
+html[data-theme="light-links"] .cta-band{background:var(--pastel),#fff;border:none;color:var(--ink);box-shadow:var(--shadow);}
+html[data-theme="light-links"] .cta-band h2{color:var(--ink)}
+html[data-theme="light-links"] .cta-band p{color:var(--ink-2)}
+html[data-theme="light-links"] .cta-band .btn-primary{background:#1d1d28}
+html[data-theme="light-links"] footer{background:#1d1d28;color:rgba(255,255,255,.72)}
+html[data-theme="light-links"] .opt.correct{border-color:#1b97f5;color:#1b97f5;background:rgba(27,151,245,.06)}
+html[data-theme="light-links"] .q-label{color:#1b97f5}
 </style>
 </head>
 <body>
