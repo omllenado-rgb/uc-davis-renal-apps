@@ -294,6 +294,7 @@ html[data-theme="light-links"] footer{background:#1d1d28;color:rgba(255,255,255,
 html[data-theme="light-links"] .opt.correct{border-color:#1b97f5;color:#1b97f5;background:rgba(27,151,245,.06)}
 html[data-theme="light-links"] .q-label{color:#1b97f5}
 </style>
+<script>document.documentElement.setAttribute('data-theme','light-links');</script>
 </head>
 <body>
 
@@ -568,22 +569,9 @@ let pBarTarget=68;
 setInterval(()=>{const d=demo[dIdx];pBarTarget=d.bar;cycleQ();},3800);
 cycleQ();
 
-// THEME: links-style light ↔ editorial dark; persisted
-const themeKey='cnn_theme';
-function currentTheme(){try{return localStorage.getItem(themeKey)||'dark'}catch(e){return 'dark'}}
-document.documentElement.dataset.theme=currentTheme();
-const themeBtn=document.createElement('button');
-themeBtn.className='hamburger';themeBtn.style.fontSize='14px';themeBtn.style.fontWeight='700';
-themeBtn.style.cssText+='cursor:pointer;padding:7px 16px;border:1.5px solid var(--border);border-radius:999px;color:var(--ink);font-family:var(--sans);display:flex;align-items:center;transition:border-color .2s';
-themeBtn.setAttribute('aria-label','Toggle light theme');
-function refreshBtn(){themeBtn.innerHTML=currentTheme()==='light-links'?'🌙 Dark theme':'☀ Light theme'}
-refreshBtn();
-themeBtn.onclick=function(){
-  var th=currentTheme()==='light-links'?'dark':'light-links';
-  document.documentElement.dataset.theme=th;try{localStorage.setItem(themeKey,th)}catch(e){}
-  refreshBtn();
-};
-document.querySelector('.nav-inner').appendChild(themeBtn);
+// Theme is locked to the liinks light theme (data-theme set below).
+document.documentElement.dataset.theme='light-links';
+// theme locked to liinks light (dark theme removed)
 </script>
 </body>
 </html>
