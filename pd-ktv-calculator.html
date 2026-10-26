@@ -130,8 +130,8 @@
                     <div class="helper-text">Total dialysate drained in 24 hrs</div>
                 </div>
                 <div class="form-group">
-                    <label>D/P Urea Ratio</label>
-                    <input type="number" id="dpRatio" class="input-field" placeholder="e.g., 0.95" step="0.01" required>
+                    <label>D/P Urea Ratio (&le;1.0)</label>
+                    <input type="number" id="dpRatio" class="input-field" placeholder="e.g., 0.95" step="0.01" min="0" max="1.05" required>
                     <div class="helper-text">Dialysate urea ÷ plasma urea</div>
                 </div>
             </div>
@@ -236,6 +236,12 @@
             document.getElementById('detailsSection').style.display = 'none';
         }
 
+                // Clear-on-edit: editing an input hides the stale result.
+        document.getElementById('pdKtvForm').addEventListener('input', function() {
+            document.getElementById('resultCard').classList.remove('show');
+            
+        });
+
         document.getElementById('pdKtvForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -249,8 +255,19 @@
             const urineUrea = parseFloat(document.getElementById('urineUrea').value) || 0;
             const serumBun = parseFloat(document.getElementById('serumBun').value);
 
-            if (!age || !height || !weight || !drainVolume || !dpRatio || !serumBun) {
+            if (!age || !height || !weight || !drainVolume || !serumBun) {
                 alert('Please fill in all required fields');
+                return;
+            }
+            if (!dpRatio) { alert('Please enter the D/P urea ratio'); return; }
+            // D/P_urea is capped ~1.0 by equilibration; >1.05 is a typo (e.g. 0.95 → 1.35
+            // would inflate peritoneal Kt/V ~40%). Reject so a typo can't flip fail→pass.
+            if (dpRatio > 1.05) {
+                alert('D/P ratio ' + dpRatio.toFixed(2) + ' exceeds the physiologic equilibration ceiling (~1.0). Check for a typo (e.g. 1.35 instead of 0.35).');
+                return;
+            }
+            if (dpRatio < 0 || age < 0 || height < 0 || weight < 0 || drainVolume < 0 || urineVolume < 0 || urineUrea < 0 || serumBun < 0) {
+                alert('Values cannot be negative');
                 return;
             }
 
@@ -278,7 +295,7 @@
             document.getElementById('statusBadge').className = 'result-status ' + totalCls;
 
             document.getElementById('peritonealKtv').textContent = peritonealKtv.toFixed(2);
-            document.getElementById('peritonealStatus').textContent = peritonealKtv >= 1.7 ? '✓ Adequate' : '—';
+            document.getElementById('peritonealStatus').textContent = totalKtv >= 1.7 ? '✓ Total meets target' : 'Contributes ' + peritonealKtv.toFixed(2);
             document.getElementById('peritonealStatus').className = 'box-status ' + (peritonealKtv >= 1.7 ? 'status-good' : 'status-warning');
 
             document.getElementById('renalKtv').textContent = renalKtv.toFixed(2);
@@ -296,10 +313,6 @@
             document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
 
-        fetch('https://api.countapi.xyz/hit/clinical-apps/pd-ktv-calculator')
-            .then(r => r.json())
-            .then(data => console.log('PD KtV views:', data.value))
-            .catch(e => console.log('Analytics:', e));
     </script>
 </body>
 </html>
