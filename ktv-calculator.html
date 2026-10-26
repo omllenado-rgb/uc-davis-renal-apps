@@ -178,7 +178,7 @@
 
         <!-- Guidelines -->
         <div class="guidelines">
-            <h4>📋 KDOQI Guidelines (2025)</h4>
+            <h4>📋 KDOQI Guidelines (2015)</h4>
             <ul>
                 <li><strong>Kt/V:</strong> Minimum 1.2 per session (3x/week)</li>
                 <li><strong>URR:</strong> Minimum 65% per session</li>
@@ -196,7 +196,7 @@
     </div>
 
     <script>
-        function calculateKTv(preBun, postBun, weight, time, uf, gender, age) {
+        function calculateKTv(preBun, postBun, weight, time, uf) {
             // URR calculation
             const urr = ((preBun - postBun) / preBun) * 100;
 
@@ -221,6 +221,12 @@
             document.getElementById('detailsSection').style.display = 'none';
         }
 
+                // Clear-on-edit: editing an input hides the stale result.
+        document.getElementById('ktvForm').addEventListener('input', function() {
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('detailsSection').style.display = 'none';
+        });
+
         document.getElementById('ktvForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -229,11 +235,13 @@
             const weight = parseFloat(document.getElementById('weight').value);
             const time = parseFloat(document.getElementById('time').value);
             const uf = parseFloat(document.getElementById('ufVolume').value) || 0;
-            const gender = document.getElementById('gender').value;
-            const age = parseFloat(document.getElementById('age').value);
 
-            if (!preBun || !postBun || !weight || !time || !age) {
+            if (!preBun || !postBun || !weight || !time) {
                 alert('Please fill in all required fields');
+                return;
+            }
+            if (preBun < 0 || postBun < 0 || weight < 0 || time < 0 || uf < 0) {
+                alert('Values cannot be negative');
                 return;
             }
 
@@ -243,7 +251,11 @@
             }
 
             // Calculate
-            const results = calculateKTv(preBun, postBun, weight, time, uf, gender, age);
+            const results = calculateKTv(preBun, postBun, weight, time, uf);
+            if (results.invalid) {
+                alert(results.invalid);
+                return;
+            }
 
             // Status for each
             const ktvStatus = getStatus(results.ktv, 1.2, 1.4);
@@ -285,11 +297,6 @@
             document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
 
-        // Analytics tracking
-        fetch('https://api.countapi.xyz/hit/clinical-apps/ktv-calculator')
-            .then(r => r.json())
-            .then(data => console.log('KtV views:', data.value))
-            .catch(e => console.log('Analytics:', e));
     </script>
 </body>
 </html>
