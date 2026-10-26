@@ -1,0 +1,243 @@
+<title>Renal Calculator QA</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one centered read column; severity-coded finding cards; app sections with verdict chips. Clinical-lab neutral: cool greys, blue accent, reserved status colors. */
+:root{
+ --bg:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+ --hair:#e1e0d9; --rule:#c3c2b7; --border:rgba(11,11,11,.10);
+ --accent:#2a78d6; --accent-deep:#1c5cab;
+ --good:#006300; --good-bright:#0ca30c; --serious:#c05521; --crit:#d03b3b;
+ font-size:16px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+ --bg:#0d0d0d; --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781;
+ --hair:#2c2c2a; --rule:#383835; --border:rgba(255,255,255,.10);
+ --accent:#3987e5; --accent-deep:#5598e7;
+ --good:#0ca30c; --good-bright:#0ca30c; --serious:#ec835a; --crit:#e66767; color-scheme:dark }}
+:root[data-theme="dark"]{
+ --bg:#0d0d0d; --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#898781;
+ --hair:#2c2c2a; --rule:#383835; --border:rgba(255,255,255,.10);
+ --accent:#3987e5; --accent-deep:#5598e7;
+ --good:#0ca30c; --good-bright:#0ca30c; --serious:#ec835a; --crit:#e66767; color-scheme:dark }
+body{ background:var(--bg); color:var(--ink);
+ font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+ padding-left:max(16px,env(safe-area-inset-left,0px));
+ padding-right:max(16px,env(safe-area-inset-right,0px));
+ margin:0; line-height:1.55; font-size:.94rem; }
+.col{ max-width:47rem; margin:0 auto; padding-block:28px 64px }
+a{ color:var(--accent-deep); text-decoration:none }
+a:hover{ text-decoration:underline }
+code,pre{ font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace }
+code{ font-size:.82em; background:var(--hair); border-radius:5px; padding:1px 5px }
+pre{ background:var(--surface); border:1px solid var(--border); border-radius:9px;
+ padding:10px 12px; font-size:.8rem; line-height:1.5; overflow-x:auto; color:var(--ink2) }
+h1,h2,h3{ text-wrap:balance; margin:0 }
+h1{ font-size:1.7rem; font-weight:700; letter-spacing:-.01em }
+h2{ font-size:1.12rem; font-weight:650; margin-top:2.6rem }
+h3{ font-size:.95rem; font-weight:650 }
+header .meta{ color:var(--ink2); font-size:.85rem; margin-top:.45rem }
+.verdict{ background:var(--surface); border:1px solid var(--border); border-radius:12px;
+ padding:16px 18px; margin:22px 0 0 }
+.verdict .big{ display:flex; gap:22px; flex-wrap:wrap }
+.big b{ display:block; font-size:1.5rem; font-variant-numeric:tabular-nums }
+.big span{ font-size:.8rem; color:var(--ink2) }
+.pill{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:.72rem;
+ font-weight:600; letter-spacing:.03em; vertical-align:1px }
+.p-crit{ background:var(--crit); color:#fff }
+.p-mod{ background:var(--serious); color:#fff }
+.p-ok{ background:var(--good); color:#fff }
+.p-min{ background:var(--hair); color:var(--ink2) }
+.appsec{ background:var(--surface); border:1px solid var(--border); border-radius:12px;
+ padding:16px 18px; margin-top:16px }
+.appsec>h3{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap }
+.appsec .file{ font-family:"IBM Plex Mono",monospace; font-weight:500; font-size:.85rem; color:var(--accent-deep) }
+.appsec .desc{ color:var(--ink2); font-size:.85rem; margin:.5rem 0 0 }
+.checked{ margin:.7rem 0 0; padding:0; list-style:none; font-size:.85rem }
+.checked li{ padding:3px 0 3px 1.4rem; text-indent:-1.4rem; color:var(--ink2) }
+.checked li b{ color:var(--good); font-weight:700; margin-right:5px }
+.finding{ border-top:1px solid var(--hair); margin-top:.9rem; padding-top:.9rem }
+.finding .fh{ font-weight:650; font-size:.92rem }
+.finding p{ margin:.35rem 0 0; font-size:.87rem; color:var(--ink2) }
+.finding .loc{ font-family:"IBM Plex Mono",monospace; font-size:.76rem; color:var(--muted) }
+.fixplan{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-top:22px }
+.fixplan ol{ margin:.6rem 0 0; padding-left:1.3rem; font-size:.87rem; color:var(--ink2) }
+.fixplan li{ margin-bottom:.45rem }
+.fixplan li b{ color:var(--ink) }
+.note{ color:var(--ink2); font-size:.85rem }
+footer{ margin-top:3rem; color:var(--muted); font-size:.8rem }
+</style>
+
+<div class="col">
+ <header>
+  <h1>Renal Calculator QA</h1>
+  <p class="meta">Correctness review of the 8 calculator/lookup apps on
+  <a href="https://omllenado-rgb.github.io/uc-davis-renal-apps/">omllenado-rgb.github.io/uc-davis-renal-apps</a>
+  · 2026-10-25 · every deployed page verified byte-identical to local repo (commit <code>c5adfdd</code>) · four parallel reviews, boundary logic re-executed in isolation</p>
+ </header>
+
+ <div class="verdict">
+  <p style="margin:0 0 10px"><strong>Bottom line: the core clinical math is right everywhere it could be independently verified.</strong>
+  Daugirdas II, Watson (×2 apps), the regional-citrate table branches, the KDOQI recirculation equation, the 0.0548 mL/cm PD constant, and the CRRT due-time math all check out constant-for-constant. No critical formula errors.</p>
+  <div class="big">
+   <div><b class="p-crit" style="background:none;color:var(--crit)">0</b><span>critical math errors</span></div>
+   <div><b style="color:var(--serious)">12</b><span>moderate findings worth fixing</span></div>
+   <div><b style="color:var(--muted)">~30</b><span>minor robustness/polish items</span></div>
+   <div><b style="color:var(--good)">13/13</b><span>dialyzability spot-checks vs FDA labels &amp; EXTRIP</span></div>
+  </div>
+  <p class="note" style="margin:12px 0 0">The recurring failure mode found is <em>output that renders clean and plausible while being wrong</em> — input conventions, helper text and range branches, not the arithmetic.</p>
+ </div>
+
+ <div class="fixplan">
+  <h3>Proposed fix order</h3>
+  <ol>
+   <li><b>Pick the two that could change a drug dose or a device decision</b>: PD catheter cm-as-inches lock volume; dialyzability wrong flags (isoniazid, metformin-CRRT, methotrexate, ertapenem, sulbactam).</li>
+   <li><b>Pick the ones that teach the operator wrong</b>: recirculation "50 mL/hr" method text; CRRT circuit "214 → 2:14" helper promise.</li>
+   <li><b>Pick the fail-flippers</b>: PD Kt/V D/P ceiling; recirculation impossibility guard; citrate 200 mL/h current-rate check.</li>
+   <li><b>Batch the shared robustness work once</b> (input bounds, NaN guard, clear-on-edit, dead analytics removal, dead CSS, citation fixes) — one pattern, eight apps.</li>
+  </ol>
+ </div>
+
+ <h2>Findings by app</h2>
+ <p class="note">Findings ranked moderate → minor. Each includes the coded line and a concrete input → wrong-output scenario.</p>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">1 moderate</span>PD catheter fill/lock volume <code class="file">pd-catheter-calculator.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>0.0548 mL/cm constant is real (BC Renal, from Mujais/Crabtree) — reproduces their published lumen table: 42 cm → 2.30, 47 cm → 2.58, 62 cm → 3.40</li>
+   <li><b>✓</b>inch→cm conversion internally consistent; arithmetic and rounding clean; no div-by-zero/NaN path</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">91/92/175/184-185</span> cm-as-inches input trap — ×2.54 over-estimation of the lock volume</p>
+   <p>The published procedure multiplies catheter length <strong>in cm</strong> by 0.0548. This app takes <strong>inches</strong> and multiplies by 2.54 internally. A nurse with a standard <strong>42 cm</strong> Tenckhoff types “42” → app outputs <strong>5.84 mL instead of 2.30 mL</strong> (+2 mL set → 7.84 vs 4.30). That flows directly into a heparin-lock or alteplase instillation amount — wrong drug volume, looking precise on screen. The “common sizes 12–22” hint matches inches, so nothing in the app warns about the wrong convention.</p>
+   <p><strong>Fix:</strong> switch the input to cm (drop the 2.54), or accept either with the unit spelled out next to the field and a size-range hint that matches.</p>
+  </div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p><span class="loc">169/179-180</span> transferSet = 0 is rejected as “missing field” although the announced range is “0–20 mL” · <span class="loc">80</span> a stray <code>/* Formula */</code> comment renders as visible text on the live page · <span class="loc">105</span> default “Baxter set = 2 mL” is 2.26 published (~11% low)</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">3 moderates</span>Drug dialyzability lookup <code class="file">drug-dialyzability.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>13/13 spot-checks against FDA labels / EXTRIP / reference texts: vancomycin, gentamicin, tobramycin, metformin, lithium, phenytoin, warfarin, amoxicillin, aspirin, digoxin, levofloxacin ('N' is label-supported), daptomycin ('N' removal-consistent), famotidine</li>
+   <li><b>✓</b>317-row sweep found no arithmetic to break; search: case-insensitive, zero-match path clean</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">242</span> Isoniazid HD = 'N' is wrong</p>
+   <p>Conventional HD removes ~70% of an INH dose; the row itself says “300 mg post-HD” and flags HD elsewhere as Y. The red ❌ contradicts its own data side-by-side.</p></div>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">337</span> Metformin CRRT = 'N' is wrong</p>
+   <p>EXTRIP accepts CVVH/CVVHDF for metformin toxicity (CRRT clearance ~34–39 mL/min). During an ICU CVVHDF run for MALA, the table says CRRT removes nothing.</p></div>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">204, 494, 414</span> Three self-contradictory rows</p>
+   <p><strong>Methotrexate:</strong> green ✓ 'Y' badge next to dose text “AVOID — not removed well” (the literature supports the text). <strong>Ertapenem:</strong> unconditional “No supplement” is wrong within 6 h of the dose (~30% removal, rebound; label says supplement if dosed &lt;6 h pre-HD). <strong>Sulbactam standalone = 'N'</strong> while Ampicillin-Sulbactam = 'Y' — opposite answers for the same molecule, no reconciliation.</p></div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p>Insulin MW 6000 vs 5800 (two rows, same drug) · Erythropoietin/Epoetin Alfa duplicate · Vd column mixes L/kg with absolute L (cinacalcet “1000” is liters, amlodipine “21” is L/kg) — no units shown · levofloxacin “500 mg post-HD” wording implies removal the 'N' badge denies (reword: q48h, scheduled post-HD) · quick-ref card teaches “listed ⇒ dialyzable”, which the daptomycin 'N' contradicts · unverifiable framing (“verified vs Lippincott”, “KDIGO 2025/KDOQI 2025” decorative) · dead countapi analytics · search + filter chip interaction leaves the match count stale · absent ESRD drugs: dofetilide, tacrolimus/sirolimus, tenofovir, newer phosphate binders</p>
+  </div>
+  <div class="finding"><span class="pill p-min">UNCERTAIN — verify before clinical reliance</span>
+   <p>Rows that look optimistic against the table's own PB/Vd rules and couldn't be verified: mexiletine (Vd 6.0 + 'Y'), chlorpheniramine, diazoxide, carisoprodol, chloral hydrate, chloramphenicol, cefotetan (all PB ≥ 90% + 'Y'), ciprofloxacin HD/HF classification. Also salt-convention inconsistencies (lithium quoted as carbonate 74, metformin as base 129) — each defensible, inconsistent as a table.</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">2 moderates</span>HD recirculation <code class="file">hd-recirculation.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>Formula is the standard KDOQI two-needle three-sample equation, %R = (P−A)/(P−V)×100, matching the app's own citation</li>
+   <li><b>✓</b>P↔A swap guarded (negative-numerator alert with instructive message); zero/negative denominator guarded; NaN never reaches display; &lt;10 / 10–15 / &gt;15 thresholds internally consistent</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">88, 142</span> Method text says “50 mL/hr” — the published slow-flow technique runs at ~50–120 mL<strong>/min</strong></p>
+   <p>The text also conflates the stop-pump method with a clamp-until-alarm variant and omits the equilibration wait. At 50 mL/hr the pump alarms immediately; an under-equilibrated arterial draw reads falsely high → recirculation inflates → a healthy access gets referred for an unnecessary workup. Fix is text-only, but it teaches the procedure.</p></div>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">180-194</span> No impossibility ceiling — the A↔V swap renders “800.0% Significant”</p>
+   <p>P=60, A=20, V=55 (samples swapped) passes both existing guards and displays 800%. Negatives pass too (no <code>min="0"</code>). Physiologically this method tops out well under ~80%; anything above is a sampler-order or lab error and should trigger a “recheck the samples” message.</p></div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p><span class="loc">184-191</span> status classes are assigned but don't exist in the stylesheet — every result renders in the same static green; severity color never happens · <span class="loc">165</span> typing “0” (a real-world typo) gives the confusing “fill in all fields” · Schneditz 1992 citation supports the formula without its own caveat (that paper explains why this method overestimates access recirculation) · Salimi 2008 volume/PMID unverified before reuse as a footnote</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">1 moderate</span>PD weekly Kt/V <code class="file">pd-ktv-calculator.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>Watson male/female coefficients exact (age correctly absent from the female equation — the classic transcription trap absent)</li>
+   <li><b>✓</b>Weekly Kt/V = 7 × (D/P × 24-hr drain + renal clearance) / V — textbook KDOQI PD practice; total target ≥ 1.7 correct; units end-to-end correct</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">134, 247</span> D/P urea ratio accepted above 1 — a typo flips a fail to a pass</p>
+   <p>D/P is physically capped ≈ 1.0 by equilibration. Drain 10 L with D/P typed 5.0 → clearance “50 L/day”, peritoneal Kt/V ~8.6, “✓ Meets KDOQI”. One dropped digit (0.95 → 1.35) inflates 40%. Cap/warn at ~1.05.</p></div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p><span class="loc">248-285</span> negatives display garbage (negative renal clearance; status flips “Anuric”) · <span class="loc">281-282</span> the peritoneal-only box judges against the 1.7 <em>total</em> target (the total badge is correct) · <span class="loc">276-277</span> 1.695 displays “1.70” beside a “Below target” badge — conservative direction but confusing · Watson weight should be drain/dry weight (inherent method limit, worth a note) · age 500 / height 900 accepted · dead countapi analytics</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">1 moderate</span>CRRT citrate titration <code class="file">crrt-citrate-calculator.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>Every branch boundary re-executed: weight bands (5 and 20 kg → middle), ACD-A rows (0.35/0.50 edges), calcium rows (1.09/1.10/1.30/1.31/1.60 edges), deltas ±2.5/5/10 — directions all agree with RCA physiology; displayed reference tables match the solver cell-for-cell</li>
+   <li><b>✓</b>No division anywhere, no unit hazards, negative computed rate caught, stale notify boxes cleared before copy, missing/invalid input sentinels</li>
+   <li><b>⚠</b>Residual risk is transcription fidelity of the Values from Policy IX-11 — verifiable only against the policy document itself (agent lacked it; local PrisMax RAG content could cross-check)</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">420-421, 445-448</span> 200 mL/h alert checks the <em>resulting</em> rate, not the <em>current</em> one</p>
+   <p>Policy: “Notify Nephrologist ASAP if calcium infusion is <strong>greater than 200</strong>” — present tense. Current 204, adjustment → 194: no alert, though the infusion exceeds 200 at the moment of assessment. Same window in the ACD-A panel.</p></div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p><span class="loc">323-330</span> negative current rate renders “-5 mL/hour” silently (only computed negatives are caught) · <span class="loc">653-659</span> editing inputs never clears result cards until re-calculate · <span class="loc">420</span> the increase-10% row never shows the computed new rate · gap values like 1.605 resolve to the higher row (unreachable with step 0.01, noted)</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">1 moderate</span>HD Kt/V <code class="file">ktv-calculator.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>Daugirdas II exact: −ln(R − 0.008·t) + (4 − 3.5R)·(UF/W), t in hours (the min/hr trap avoided), UF/W dimensionless, all constants verified</li>
+   <li><b>✓</b>URR standard; pre/post orientation correct with post&gt;pre rejected; KDOQI-correct thresholds (1.2/1.4, URR 65/70); status computed on unrounded values so rounding can't flip a badge</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">109-111, 207</span> weight field doesn't say Daugirdas wants <em>post-dialysis</em> weight</p>
+   <p>Entering pre-weight (the usually-recorded one) with UF 3 L underestimates Kt/V by ~0.01–0.02. Direction is conservative; the fix is a label plus helper text, not the math.</p></div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p><span class="loc">231</span> negative UF accepted (convective term subtracts) · <span class="loc">207</span> extreme combos render literal “NaN” (R − 0.008t &lt; 0) or “Infinity” with a “✓ Exceeds” badge · <span class="loc">276-278</span> clearance back-estimate shows integer mL/min precision for what's a ±10–20% approximation (Vd = 0.6·W) · <span class="loc">127-135, 232-233</span> gender and age are required but never used — dead inputs · <span class="loc">181</span> thresholds are KDOQI 2015, cited as “2025” · dead countapi analytics · hardcoded ✅ icon regardless of pass/fail</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-mod">1 moderate</span>CRRT circuit countdown <code class="file">crrt-circuit-calculator.html</code></h3>
+  <ul class="checked">
+   <li><b>✓</b>Due-time math exact; all duration formats parsed correctly (“45:46” = 45 h 46 min, “45.5” = decimal hours, “90m”); “45:99” rejected; overdue/amber states right; clock re-read at submit (no stale clock)</li>
+  </ul>
+  <div class="finding"><span class="pill p-mod">MODERATE</span>
+   <p class="fh"><span class="loc">284 vs 336-337</span> elapsed-mode helper teaches “214 → 2:14” but the formatter produces 21:04 — a 19-hour error</p>
+   <p>The colon is inserted after the second digit, so typed “214” parses as 21 h 04 min (confirmed by execution). Only “0214” yields 2:14, and the left-mode helper — which does tell the nurse to type the leading zero — contradicts this one. The parsed readout exposes the true value, but green “= 21 h 4 min” beside an instruction promising 2:14 is exactly the looks-right / is-wrong pattern, and it lands on a change-time decision.</p></div>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p>bare “90” reads as 90 hours (deliberate, acknowledged in code comments, nothing flags it) · DST-transition countdown wall-clock ±1 h once a year · lifespan change doesn't recompute until resubmit · <span class="loc">453</span> clipboard copy has no fallback here (the citrate app ships the correct pattern) · “:30” alone unparseable</p>
+  </div>
+ </div>
+
+ <div class="appsec">
+  <h3><span class="pill p-ok">0 findings</span>TBW calculator <code class="file">tbw-calculator.html</code> — cleanest app</h3>
+  <ul class="checked">
+   <li><b>✓</b>Watson 1980 male and female exact; branches not swapped; header label always agrees with the math; BMI and % formulas correct; NaN can't reach display; no negative-TBW possible within input bounds</li>
+  </ul>
+  <div class="finding"><span class="pill p-min">MINOR</span>
+   <p><span class="loc">168/142</span> reset styles the reset *button* itself as “gender active” and silently reverts state to male — a female patient's next calc can use male coefficients (~0.1 L off at defaults, larger for small patients) · stale result after gender tap · Watson derived on ages 17–86, app accepts 18–120 silently</p>
+  </div>
+ </div>
+
+ <h2>Cross-app patterns</h2>
+ <div class="appsec">
+  <ul class="checked">
+   <li><b>•</b><strong>Three apps POST analytics to a dead endpoint</strong> (countapi.xyz shut down years ago) — harmless, removes with one line each</li>
+   <li><b>•</b><strong>No numeric input is bounded anywhere</strong> — negatives, zero and absurd magnitudes all render; the fix pattern (bounds + NaN guard + “clear outputs on edit”) is one shared snippet</li>
+   <li><b>•</b><strong>Citation drift is cosmetic but real</strong>: “KDOQI 2025” is 2015 thresholds; KDIGO/KDOQI footer on the dialyzability table is decorative; one reference's volume/PMID unverified</li>
+   <li><b>•</b><strong>Clean-on-submit is inconsistent</strong>: some apps clear stale outputs on any input change, others keep the previous result until re-submit — an interrupted user can read a consistent-looking stale result in at least 4 apps</li>
+  </ul>
+ </div>
+
+ <h2>Method & sources</h2>
+ <div class="appsec">
+  <p class="note">Eight apps reviewed in full via four parallel reviewers; every boundary/branch claim re-executed in isolated JavaScript, not just read. Clinical values verified against: FDA labels (LEVAQUIN, CUBICIN, Invanz/ertapenem), EXTRIP (metformin, lithium), BC Renal PD procedures (0.0548 mL/cm, transfer-set volumes, alteplase instillation), published Watson/TBW equation tables, KDOQI HD 2015 + PD adequacy targets, and the KDOQI two-needle recirculation method. Policy IX-11 citrate table values are local-protocol transcription — verified for direction/structure, not against the policy document itself. The fix plan above changes labels, text, flags and validation only — every verified formula stays exactly as is.</p>
+ </div>
+
+ <footer>QA review 2026-10-25 · read-only (no files modified) · deployed pages verified identical to local repo before review</footer>
+</div>
