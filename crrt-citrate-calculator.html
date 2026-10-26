@@ -414,6 +414,8 @@ function solve(which, kg, band) {
 
   if (ica <= 0) return { which: which, T: T, invalid: 'Ionized calcium must be greater than zero.', rate: rate };
 
+  if (rate !== null && rate < 0) return { which: which, T: T, invalid: T.rateWord + ' rate cannot be negative.', rate: rate };
+
   var row = resolveRow(which, ica);
   var delta = row.band[band];
   var isNotify = (typeof delta === 'string');
@@ -442,9 +444,13 @@ function solve(which, kg, band) {
   if (which === 'pat' && isNotify) {
     notes.push('Notify PICU MD for patient iCa ' + ica + ' mmol/L (outside ' + T.target + ').');
   }
-  if (effective !== null && effective > MAX_RATE) {
+  if (rate !== null && rate > MAX_RATE) {
     notes.push('Notify Nephrologist ASAP — ' + T.rateWord + ' infusion is greater than ' +
-               MAX_RATE + ' mL/hour (calculated ' + r1(effective) + ' mL/hour).');
+               MAX_RATE + ' mL/hour (current ' + r1(rate) + ' mL/hour' +
+               (newRate !== null ? ', becomes ' + r1(newRate) + ' after the change' : '') + ').');
+  } else if (newRate !== null && newRate > MAX_RATE) {
+    notes.push('Notify Nephrologist ASAP — ' + T.rateWord + ' infusion becomes greater than ' +
+               MAX_RATE + ' mL/hour (calculated ' + r1(newRate) + ' mL/hour).');
   }
   if (newRate !== null && newRate <= 0) {
     notes.push('Calculated rate is zero or negative — stop and clarify the order with the team before acting.');
@@ -650,6 +656,11 @@ buildRefTables();
 });
 onWeightInput();
 document.getElementById('weight').addEventListener('input', onWeightInput);
+['sysIca', 'patIca', 'sysRate', 'patRate'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', function(){
+    clearOutputs();  // result cards must never survive their own inputs
+  });
+});
 ['sysIca', 'patIca'].forEach(function (id) {
   document.getElementById(id).addEventListener('input', function () { highlightRef(null); });
 });
