@@ -77,33 +77,29 @@
             <p>Calculate fill volume for peritoneal dialysis catheters</p>
         </div>
 
-        /* Formula */
         <div class="formula-box">
             <h3>📊 Formula:</h3>
-            <div class="formula">Fill Volume (mL) = (Length inches × 2.54) × 0.0548 + Transfer Set (mL)</div>
-            <p style="font-size: 11px; color: #666; margin-top: 8px;">Constant: 0.0548 mL/cm (manufacturer spec). Catheter length converted from inches to cm (× 2.54).</p>
+            <div class="formula">Fill Volume (mL) = Length in cm × 0.0548 + Transfer Set (mL)</div>
+            <p style="font-size: 11px; color: #666; margin-top: 8px;">Constant: 0.0548 mL/cm (BC Renal procedure, from Mujais/Crabtree). Catheter length is measured and printed in cm — enter it directly.</p>
         </div>
 
         <!-- Form -->
         <form id="pdForm">
             <div class="form-group">
-                <label>PD Catheter Length</label>
-                <input type="number" id="catheterLength" class="input-field" placeholder="e.g., 14" step="0.5" required>
-                <div class="helper-text">Common sizes: 12, 14, 16, 18, 20, 22</div>
+                <label>PD Catheter Length (cm)</label>
+                <input type="number" id="catheterLength" class="input-field" placeholder="e.g., 42" step="0.5" min="0" required>
+                <div class="helper-text">Catheter is printed in centimeters. Common adult Tenckhoff: 42, 47, 62 cm</div>
                 <div class="preset-row">
-                    <button type="button" class="preset-btn" onclick="setLength(12)">12</button>
-                    <button type="button" class="preset-btn" onclick="setLength(14)">14</button>
-                    <button type="button" class="preset-btn" onclick="setLength(16)">16</button>
-                    <button type="button" class="preset-btn" onclick="setLength(18)">18</button>
-                    <button type="button" class="preset-btn" onclick="setLength(20)">20</button>
-                    <button type="button" class="preset-btn" onclick="setLength(22)">22</button>
+                    <button type="button" class="preset-btn" onclick="setLength(42)">42 cm</button>
+                    <button type="button" class="preset-btn" onclick="setLength(47)">47 cm</button>
+                    <button type="button" class="preset-btn" onclick="setLength(62)">62 cm</button>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Transfer Set Volume (mL)</label>
-                <input type="number" id="transferSet" class="input-field" placeholder="e.g., 2" step="0.1" value="2" required>
-                <div class="helper-text">Baxter set = 2 mL (default)</div>
+                <input type="number" id="transferSet" class="input-field" placeholder="e.g., 2.3" step="0.1" value="2.3" required>
+                <div class="helper-text">Baxter 15 cm (6&quot;) set &asymp; 2.3 mL (default) — use your actual set</div>
             </div>
 
             <button type="submit" class="calculate-btn">Calculate Fill Volume</button>
@@ -148,7 +144,7 @@
     </div>
 
     <script>
-        const CATHETER_CONSTANT = 0.0548; // mL/cm (but we use inches as input)
+        const CATHETER_CONSTANT = 0.0548; // mL per cm of catheter length (input is in cm)
 
         function setLength(length) {
             document.getElementById('catheterLength').value = length;
@@ -156,9 +152,15 @@
 
         function resetForm() {
             document.getElementById('pdForm').reset();
-            document.getElementById('transferSet').value = 2;
+            document.getElementById('transferSet').value = 2.3;
             document.getElementById('resultCard').classList.remove('show');
         }
+
+                // Clear-on-edit: editing an input hides the stale result.
+        document.getElementById('pdForm').addEventListener('input', function() {
+            document.getElementById('resultCard').classList.remove('show');
+            
+        });
 
         document.getElementById('pdForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -166,14 +168,14 @@
             const catheterLength = parseFloat(document.getElementById('catheterLength').value);
             const transferSet = parseFloat(document.getElementById('transferSet').value);
 
-            if (!catheterLength || !transferSet) {
+            if (isNaN(catheterLength) || isNaN(transferSet)) {
                 alert('Please fill in all fields');
                 return;
             }
 
-            // Input validation
-            if (catheterLength < 5 || catheterLength > 40) {
-                alert('Please enter a valid catheter length (5-40 inches)');
+            // Input validation (catheter length is in CENTIMETERS)
+            if (catheterLength < 20 || catheterLength > 80) {
+                alert('Please enter a valid catheter length in cm (20-80 cm) — standard adult Tenckhoff: 42, 47, 62 cm');
                 return;
             }
             if (transferSet < 0 || transferSet > 20) {
@@ -181,14 +183,14 @@
                 return;
             }
 
-            // Calculate catheter volume — convert inches to cm (× 2.54) then apply mL/cm constant
-            const catheterVolume = catheterLength * 2.54 * CATHETER_CONSTANT;
+            // Calculate catheter volume — length in cm × mL/cm constant (BC Renal)
+            const catheterVolume = catheterLength * CATHETER_CONSTANT;
             
             // Calculate total fill volume
             const totalVolume = catheterVolume + transferSet;
 
             // Display results
-            document.getElementById('catheterLengthDisplay').textContent = `${catheterLength} inches`;
+            document.getElementById('catheterLengthDisplay').textContent = `${catheterLength} cm`;
             document.getElementById('catheterVolume').textContent = `${catheterVolume.toFixed(2)} mL`;
             document.getElementById('transferSetVolume').textContent = `${transferSet.toFixed(1)} mL`;
             document.getElementById('totalVolumeBreakdown').textContent = `${totalVolume.toFixed(2)} mL`;
@@ -201,11 +203,6 @@
             document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
 
-        // Analytics tracking
-        fetch('https://api.countapi.xyz/hit/clinical-apps/pd-catheter-calculator')
-            .then(r => r.json())
-            .then(data => console.log('PD Catheter Calculator views:', data.value))
-            .catch(e => console.log('Analytics:', e));
     </script>
 </body>
 </html>
