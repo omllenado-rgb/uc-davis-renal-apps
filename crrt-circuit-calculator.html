@@ -281,7 +281,7 @@
             document.getElementById('value').placeholder = m === 'left' ? 'e.g., 4546' : 'e.g., 0214';
             document.getElementById('inputHelper').innerHTML = m === 'left'
                 ? 'Just type the numbers and the colon is added for you. Type <b>4546</b> and it becomes <b>45:46</b> (45 hours 46 minutes). For a circuit under 10 hours type the leading zero, like <b>0214</b> for <b>02:14</b>. You can also type <b>45.5</b> or <b>45h 46m</b>.'
-                : 'Just type the numbers — the colon is added for you. Type <b>214</b> and it becomes <b>2:14</b> (2 hours 14 minutes). You can also type <b>2.5</b> or <b>2h 30m</b>.';
+                : 'Just type the numbers and the colon is added for you. Type <b>0214</b> and it becomes <b>02:14</b> (2 hours 14 minutes) — always type the leading zero for circuits under 10 hours. You can also type <b>2.5</b> or <b>2h 30m</b>. The green readout below the field always shows exactly how long was entered — check it before submitting.';
             document.getElementById('dEnteredLabel').textContent =
                 m === 'left' ? 'Shown on the machine' : 'You entered (age)';
             renderPresets();
@@ -382,6 +382,23 @@
         var __valueEl = document.getElementById('value');
         __valueEl.addEventListener('input', function(){ formatDurationInput(__valueEl); });
 
+        // Clear-on-edit + lifespan re-requirement: editing the value or changing
+        // the lifespan hides the stale result until resubmit.
+        ['value', 'lifespan', 'modeElapsed'].forEach(function(id){
+          var el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener('input', function(){
+            document.getElementById('resultCard').classList.remove('show');
+            var d = document.getElementById('detailsSection');
+            if (d) d.style.display = 'none';
+          });
+          el.addEventListener('change', function(){
+            document.getElementById('resultCard').classList.remove('show');
+            var d = document.getElementById('detailsSection');
+            if (d) d.style.display = 'none';
+          });
+        });
+
         document.getElementById('circuitForm').addEventListener('submit', function(ev){
             ev.preventDefault();
             clearError();
@@ -450,12 +467,19 @@
         function copyResult(){
             if(!window.__due) return;
             var txt = window.__txt;
-            navigator.clipboard.writeText(txt).then(function(){
+            var show = function(){
                 var b = document.querySelector('.copy-btn');
                 var old = b.textContent;
                 b.textContent = '✓ Copied';
                 setTimeout(function(){ b.textContent = old; }, 1600);
-            }).catch(function(){ alert(txt); });
+            };
+            // clipboard API can be unavailable (permissions, older webviews) —
+            // fall back to showing the text so the copy is never silent.
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(txt).then(show).catch(function(){ alert(txt); });
+            } else {
+                alert(txt);
+            }
         }
 
         function resetForm(){
