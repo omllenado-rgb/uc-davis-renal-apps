@@ -42,6 +42,9 @@
         .result-value { font-size: 48px; font-weight: 700; margin-bottom: 5px; }
         .result-unit { font-size: 16px; opacity: 0.9; }
         .result-status { background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 20px; display: inline-block; margin-top: 15px; font-weight: 600; font-size: 14px; }
+        .status-warn { background: #c05521; }
+        .status-bad { background: #c0392b; }
+        .status-good { background: rgba(21,110,40,0.55); }
 
         /* Breakdown */
         .breakdown { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 20px; margin-top: 20px; }
@@ -84,17 +87,17 @@
         <form id="recircForm">
             <div class="form-group">
                 <label>Peripheral BUN (Stop-Flow) — P (mg/dL)</label>
-                <input type="number" id="peripheral" class="input-field" placeholder="e.g., 60" step="0.1" required>
+                <input type="number" id="peripheral" class="input-field" placeholder="e.g., 60" step="0.1" min="0" required>
                 <div class="helper-text">Clamp venous line, let pressure rise, draw from arterial port</div>
             </div>
             <div class="form-group">
                 <label>Arterial BUN — A (mg/dL)</label>
-                <input type="number" id="arterial" class="input-field" placeholder="e.g., 55" step="0.1" required>
+                <input type="number" id="arterial" class="input-field" placeholder="e.g., 55" step="0.1" min="0" required>
                 <div class="helper-text">From the arterial (red) port of blood lines</div>
             </div>
             <div class="form-group">
                 <label>Venous BUN — V (mg/dL)</label>
-                <input type="number" id="venous" class="input-field" placeholder="e.g., 20" step="0.1" required>
+                <input type="number" id="venous" class="input-field" placeholder="e.g., 20" step="0.1" min="0" required>
                 <div class="helper-text">From the venous (blue) port of blood lines</div>
             </div>
 
@@ -139,7 +142,7 @@
                 <li><strong>10-15%:</strong> Borderline — investigate access</li>
                 <li><strong>&gt; 15%:</strong> Significant recirculation — access dysfunction likely</li>
             </ul>
-            <p><strong>Two-Needle (Stop-Flow) Method:</strong> Draw arterial (red port) and venous (blue port) samples. Decrease BFR to 50 mL/hr, clamp the venous line (closest to patient), allow venous pressure to rise until the machine alarms, then draw from the arterial port (label as PERIPHERAL). Uses the formula: (P − A) / (P − V) × 100.</p>
+            <p><strong>Two-Needle (Stop-Flow) Method:</strong> Draw the arterial (red port) and venous (blue port) samples at normal BFR first. Then <strong>reduce BFR to 50 mL/min</strong> (slow-flow), wait ~15&ndash;30&nbsp;seconds for blood to re-equilibrate with the systemic circulation, and draw from the arterial port as the PERIPHERAL sample. Uses the formula: (P − A) / (P − V) × 100.</p>
         </div>
 
         <!-- Footer -->
@@ -154,6 +157,12 @@
             document.getElementById('recircForm').reset();
             document.getElementById('resultCard').classList.remove('show');
         }
+
+                // Clear-on-edit: editing an input hides the stale result.
+        document.getElementById('recircForm').addEventListener('input', function() {
+            document.getElementById('resultCard').classList.remove('show');
+            
+        });
 
         document.getElementById('recircForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -181,7 +190,8 @@
 
             // Status
             let status, statusClass;
-            if (recirc < 10) { status = '✓ Normal (<10%)'; statusClass = 'status-good'; }
+            if (recirc > 50) { status = '❓ >50% — physiologically implausible; samples likely swapped or mislabeled. Recheck sample order.'; statusClass = 'status-warn'; }
+            else if (recirc < 10) { status = '✓ Normal (<10%)'; statusClass = 'status-good'; }
             else if (recirc <= 15) { status = '⚠️ Borderline (10-15%)'; statusClass = 'status-warning'; }
             else { status = '❌ Significant (>15%)'; statusClass = 'status-bad'; }
 
@@ -197,11 +207,6 @@
             document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
 
-        // Analytics
-        fetch('https://api.countapi.xyz/hit/clinical-apps-renal/hd-recirculation')
-            .then(r => r.json())
-            .then(data => console.log('HD Recirculation views:', data.value))
-            .catch(e => console.log('Analytics:', e));
     </script>
 </body>
 </html>
