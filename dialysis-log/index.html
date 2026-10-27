@@ -334,7 +334,17 @@ async function syncFromCloud(){
       if(cloudIdsM[m.id] && !mapM[m.id]) return;         // tombstoned in cloud: let it die
       var c = mapM[m.id];
       if(!c){ mapM[m.id]=m; upM.push(mRow(m)); return; }  // local-only (offline/pre-DB): push up
-      if((m.ts||0) > (c.ts||0)){ mapM[m.id]=m; upM.push(mRow(m)); }  // offline edit: local wins + push
+      /* SAFETY-STATE rule (beats LWW): a Positive culture tags the machine Out
+         of service; NOTHING auto-clears it — only an explicit human Status-change
+         entry, which stamps the machine ts. So when one side is Out and the
+         other is In with an older-or-equal ts, Out WINS and is pushed up. */
+      if(c.status==="Out of service" && m.status==="In service" && (m.ts||0) <= (c.ts||0)){
+        m.status = "Out of service"; m.ts = c.ts||0;
+      } else if(m.status==="Out of service" && c.status==="In service" && (m.ts||0) >= (c.ts||0)){
+        c.status = "Out of service"; c.ts = m.ts||Date.now(); mapM[m.id]=c; upM.push(mRow(c));
+      } else if((m.ts||0) > (c.ts||0)){
+        mapM[m.id]=m; upM.push(mRow(m));                 // offline edit: local wins + push
+      }
     });
     if(upM.length) await sbUpsert(SBI.m, upM);
     S.machines = Object.values(mapM);
